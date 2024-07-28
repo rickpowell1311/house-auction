@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import tailwindcssAnimated from 'tailwindcss-animated'
 export default {
   content: [
     // Example content paths...
@@ -6,8 +7,15 @@ export default {
     './src/**/*.{js,jsx,ts,tsx,vue}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "primary": "#d99021",
+        "secondary": "#292F4E"
+      }
+    },
   },
-  plugins: [],
+  plugins: [
+    tailwindcssAnimated
+  ],
 }
 
