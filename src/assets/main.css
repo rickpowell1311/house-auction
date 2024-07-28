@@ -62,6 +62,9 @@
 
 @layer base {
   html {
+    @apply text-white bg-secondary;
     font-family: "Ubuntu", system-ui, sans-serif;
   }
+
+  h1 { @apply text-[72px] font-bold };
 }
