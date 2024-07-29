@@ -4,6 +4,7 @@ import { useStoryblokApi, type ISbStoryData } from "@storyblok/vue";
 import { onMounted, ref } from "vue";
 import Main from "../_shared/components/layout/Main.vue";
 import Card from "./_shared/components/Card.vue";
+import Deck from "./_shared/components/Deck.vue";
 import CardContents from "./_shared/components/storyblok/CardContents.vue";
 import Table from "./_shared/components/Table.vue";
 
@@ -29,12 +30,12 @@ onMounted(async () => {
     <Main>
       <div class="flex justify-center items-center">
         <Table>
-          <div class="flex gap-2 flex-wrap">
+          <div class="flex gap-2 flex-wrap items-center">
+            <Deck />
             <template v-for="card in cards" :key="card.content.value">
-              <Card :is-face-up="false" class="animate-flip-down animate-duration-200">
+              <Card :is-face-up="true" class="animate-flip-down animate-duration-200">
                 <CardContents :blok="card.content" />
               </Card>
-              <Card :is-face-up="true" />
             </template>
           </div>
         </Table>
