@@ -10,7 +10,7 @@
     "test": "vitest",
     "build-only": "vite build --base=/house-auction",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint \"src/**/*.{ts,vue}\"",
+    "lint": "eslint \"src/**/*.{ts,vue}\" --ignore-pattern \"src/_shared/components/storyblok/schema\"",
     "storyblok:update-types": "npm run storyblok:pull-components && npm run storyblok:generate-types",
     "storyblok:pull-components": "storyblok pull-components --space 298738 --path src/_shared/components/storyblok/schema/",
     "storyblok:generate-types": "storyblok generate-typescript-typedefs --sourceFilePaths ./src/_shared/components/storyblok/schema/components.298738.json --destinationFilePath ./src/_shared/components/storyblok/schema/component-types.d.ts"
