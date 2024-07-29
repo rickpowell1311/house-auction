@@ -2,7 +2,6 @@
 import JumpIn from "./_shared/components/animations/JumpIn.vue";
 import Button from "./_shared/components/Button.vue";
 import Main from "./_shared/components/layout/Main.vue";
-import Section from "./_shared/components/layout/Section.vue";
 </script>
 <template>
   <div class="h-1/6" />
@@ -10,14 +9,12 @@ import Section from "./_shared/components/layout/Section.vue";
     <div class="container mx-auto">
       <Main>
         <div class="flex justify-center">
-          <div class="flex flex-col items-start justify-center">
-            <h1>House Auction</h1>
-            <Section>
-              <div class="flex flex-col gap-4 items-start">
-                <Button>Create Game</Button>
-                <Button>Join Game</Button>
-              </div>
-            </Section>
+          <div class="flex flex-col items-center justify-center gap-16">
+            <h1 class="text-center text-shadow-sm shadow-gray-300">House Auction</h1>
+            <div class="flex flex-col gap-4 items-start">
+              <Button>Create Game</Button>
+              <Button>Join Game</Button>
+            </div>
           </div>
         </div>
       </Main>

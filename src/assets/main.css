@@ -64,6 +64,8 @@
   html {
     @apply text-white bg-secondary;
     font-family: "Ubuntu", system-ui, sans-serif;
+    letter-spacing: 0.75px;
+    line-height: 1;
   }
 
   h1 { @apply text-[72px] font-bold };
