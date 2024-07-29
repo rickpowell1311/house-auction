@@ -10,9 +10,13 @@
     "test": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint \"src/**/*.{ts,vue}\""
+    "lint": "eslint \"src/**/*.{ts,vue}\"",
+    "storyblok:update-types": "npm run storyblok:pull-components && npm run storyblok:generate-types",
+    "storyblok:pull-components": "storyblok pull-components --space 298738 --path src/_shared/components/storyblok/schema/",
+    "storyblok:generate-types": "storyblok generate-typescript-typedefs --sourceFilePaths ./src/_shared/components/storyblok/schema/components.298738.json --destinationFilePath ./src/_shared/components/storyblok/schema/component-types.d.ts"
   },
   "dependencies": {
+    "@storyblok/vue": "^8.0.8",
     "tailwindcss-animated": "^1.1.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
@@ -32,6 +36,7 @@
     "jsdom": "^24.1.0",
     "npm-run-all2": "^6.2.0",
     "postcss": "^8.4.40",
+    "storyblok": "^3.32.3",
     "tailwindcss": "^3.4.7",
     "typescript": "~5.4.0",
     "typescript-eslint": "^7.17.0",

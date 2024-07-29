@@ -1,0 +1,40 @@
+{
+  "components": [
+    {
+      "name": "card",
+      "display_name": null,
+      "created_at": "2024-07-29T10:25:40.258Z",
+      "updated_at": "2024-07-29T10:26:09.031Z",
+      "id": 6103734,
+      "schema": {
+        "value": {
+          "type": "number",
+          "pos": 0,
+          "required": true
+        },
+        "picture": {
+          "type": "asset",
+          "pos": 1,
+          "required": true,
+          "filetypes": [
+            "images"
+          ]
+        }
+      },
+      "image": null,
+      "preview_field": null,
+      "is_root": true,
+      "preview_tmpl": null,
+      "is_nestable": true,
+      "all_presets": [],
+      "preset_id": null,
+      "real_name": "card",
+      "component_group_uuid": null,
+      "color": null,
+      "icon": null,
+      "internal_tags_list": [],
+      "internal_tag_ids": [],
+      "content_type_asset_preview": null
+    }
+  ]
+}
