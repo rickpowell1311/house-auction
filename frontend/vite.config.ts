@@ -6,15 +6,11 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    target: 'esnext',
-  },
   plugins: [
     VueRouter({
       routesFolder: [
         {
           src: 'src',
-          path: '',
           // override globals
           exclude: (excluded) => excluded,
           filePatterns: (filePatterns) => filePatterns,

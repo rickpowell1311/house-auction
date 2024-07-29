@@ -8,6 +8,8 @@ import { addStoryblok } from './storyblok'
 const app = createApp(App)
 
 app.use(router)
-await addStoryblok(app);
+
+// FYI no await here: Can't enable top level awaits in Vite (breaks prod build)
+addStoryblok(app);
 
 app.mount('#app')
