@@ -28,7 +28,6 @@ const dealNext = () => {
     .slice(0, cardsPerRound <= randomized.length ? cardsPerRound : randomized.length);
 
   usedCards.value = [...usedCards.value, ...next];
-  console.log(next);
   deal(next);
 };
 

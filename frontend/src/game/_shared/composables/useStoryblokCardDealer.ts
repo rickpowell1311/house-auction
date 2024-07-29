@@ -25,7 +25,6 @@ export const useStoryblokCardDealer = () => {
       version: import.meta.env.VITE_CMS_SHOW_DRAFTS === "true" ? "draft" : "published",
       per_page: 30
     });
-    console.log(response.data.stories.map(x => x.content?.value));
     return response.data.stories as ISbStoryData<CardStoryblok>[];
   };
 
