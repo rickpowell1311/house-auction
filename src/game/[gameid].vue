@@ -2,9 +2,10 @@
 import type { CardStoryblok } from "@/_shared/components/storyblok/schema/component-types";
 import { useStoryblokApi, type ISbStoryData } from "@storyblok/vue";
 import { onMounted, ref } from "vue";
-import JumpIn from "../_shared/components/animations/JumpIn.vue";
 import Main from "../_shared/components/layout/Main.vue";
-import Card from "./_shared/components/storyblok/Card.vue";
+import Card from "./_shared/components/Card.vue";
+import CardContents from "./_shared/components/storyblok/CardContents.vue";
+import Table from "./_shared/components/Table.vue";
 
 const storyblokApi = useStoryblokApi();
 const cards = ref<ISbStoryData<CardStoryblok>[]>([]);
@@ -23,15 +24,21 @@ onMounted(async () => {
 
 </script>
 <template>
-  <JumpIn>
-    <div class="container mx-auto">
-      <Main>
-        <div class="flex gap-2">
-          <template v-for="card in cards" :key="card.content.value">
-            <Card :blok="card.content" />
-          </template>
-        </div>
-      </Main>
-    </div>
-  </JumpIn>
+  <div class="h-1/6" />
+  <div class="container mx-auto">
+    <Main>
+      <div class="flex justify-center items-center">
+        <Table>
+          <div class="flex gap-2 flex-wrap">
+            <template v-for="card in cards" :key="card.content.value">
+              <Card :is-face-up="false" class="animate-flip-down animate-duration-200">
+                <CardContents :blok="card.content" />
+              </Card>
+              <Card :is-face-up="true" />
+            </template>
+          </div>
+        </Table>
+      </div>
+    </Main>
+  </div>
 </template>
