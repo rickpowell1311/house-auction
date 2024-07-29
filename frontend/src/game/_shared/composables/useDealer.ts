@@ -28,7 +28,7 @@ export const useDealer = (options?: { delay: number }) => {
 
       dealt.value = update;
       dealNextCard();
-    }, options?.delay ?? 400)
+    }, options?.delay ?? 200)
   }
 
   const deal = (numbers: number[]) => {

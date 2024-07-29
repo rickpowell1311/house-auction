@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import Button from "../_shared/components/Button.vue";
 import Main from "../_shared/components/layout/Main.vue";
-import Section from "../_shared/components/layout/Section.vue";
 import Flip from "./_shared/components/animations/Flip.vue";
 import Card from "./_shared/components/Card.vue";
 import Deck from "./_shared/components/Deck.vue";
@@ -20,6 +18,10 @@ const availableCards = computed(() => {
 });
 
 const dealNext = () => {
+  if (availableCards.value.length === 0) {
+    return;
+  }
+
   const randomized = shuffle(availableCards.value);
 
   const next = randomized
@@ -42,7 +44,7 @@ onMounted(() => {
       <div class="flex items-center">
         <Table v-if="allCards.length > 0">
           <div class="flex gap-2 flex-wrap items-center w-full">
-            <Deck />
+            <Deck class="hover:cursor-pointer" @click="() => dealNext()" />
             <template v-for="card in dealtCards" :key="card.content.value">
               <Flip>
                 <Card :is-face-up="true">
@@ -51,11 +53,6 @@ onMounted(() => {
               </Flip>
             </template>
           </div>
-          <Section>
-            <div v-if="availableCards.length > 0">
-              <Button @click="() => dealNext()">Deal</Button>
-            </div>
-          </Section>
         </Table>
       </div>
     </Main>
