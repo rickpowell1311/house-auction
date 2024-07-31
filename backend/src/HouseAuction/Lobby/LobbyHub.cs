@@ -2,16 +2,37 @@
 
 namespace HouseAuction.Lobby
 {
-    public class LobbyHub(Participants _participants) : Hub<ILobby>
+    public class LobbyHub(LobbyContext context) : Hub<ILobbyNotifications>
     {
-        public async Task JoinLobby(string name)
+        public const string Route = "/lobby";
+
+        private readonly LobbyContext _context = context;
+
+        public async Task CreateLobby(string name)
         {
-            if (_participants.Any(x => FuzzyNameMatch.IsCloseMatch(x, name)))
+            var lobby = Domain.Lobby.Create(name);
+
+            _context.Lobbies.Add(lobby);
+            await _context.SaveChangesAsync();
+
+            await Clients.Caller.OnLobbyCreated(lobby.GameId);
+        }
+
+        public async Task JoinLobby(string gameId, string name)
+        {
+            var lobby = await _context.Lobbies.FindAsync(gameId);
+
+            if (lobby == null)
             {
-                throw new HubException("Similar user name already in use");
+                throw new HubException($"Game with Id {gameId} not found");
             }
 
-            _participants.Add(name);
+            if (!lobby.TryJoin(name, out var error))
+            {
+                throw new HubException(error);
+            }
+
+            await _context.SaveChangesAsync();
 
             await Clients.All.OnGamerJoined(name);
         }

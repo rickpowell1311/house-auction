@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseAuction", "HouseAuction\HouseAuction.csproj", "{5748A717-61FF-4634-BF1C-D8B26EAF2B28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseAuction", "HouseAuction\HouseAuction.csproj", "{5748A717-61FF-4634-BF1C-D8B26EAF2B28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseAuction.Tests", "HouseAuction.Tests\HouseAuction.Tests.csproj", "{49C3C0CC-12F6-468F-8554-BBA4F5F9FBD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5748A717-61FF-4634-BF1C-D8B26EAF2B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5748A717-61FF-4634-BF1C-D8B26EAF2B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5748A717-61FF-4634-BF1C-D8B26EAF2B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49C3C0CC-12F6-468F-8554-BBA4F5F9FBD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49C3C0CC-12F6-468F-8554-BBA4F5F9FBD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49C3C0CC-12F6-468F-8554-BBA4F5F9FBD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49C3C0CC-12F6-468F-8554-BBA4F5F9FBD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

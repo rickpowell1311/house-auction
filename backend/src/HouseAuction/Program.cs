@@ -1,16 +1,16 @@
-using HouseAuction.Lobby;
-
-internal class Program
+namespace HouseAuction
 {
-    private static void Main(string[] args)
+    public class Program
     {
-        var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddSignalR();
-        builder.Services.AddLobby();
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddHouseAuction();
 
-        var app = builder.Build();
-        app.UseLobby();
+            var app = builder.Build();
+            app.MapHouseAuctionRoutes();
 
-        app.Run();
+            app.Run();
+        }
     }
 }
