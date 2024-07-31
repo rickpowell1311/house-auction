@@ -14,10 +14,10 @@
 
         public ICollection<Gamer> Gamers { get; private set; }
 
-        private Lobby(string gameId, Gamer creator, List<Gamer> gamers) : this(gameId, false)
-        {           
-            Gamers = gamers;
-            Creator = creator;
+        private Lobby(string gameId, string creator) : this(gameId, false)
+        {          
+            Creator = new Gamer(creator, GameId);
+            Gamers = new List<Gamer> { Creator };
         }
 
         private Lobby(string gameId, bool hasStarted)
@@ -26,19 +26,21 @@
             HasStarted = hasStarted;
         }
 
-        public static Lobby Create(string gamerName)
+        public static Lobby Create(string creator)
         {
-            var gamer = new Gamer(gamerName);
-
             return new Lobby(
                 Domain.GameId.NewGameId(),
-                gamer, 
-                [gamer]);
+                creator);
         }
 
         public bool TryJoin(string name, out string error)
         {
             error = null;
+
+            if (Gamers.Any(x => x.Name == name))
+            {
+                return true;
+            }
 
             if (HasStarted)
             {
@@ -58,7 +60,9 @@
                 return false;
             }
 
-            Gamers.Add(new Gamer(name));
+            var gamer = new Gamer(name, GameId);
+            Gamers.Add(gamer);
+
             return true;
         }
 

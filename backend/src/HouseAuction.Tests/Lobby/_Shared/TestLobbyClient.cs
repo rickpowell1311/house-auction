@@ -4,13 +4,22 @@ namespace HouseAuction.Tests.Lobby._Shared
 {
     public class TestLobbyClient : ILobbyClient
     {
-        public List<string> GamersJoined { get; } = [];
+        public List<string> GamersJoined { get; private set; } = [];
 
         public List<string> LobbiesCreated { get; } = [];
 
-        public Task OnGamerJoined(string name)
+        public List<string> GamesBegun { get; } = [];
+
+        public Task OnGameBegun(string gameId)
         {
-            GamersJoined.Add(name);
+            GamesBegun.Add(gameId);
+
+            return Task.CompletedTask;
+        }
+
+        public Task OnLobbyMembersChanged(List<string> members)
+        {
+            GamersJoined = members;
 
             return Task.CompletedTask;
         }

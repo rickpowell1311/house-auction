@@ -31,6 +31,24 @@ namespace HouseAuction.Tests.Lobby
             Assert.Single(_client.LobbiesCreated);
         }
 
+        [Fact]
+        public async Task CanJoinLobby()
+        {
+            var firstGamer = Gamers.Sample[0];
+            var secondGamer = Gamers.Sample[1];
+
+            await _hub.CreateLobby(firstGamer);
+            var gameId = _client.LobbiesCreated.Single();
+
+            var secondClient = new TestLobbyClient();
+            _connection.Register<ILobbyClient>(secondClient);
+
+            await _hub.JoinLobby(gameId, secondGamer);
+
+            Assert.Equal(2, _client.GamersJoined.Count);
+            Assert.Equal(2, secondClient.GamersJoined.Count);
+        }
+
         public async Task DisposeAsync()
         {
             await _connection.StopAsync();

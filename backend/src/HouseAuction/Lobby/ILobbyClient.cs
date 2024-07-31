@@ -4,6 +4,8 @@
     {
         Task OnLobbyCreated(string gameId);
 
-        Task OnGamerJoined(string name);
+        Task OnLobbyMembersChanged(List<string> members);
+
+        Task OnGameBegun(string gameId);
     }
 }

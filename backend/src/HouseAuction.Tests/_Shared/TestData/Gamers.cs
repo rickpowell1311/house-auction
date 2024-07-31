@@ -1,4 +1,6 @@
-﻿namespace HouseAuction.Tests._Shared.TestData
+﻿using HouseAuction.Lobby.Domain;
+
+namespace HouseAuction.Tests._Shared.TestData
 {
     public class Gamers
     {

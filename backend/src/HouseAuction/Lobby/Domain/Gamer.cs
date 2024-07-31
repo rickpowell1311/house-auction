@@ -1,22 +1,29 @@
 ﻿
+
+
+
 namespace HouseAuction.Lobby.Domain
 {
     public class Gamer : IEquatable<Gamer>
     {
         public Guid Id { get; private set; }
 
+        public string GameId { get; private set; }
+
         public string Name { get; private set; }
 
         public bool IsReady { get; private set; }
 
-        public Gamer(string name)
+        public Gamer(string name, string gameId)
         {
-            Name = name;
             Id = Guid.NewGuid();
+            GameId = gameId;
+            Name = name;
         }
 
-        private Gamer(string name, bool isReady) : this(name)
+        private Gamer(Guid id, string gameId, string name, bool isReady) : this(name, gameId)
         {
+            Id = id;
             IsReady = isReady;
         }
 

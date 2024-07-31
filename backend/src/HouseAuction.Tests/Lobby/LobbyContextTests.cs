@@ -20,8 +20,10 @@ namespace HouseAuction.Tests.Lobby
             await context.SaveChangesAsync();
 
             var rehydratedLobby = await context.Lobbies.FindAsync(lobby.GameId);
-
             Assert.NotNull(rehydratedLobby);
+
+            rehydratedLobby.TryJoin(Gamers.Sample[1], out _);
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using HouseAuction.Lobby.Domain;
+using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction.Lobby
 {
@@ -14,6 +15,8 @@ namespace HouseAuction.Lobby
 
             _context.Lobbies.Add(lobby);
             await _context.SaveChangesAsync();
+
+            await Groups.AddToGroupAsync(name, lobby.GameId);
 
             await Clients.Caller.OnLobbyCreated(lobby.GameId);
         }
@@ -34,7 +37,27 @@ namespace HouseAuction.Lobby
 
             await _context.SaveChangesAsync();
 
-            await Clients.All.OnGamerJoined(name);
+            await Groups.AddToGroupAsync(name, lobby.GameId);
+            await Clients.Group(lobby.GameId).OnLobbyMembersChanged(lobby.Gamers.Select(x => x.Name).ToList());
+        }
+
+        public async Task BeginGame(string gameId)
+        {
+            var lobby = await _context.Lobbies.FindAsync(gameId);
+
+            if (lobby == null)
+            {
+                throw new HubException($"Game with Id {gameId} not found");
+            }
+
+            if (!lobby.TryBeginGame(out var error))
+            {
+               throw new HubException(error);
+            }
+
+            await _context.SaveChangesAsync();
+
+            await Clients.Group(lobby.GameId).OnGameBegun(gameId);
         }
     }
 }
