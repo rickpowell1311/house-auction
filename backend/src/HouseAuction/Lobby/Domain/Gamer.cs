@@ -3,6 +3,8 @@ namespace HouseAuction.Lobby.Domain
 {
     public class Gamer : IEquatable<Gamer>
     {
+        public Guid Id { get; private set; }
+
         public string Name { get; private set; }
 
         public bool IsReady { get; private set; }
@@ -10,6 +12,7 @@ namespace HouseAuction.Lobby.Domain
         public Gamer(string name)
         {
             Name = name;
+            Id = Guid.NewGuid();
         }
 
         private Gamer(string name, bool isReady) : this(name)

@@ -2,7 +2,7 @@
 
 namespace HouseAuction.Lobby
 {
-    public class LobbyHub(LobbyContext context) : Hub<ILobbyNotifications>
+    public class LobbyHub(LobbyContext context) : Hub<ILobbyClient>, ILobbyHub
     {
         public const string Route = "/lobby";
 

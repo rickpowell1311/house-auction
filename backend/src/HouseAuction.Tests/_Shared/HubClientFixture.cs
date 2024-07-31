@@ -44,15 +44,19 @@ namespace HouseAuction.Tests._Shared
 
                 _host.Start();
             }
-            public HubConnection GetHubConnection<THub>(string route) 
+            public async Task<HubConnection> StartHubConnection<THub>(string route) 
                 where THub : Hub
             {
                 var url = _host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.Single();
                 var hubRoute = route.StartsWith("/") ? route.Remove(0, 1) : route;
 
-                return new HubConnectionBuilder()
+                var hubConnection = new HubConnectionBuilder()
                     .WithUrl($"{url}/{hubRoute}")
                     .Build();
+
+                await hubConnection.StartAsync();
+
+                return hubConnection;
             }
 
             public async ValueTask DisposeAsync()

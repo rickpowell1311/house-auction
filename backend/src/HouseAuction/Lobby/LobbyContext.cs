@@ -15,7 +15,7 @@ namespace HouseAuction.Lobby
             lobbyConfiguration.HasKey(x => x.GameId);
             lobbyConfiguration.OwnsMany(x => x.Gamers, g =>
             {
-                g.HasKey(y => y.Name);
+                g.HasKey(y => y.Id);
             });
             lobbyConfiguration.OwnsOne(x => x.Creator);
 

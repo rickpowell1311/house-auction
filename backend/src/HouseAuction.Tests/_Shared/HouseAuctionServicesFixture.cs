@@ -15,7 +15,6 @@ namespace HouseAuction.Tests.Lobby._Shared
 
         public class Provider : IAsyncDisposable
         {
-            private readonly IWebHost _host;
             private readonly ServiceProvider _serviceProvider;
 
             public Provider()

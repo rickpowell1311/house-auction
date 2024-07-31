@@ -1,6 +1,6 @@
 ﻿namespace HouseAuction.Lobby
 {
-    public interface ILobbyNotifications
+    public interface ILobbyClient
     {
         Task OnLobbyCreated(string gameId);
 
