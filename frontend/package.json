@@ -17,8 +17,10 @@
   },
   "dependencies": {
     "@storyblok/vue": "^8.0.8",
+    "@vee-validate/yup": "^4.13.2",
     "house-auction": "file:",
     "tailwindcss-animated": "^1.1.2",
+    "vee-validate": "^4.13.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
