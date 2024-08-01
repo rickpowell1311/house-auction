@@ -33,37 +33,33 @@
                 creator);
         }
 
-        public bool TryJoin(string name, out string error)
+        public LobbyJoinResult Join(string name)
         {
-            error = null;
-
-            if (Gamers.Any(x => x.Name == name))
+            if (HasStarted && Gamers.Any(x => x.Name.ToLowerInvariant() == name.ToLowerInvariant()))
             {
-                return true;
+                return LobbyJoinResult.Reconnection();
             }
 
             if (HasStarted)
             {
-                error = "Game in progress";
-                return false;
+                return LobbyJoinResult.Error("Game in progress");
             }
 
             if (Gamers.Count >= MaxGamers)
             {
-                error = "This lobby is full";
-                return false;
+                return LobbyJoinResult.Error("This lobby is full");
             }
 
             if (Gamers.Any(x => FuzzyNameMatch.IsCloseMatch(x.Name, name)))
             {
-                error = "Someone with a similar user name already joined this lobby. Please choose another name";
-                return false;
+                return LobbyJoinResult.Error(
+                    "Someone with a similar user name already joined this lobby. Please choose another name");
             }
 
             var gamer = new Gamer(name, GameId);
             Gamers.Add(gamer);
 
-            return true;
+            return LobbyJoinResult.Success();
         }
 
         public void ReadyUp(string name)

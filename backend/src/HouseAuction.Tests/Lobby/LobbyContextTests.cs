@@ -1,4 +1,5 @@
 ﻿using HouseAuction.Lobby;
+using HouseAuction.Lobby.Domain;
 using HouseAuction.Tests._Shared.TestData;
 using HouseAuction.Tests.Lobby._Shared;
 
@@ -22,7 +23,8 @@ namespace HouseAuction.Tests.Lobby
             var rehydratedLobby = await context.Lobbies.FindAsync(lobby.GameId);
             Assert.NotNull(rehydratedLobby);
 
-            rehydratedLobby.TryJoin(Gamers.Sample[1], out _);
+            var joinResult = rehydratedLobby.Join(Gamers.Sample[1]);
+            Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             await context.SaveChangesAsync();
         }
     }

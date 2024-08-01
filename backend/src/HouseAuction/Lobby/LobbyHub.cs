@@ -30,9 +30,17 @@ namespace HouseAuction.Lobby
                 throw new HubException($"Game with Id {gameId} not found");
             }
 
-            if (!lobby.TryJoin(name, out var error))
+            var lobbyJoinResult = lobby.Join(name);
+
+            switch (lobbyJoinResult.Type)
             {
-                throw new HubException(error);
+                case LobbyJoinResult.JoinResultType.Error:
+                    throw new HubException(lobbyJoinResult.ErrorMessage);
+                case LobbyJoinResult.JoinResultType.Reconnection:
+                    // TODO:
+                    throw new NotImplementedException("Reconnection not implemented yet");
+                default:
+                    break;
             }
 
             await _context.SaveChangesAsync();
