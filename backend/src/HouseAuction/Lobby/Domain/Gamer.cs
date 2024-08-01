@@ -19,6 +19,7 @@ namespace HouseAuction.Lobby.Domain
         public Gamer(string name, string gameId, string connectionId)
         {
             Id = Guid.NewGuid();
+            ConnectionId = connectionId;
             GameId = gameId;
             Name = name;
         }

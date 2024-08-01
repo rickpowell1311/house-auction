@@ -22,6 +22,18 @@ namespace HouseAuction
             await Clients.Caller.OnLobbyCreated(lobby.GameId);
         }
 
+        public async Task<List<string>> FetchLobby(string gameId)
+        {
+            var lobby = await _context.Lobbies.FindAsync(gameId);
+
+            if (lobby == null || !lobby.Gamers.Any(x => x.ConnectionId == Context.ConnectionId))
+            {
+                throw new HubException($"Game with Id {gameId} not found");
+            }
+
+            return lobby.Gamers.Select(x => x.Name).ToList();
+        }
+
         public async Task JoinLobby(string gameId, string name)
         {
             var lobby = await _context.Lobbies.FindAsync(gameId);
