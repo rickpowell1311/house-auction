@@ -28,6 +28,7 @@ namespace HouseAuction.Tests.Lobby
         {
             await _hub.CreateLobby(Gamers.Sample[0]);
 
+            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
             Assert.Single(_client.LobbiesCreated);
         }
 
@@ -45,6 +46,7 @@ namespace HouseAuction.Tests.Lobby
 
             await _hub.JoinLobby(gameId, secondGamer);
 
+            await WaitFor.Condition(() => _client.GamersJoined.Count == 2 && secondClient.GamersJoined.Count == 2);
             Assert.Equal(2, _client.GamersJoined.Count);
             Assert.Equal(2, secondClient.GamersJoined.Count);
         }
