@@ -17,7 +17,7 @@ namespace HouseAuction.Tests.Lobby
 
         public async Task InitializeAsync()
         {
-            _connection = await _hubClientFixtureProvider.StartHubConnection<LobbyHub>(LobbyHub.Route);
+            _connection = await _hubClientFixtureProvider.StartHubConnection<HouseAuctionHub>(HouseAuctionHub.Route);
             _hub = _connection.CreateHubProxy<ILobbyHub>();
             _client = new TestLobbyClient();
             _connection.Register<ILobbyClient>(_client);
@@ -39,6 +39,8 @@ namespace HouseAuction.Tests.Lobby
             var secondGamer = Gamers.Sample[1];
 
             await _hub.CreateLobby(firstGamer);
+
+            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
             var gameId = _client.LobbiesCreated.Single();
 
             var secondClient = new TestLobbyClient();
@@ -49,6 +51,35 @@ namespace HouseAuction.Tests.Lobby
             await WaitFor.Condition(() => _client.GamersJoined.Count == 2 && secondClient.GamersJoined.Count == 2);
             Assert.Equal(2, _client.GamersJoined.Count);
             Assert.Equal(2, secondClient.GamersJoined.Count);
+        }
+
+        [Fact]
+        public async Task CanStartGame()
+        {
+            var gamers = Gamers.Sample.Take(HouseAuction.Lobby.Domain.Lobby.MinGamers).ToList();
+            var lobbyCreator = gamers[0];
+            var otherGamers = gamers.Skip(1).ToList();
+
+            await _hub.CreateLobby(lobbyCreator);
+
+            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
+            var gameId = _client.LobbiesCreated.Single();
+
+            foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
+            {
+                await _hub.JoinLobby(gameId, gamer);
+                await WaitFor.Condition(() => _client.GamersJoined.Count >= index + 2);
+            }
+
+            foreach (var gamer in gamers)
+            {
+                await _hub.ReadyUp(gameId, gamer);
+            }
+
+            await WaitFor.Condition(() => _client.GamesBegun.Count >= 1);
+
+            var game = _client.GamesBegun.SingleOrDefault(x => x == gameId);
+            Assert.NotNull(game);
         }
 
         public async Task DisposeAsync()

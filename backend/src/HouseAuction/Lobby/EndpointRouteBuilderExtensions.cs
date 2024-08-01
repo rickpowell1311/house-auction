@@ -4,7 +4,7 @@
     {
         public static void MapLobbyRoutes(this IEndpointRouteBuilder endpointRouteBuilder)
         {
-            endpointRouteBuilder.MapHub<LobbyHub>(LobbyHub.Route);
+            endpointRouteBuilder.MapHub<HouseAuctionHub>(HouseAuctionHub.Route);
         }
     }
 }

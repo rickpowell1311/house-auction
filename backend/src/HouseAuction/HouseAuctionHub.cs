@@ -1,17 +1,18 @@
-﻿using HouseAuction.Lobby.Domain;
+﻿using HouseAuction.Lobby;
+using HouseAuction.Lobby.Domain;
 using Microsoft.AspNetCore.SignalR;
 
-namespace HouseAuction.Lobby
+namespace HouseAuction
 {
-    public class LobbyHub(LobbyContext context) : Hub<ILobbyClient>, ILobbyHub
+    public class HouseAuctionHub(LobbyContext context) : Hub<IHouseAuctionClient>, IHouseAuctionHub
     {
-        public const string Route = "/lobby";
+        public const string Route = "/house-auction";
 
         private readonly LobbyContext _context = context;
 
         public async Task CreateLobby(string name)
         {
-            var lobby = Domain.Lobby.Create(name, Context.ConnectionId);
+            var lobby = Lobby.Domain.Lobby.Create(name, Context.ConnectionId);
 
             _context.Lobbies.Add(lobby);
             await _context.SaveChangesAsync();
@@ -49,7 +50,7 @@ namespace HouseAuction.Lobby
             await Clients.Group(lobby.GameId).OnLobbyMembersChanged(lobby.Gamers.Select(x => x.Name).ToList());
         }
 
-        public async Task BeginGame(string gameId)
+        public async Task ReadyUp(string gameId, string name)
         {
             var lobby = await _context.Lobbies.FindAsync(gameId);
 
@@ -58,14 +59,17 @@ namespace HouseAuction.Lobby
                 throw new HubException($"Game with Id {gameId} not found");
             }
 
-            if (!lobby.TryBeginGame(out var error))
+            if (!lobby.TryReadyUp(name, out var error))
             {
-               throw new HubException(error);
+                throw new HubException(error);
             }
 
             await _context.SaveChangesAsync();
 
-            await Clients.Group(lobby.GameId).OnGameBegun(gameId);
+            if (lobby.HasGameStarted)
+            {
+                await Clients.Group(lobby.GameId).OnGameBegun(lobby.GameId);
+            }
         }
     }
 }

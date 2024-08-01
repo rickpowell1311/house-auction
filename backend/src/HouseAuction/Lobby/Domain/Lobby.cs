@@ -6,7 +6,11 @@
 
         public const int MaxGamers = 6;
 
-        public bool HasStarted { get; private set; }
+        public bool IsReadyToStartGame => Gamers.Count >= MinGamers 
+            && Gamers.Count <= MaxGamers
+            && Gamers.All(x => x.IsReady);
+
+        public bool HasGameStarted { get; private set; }
 
         public string GameId { get; private set; }
 
@@ -20,10 +24,10 @@
             Gamers = new List<Gamer> { Creator };
         }
 
-        private Lobby(string gameId, bool hasStarted)
+        private Lobby(string gameId, bool hasGameStarted)
         {
             GameId = gameId;
-            HasStarted = hasStarted;
+            HasGameStarted = hasGameStarted;
         }
 
         public static Lobby Create(string creator, string creatorConnectionId)
@@ -36,12 +40,12 @@
 
         public LobbyJoinResult Join(string name, string connectionId)
         {
-            if (HasStarted && Gamers.Any(x => x.Name.ToLowerInvariant() == name.ToLowerInvariant()))
+            if (HasGameStarted && Gamers.Any(x => x.Name.ToLowerInvariant() == name.ToLowerInvariant()))
             {
                 return LobbyJoinResult.Reconnection();
             }
 
-            if (HasStarted)
+            if (HasGameStarted)
             {
                 return LobbyJoinResult.Error("Game in progress");
             }
@@ -63,35 +67,24 @@
             return LobbyJoinResult.Success();
         }
 
-        public void ReadyUp(string name)
+        public bool TryReadyUp(string name, out string error)
         {
+            error = null;
             var gamer = Gamers.SingleOrDefault(x => x.Name == name);
 
             if (gamer == null)
             {
-                return;
+                error = $"Cannot ready up - Gamer {name} is not part of lobby for game {GameId}";
+                return false;
             }
 
             gamer.ReadyUp();
-        }
 
-        public bool TryBeginGame(out string error)
-        {
-            error = null;
-
-            if (Gamers.Count < MinGamers)
+            if (IsReadyToStartGame)
             {
-                error = "Not enough players";
-                return false;
+                HasGameStarted = true;
             }
 
-            if (Gamers.Any(x => !x.IsReady))
-            {
-                error = "Not all gamers are ready";
-                return false;
-            }
-
-            HasStarted = true;
             return true;
         }
     }
