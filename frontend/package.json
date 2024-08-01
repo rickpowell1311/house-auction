@@ -17,12 +17,14 @@
   },
   "dependencies": {
     "@storyblok/vue": "^8.0.8",
+    "house-auction": "file:",
     "tailwindcss-animated": "^1.1.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
+    "@tailwindcss/forms": "^0.5.7",
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.14.5",

@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import forms from '@tailwindcss/forms'
 import tailwindcssAnimated from 'tailwindcss-animated'
 import plugin from 'tailwindcss/plugin'
 export default {
@@ -31,7 +32,8 @@ export default {
         { values: theme('textShadow') }
       )
     }),
-    tailwindcssAnimated
+    tailwindcssAnimated,
+    forms
   ],
 }
 
