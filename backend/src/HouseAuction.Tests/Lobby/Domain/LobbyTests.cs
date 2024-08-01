@@ -1,6 +1,5 @@
 ﻿using HouseAuction.Lobby.Domain;
 using HouseAuction.Tests._Shared.TestData;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HouseAuction.Tests.Lobby.Domain
 {
@@ -9,16 +8,16 @@ namespace HouseAuction.Tests.Lobby.Domain
         [Fact]
         public void TryJoin_WhenLobbyFull_ReturnsFalse()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0]);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
             foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MaxGamers - 1))
             {
-                var joinResult = lobby.Join(gamer);
+                var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(HouseAuction.Lobby.Domain.LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 
             var lastGamer = Gamers.Sample.Skip(HouseAuction.Lobby.Domain.Lobby.MaxGamers).Take(1).Single();
 
-            var lastJoinResult = lobby.Join(lastGamer);
+            var lastJoinResult = lobby.Join(lastGamer, Guid.NewGuid().ToString());
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, lastJoinResult.Type);
         }
 
@@ -26,8 +25,8 @@ namespace HouseAuction.Tests.Lobby.Domain
         public void TryJoin_WhenAlreadyJoined_ReturnsFalse()
         {
             var gamer = Gamers.Sample[0];
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(gamer);
-            var joinResult = lobby.Join(gamer);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(gamer, Guid.NewGuid().ToString());
+            var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
 
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, joinResult.Type);
         }
@@ -39,10 +38,10 @@ namespace HouseAuction.Tests.Lobby.Domain
             var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
             var joiningAfterGameStarted = Gamers.Sample.Skip(HouseAuction.Lobby.Domain.Lobby.MinGamers).Take(1).Single();
 
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, Guid.NewGuid().ToString());
             foreach (var gamer in otherGamers)
             {
-                var joinResult = lobby.Join(gamer);
+                var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 
@@ -54,14 +53,14 @@ namespace HouseAuction.Tests.Lobby.Domain
             var gameStartResult = lobby.TryBeginGame(out var _);
             Assert.True(gameStartResult);
 
-            var lateJoinResult = lobby.Join(joiningAfterGameStarted);
+            var lateJoinResult = lobby.Join(joiningAfterGameStarted, Guid.NewGuid().ToString());
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, lateJoinResult.Type);
         }
 
         [Fact]
         public void TryBeginGame_WhenNotEnoughPlayers_ReturnsFalse()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0]);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
 
             foreach (var gamer in lobby.Gamers)
             {
@@ -74,10 +73,10 @@ namespace HouseAuction.Tests.Lobby.Domain
         [Fact]
         public void TryBeginGame_WhenNotAllPlayersReady_ReturnsFalse()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0]);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
             foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1))
             {
-                var joinResult = lobby.Join(gamer);
+                var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 
@@ -87,10 +86,10 @@ namespace HouseAuction.Tests.Lobby.Domain
         [Fact]
         public void TryBeginGame_WhenAllPlayersReady_ReturnsTrue()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0]);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
             foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers))
             {
-                var joinResult = lobby.Join(gamer);
+                var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 

@@ -13,7 +13,7 @@ namespace HouseAuction.Tests.Lobby
         [Fact]
         public async Task CanCreateAndRehydrateLobby()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0]);
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
 
             var context = _servicesFixtureProvider.GetService<LobbyContext>();
             context.Lobbies.Add(lobby);
@@ -23,7 +23,7 @@ namespace HouseAuction.Tests.Lobby
             var rehydratedLobby = await context.Lobbies.FindAsync(lobby.GameId);
             Assert.NotNull(rehydratedLobby);
 
-            var joinResult = rehydratedLobby.Join(Gamers.Sample[1]);
+            var joinResult = rehydratedLobby.Join(Gamers.Sample[1], Guid.NewGuid().ToString());
             Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             await context.SaveChangesAsync();
         }

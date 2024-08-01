@@ -11,12 +11,12 @@ namespace HouseAuction.Lobby
 
         public async Task CreateLobby(string name)
         {
-            var lobby = Domain.Lobby.Create(name);
+            var lobby = Domain.Lobby.Create(name, Context.ConnectionId);
 
             _context.Lobbies.Add(lobby);
             await _context.SaveChangesAsync();
 
-            await Groups.AddToGroupAsync(name, lobby.GameId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, lobby.GameId);
 
             await Clients.Caller.OnLobbyCreated(lobby.GameId);
         }
@@ -30,7 +30,7 @@ namespace HouseAuction.Lobby
                 throw new HubException($"Game with Id {gameId} not found");
             }
 
-            var lobbyJoinResult = lobby.Join(name);
+            var lobbyJoinResult = lobby.Join(name, Context.ConnectionId);
 
             switch (lobbyJoinResult.Type)
             {
@@ -45,7 +45,7 @@ namespace HouseAuction.Lobby
 
             await _context.SaveChangesAsync();
 
-            await Groups.AddToGroupAsync(name, lobby.GameId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, lobby.GameId);
             await Clients.Group(lobby.GameId).OnLobbyMembersChanged(lobby.Gamers.Select(x => x.Name).ToList());
         }
 

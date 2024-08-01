@@ -12,16 +12,18 @@ namespace HouseAuction.Lobby.Domain
 
         public string Name { get; private set; }
 
+        public string ConnectionId { get; private set; }
+
         public bool IsReady { get; private set; }
 
-        public Gamer(string name, string gameId)
+        public Gamer(string name, string gameId, string connectionId)
         {
             Id = Guid.NewGuid();
             GameId = gameId;
             Name = name;
         }
 
-        private Gamer(Guid id, string gameId, string name, bool isReady) : this(name, gameId)
+        private Gamer(Guid id, string gameId, string name, string connectionId, bool isReady) : this(name, gameId, connectionId)
         {
             Id = id;
             IsReady = isReady;
@@ -40,7 +42,7 @@ namespace HouseAuction.Lobby.Domain
         public bool Equals(Gamer other)
         {
             return other is not null &&
-                   Name == other.Name;
+                Name == other.Name;
         }
 
         public override int GetHashCode()

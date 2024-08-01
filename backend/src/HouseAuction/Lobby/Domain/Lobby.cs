@@ -14,9 +14,9 @@
 
         public ICollection<Gamer> Gamers { get; private set; }
 
-        private Lobby(string gameId, string creator) : this(gameId, false)
+        private Lobby(string gameId, string creator, string creatorConnectionId) : this(gameId, false)
         {          
-            Creator = new Gamer(creator, GameId);
+            Creator = new Gamer(creator, GameId, creatorConnectionId);
             Gamers = new List<Gamer> { Creator };
         }
 
@@ -26,14 +26,15 @@
             HasStarted = hasStarted;
         }
 
-        public static Lobby Create(string creator)
+        public static Lobby Create(string creator, string creatorConnectionId)
         {
             return new Lobby(
                 Domain.GameId.NewGameId(),
-                creator);
+                creator,
+                creatorConnectionId);
         }
 
-        public LobbyJoinResult Join(string name)
+        public LobbyJoinResult Join(string name, string connectionId)
         {
             if (HasStarted && Gamers.Any(x => x.Name.ToLowerInvariant() == name.ToLowerInvariant()))
             {
@@ -56,7 +57,7 @@
                     "Someone with a similar user name already joined this lobby. Please choose another name");
             }
 
-            var gamer = new Gamer(name, GameId);
+            var gamer = new Gamer(name, GameId, connectionId);
             Gamers.Add(gamer);
 
             return LobbyJoinResult.Success();
