@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import Back from "@/_shared/components/Back.vue";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import JumpIn from "../_shared/components/animations/JumpIn.vue";
 import Button from "../_shared/components/Button.vue";
 import Main from "../_shared/components/layout/Main.vue";
-import { default as CreateGame, default as CreateLobby } from "./_shared/components/CreateGame.vue";
+import { default as CreateGame } from "./_shared/components/CreateGame.vue";
 import JoinGame from "./_shared/components/JoinGame.vue";
-
-const router = useRouter();
-
-const createGame = () => {
-  router.push("/game/123");
-};
 
 const workflow = ref("landing" as "landing" | "creating" | "joining");
 

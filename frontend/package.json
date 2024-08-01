@@ -16,6 +16,7 @@
     "storyblok:generate-types": "storyblok generate-typescript-typedefs --sourceFilePaths ./src/_shared/components/storyblok/schema/components.298738.json --destinationFilePath ./src/_shared/components/storyblok/schema/component-types.d.ts"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@storyblok/vue": "^8.0.8",
     "@vee-validate/yup": "^4.13.2",
     "house-auction": "file:",
