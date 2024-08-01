@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-import { onMounted, provide, ref } from 'vue';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { onMounted, provide, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Loader from '../components/Loader.vue';
 import type { SignalRClient } from './signalRClient';
 import { Key, SignalRClientImpl } from './signalRClient';
 
-var hubConnection = new HubConnectionBuilder()
+const connection = ref<HubConnection>(new HubConnectionBuilder()
   .withUrl(`${import.meta.env.VITE_SIGNALR_URL}/house-auction`, { withCredentials: false })
-  .build()
+  .build());
 
-const connection = ref<HubConnection>(hubConnection);
+const isConnected = ref(false);
 const router = useRouter();
 
 provide<SignalRClient>(Key, new SignalRClientImpl(connection.value as HubConnection));
@@ -21,9 +21,13 @@ onMounted(async () => {
   // If we're refreshing a SignalR connection we always want to boot out to the root page
   router.push("/");
 })
+
+watch(connection.value, val => {
+  isConnected.value = val.state === "Connected";
+})
 </script>
 
 <template>
-  <Loader v-if="connection.state !== HubConnectionState.Connected" />
+  <Loader v-if="!isConnected" />
   <slot v-else />
 </template>

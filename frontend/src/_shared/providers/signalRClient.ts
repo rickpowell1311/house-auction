@@ -11,12 +11,24 @@ export class SignalRClientImpl implements SignalRClient {
     this.lobby = new LobbyClientImpl(hubConnection);
   }
 
-  public createLobby(name: string) {
-    this.lobby.createLobby(name);
+  public async createLobby(name: string) {
+    await this.lobby.createLobby(name);
+  }
+
+  public async joinLobby(gameId: string, name: string) {
+    await this.lobby.joinLobby(gameId, name);
+  }
+
+  public async fetchLobby(name: string) {
+    return await this.lobby.fetchLobby(name);
   }
 
   public handleLobbyCreated(cb: (gameId: string) => void) {
     this.lobby.handleLobbyCreated(cb);
+  }
+
+  public handleLobbyMembersChanged(cb: (players: string[]) => void) {
+    this.lobby.handleLobbyMembersChanged(cb);
   }
 }
 
@@ -31,12 +43,31 @@ export class LobbyClientImpl implements LobbyClient {
     await this.hubConnection.invoke("CreateLobby", name);
   }
 
+  async joinLobby(gameId: string, name: string) {
+    await this.hubConnection.invoke("JoinLobby", gameId, name);
+  }
+
+  async fetchLobby(name: string) {
+    const result = await this.hubConnection.invoke("FetchLobby", name);
+
+    return {
+      players: result as string[]
+    }
+  }
+
+  handleLobbyMembersChanged(cb: (players: string[]) => void) {
+    this.hubConnection.on("OnLobbyMembersChanged", cb);
+  }
+
   handleLobbyCreated(cb: (gameId: string) => void) {
     this.hubConnection.on("OnLobbyCreated", cb);
   }
 }
 
 export interface LobbyClient {
-  createLobby: (name: string) => void;
+  createLobby: (name: string) => Promise<void>;
+  joinLobby: (gameId: string, name: string) => Promise<void>;
+  fetchLobby: (name: string) => Promise<{ players: string[] }>;
+  handleLobbyMembersChanged: (cb: (players: string[]) => void) => void;
   handleLobbyCreated: (cb: (gameId: string) => void) => void;
 }
