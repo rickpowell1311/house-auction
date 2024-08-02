@@ -44,7 +44,7 @@ namespace HouseAuction
 
             // Log setup before starting
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            logger.LogInformation($"Environment: {builder.Environment}");
+            logger.LogInformation($"Environment: {builder.Environment.EnvironmentName}");
             logger.LogInformation($"Allowed CORS Origins: {allowedOrigins.Aggregate((prev, curr) => $"{prev}, {curr}")}");
 
             app.Run();
