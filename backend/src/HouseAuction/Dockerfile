@@ -7,12 +7,11 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["HouseAuction/HouseAuction.csproj", "HouseAuction/"]
-RUN dotnet restore "./HouseAuction/HouseAuction.csproj"
+COPY ["HouseAuction.csproj", "HouseAuction/"]
+WORKDIR "/HouseAuction"
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/HouseAuction"
-RUN dotnet build "./HouseAuction.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

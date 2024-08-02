@@ -49,14 +49,14 @@ jobs:
       run: |-
         gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
     - name: Build image
-      run: docker build . --file src/HouseAuction/Dockerfile --tag ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}
-      working-directory: backend
+      run: docker build . --tag ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction:latest
+      working-directory: backend/src/HouseAuction
     - name: Push image
-      run: docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}
+      run: docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction:latest
     - uses: 'google-github-actions/deploy-cloudrun@v2'
       name: 'Deploy to Cloud Run'
       with:
         service: 'house-auction'
-        image: '${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction'
+        image: '${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction:latest'
         env_vars: |-
           Cors__AllowedOrigins__0=https://houseauction.theseguys.games
