@@ -61,5 +61,6 @@ jobs:
         image: '${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction:latest'
         revision_traffic: 'LATEST=100'
         env_vars: |-
+          ASPNETCORE_ENVIRONMENT=production
           Cors__AllowedOrigins__0="https://houseauction.theseguys.games"
           Cors__AllowedOrigins__1="http://localhost:5173"

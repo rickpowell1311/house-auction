@@ -1,4 +1,4 @@
-using System.Reflection.PortableExecutable;
+using Google.Cloud.Diagnostics.AspNetCore3;
 
 namespace HouseAuction
 {
@@ -7,6 +7,12 @@ namespace HouseAuction
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            if (builder.Environment.IsProduction())
+            {
+                builder.Services.AddGoogleDiagnosticsForAspNetCore();
+            }
 
             // Order important - environment variables should override appsettings.json
             builder.Configuration
@@ -35,6 +41,11 @@ namespace HouseAuction
             app.MapHouseAuctionRoutes();
             app.UseRouting();
             app.UseCors();
+
+            // Log setup before starting
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation($"Environment: {builder.Environment}");
+            logger.LogInformation($"Allowed CORS Origins: {allowedOrigins.Aggregate((prev, curr) => $"{prev}, {curr}")}");
 
             app.Run();
         }
