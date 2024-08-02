@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build:
     name: 'Build, Test and Deploy'
-    environment: 'Google Cloud Platform'
+    environment: 'production'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,9 +42,21 @@ jobs:
     - uses: 'google-github-actions/auth@v2'
       name: 'Authenticate to GCP'
       with:
-        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - uses: 'google-github-actions/setup-gcloud@v2'
+      name: 'Set up Cloud SDK'
+    - name: "Docker auth"
+      run: |-
+        gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+    - name: Build image
+      run: docker build . --file src/HouseAuction/Dockerfile --tag ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ env.GCP_DOCKER_REPO }}
+      working-directory: backend
+    - name: Push image
+      run: docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ env.GCP_DOCKER_REPO }}
     - uses: 'google-github-actions/deploy-cloudrun@v2'
       name: 'Deploy to Cloud Run'
       with:
         service: 'house-auction'
-        image: 'gcr.io/cloudrun/hello'
+        image: '${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT }}/${{ env.GCP_DOCKER_REPO }}/houseauction'
+        env_vars: |-
+          Cors__AllowedOrigins__0=https://houseauction.theseguys.games
