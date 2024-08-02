@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
     "test": "vitest",
     "lint": "eslint \"src/**/*.{ts,vue}\" --ignore-pattern \"src/_shared/components/storyblok/schema\"",
     "signalr:update-types": "dotnet tsrts --project ../backend/src/HouseAuction/HouseAuction.csproj --output ./src/_shared/providers/generated",
