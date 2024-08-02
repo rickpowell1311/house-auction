@@ -24,13 +24,20 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: backend/src
     
     steps:
     - uses: 'actions/checkout@v4'
-
-    - name: 'Test'
-      working-directory: backend/src/HouseAuction.Tests
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build
+    - name: Test with the dotnet CLI
+      run: dotnet test
 
     # - uses: 'google-github-actions/auth@v2'
     #   with:
