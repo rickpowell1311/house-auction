@@ -1,0 +1,47 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy backend to Cloud Run
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+    branches: ['main']
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'backend'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: 'Build, Test and Deploy'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    
+    steps:
+    - uses: 'actions/checkout@v4'
+
+    - name: 'Test'
+      working-directory: backend/src/HouseAuction.Tests
+
+    # - uses: 'google-github-actions/auth@v2'
+    #   with:
+    #     workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+    #     service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+    # - id: 'deploy'
+    #   uses: 'google-github-actions/deploy-cloudrun@v2'
+    #   with:
+    #     service: 'hello-cloud-run'
+    #     image: 'gcr.io/cloudrun/hello'
+
+    # - name: 'Use output'
+    #   run: 'curl "${{ steps.deploy.outputs.url }}"'
