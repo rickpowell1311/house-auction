@@ -3,7 +3,6 @@ import Button from '@/_shared/components/Button.vue';
 import Form from '@/_shared/components/forms/Form.vue';
 import FormField from '@/_shared/components/forms/FormField.vue';
 import TextInput from '@/_shared/components/forms/TextInput.vue';
-import { Key as LoadingKey, type Loading } from '@/_shared/providers/loading';
 import { Key as SignalRKey, type SignalRClient } from '@/_shared/providers/signalRClient';
 import { useForm } from 'vee-validate';
 import { inject } from 'vue';
@@ -11,7 +10,6 @@ import { useRouter } from 'vue-router';
 import { object, string } from 'yup';
 
 const signalRClient = inject<SignalRClient>(SignalRKey);
-const loading = inject<Loading>(LoadingKey);
 const router = useRouter();
 
 const { meta, handleSubmit } = useForm({
@@ -26,11 +24,15 @@ const { meta, handleSubmit } = useForm({
   })
 })
 
-const onSubmit = handleSubmit(values => {
-  loading?.toggleLoading(true);
-  signalRClient?.joinLobby(values.gameId, values.name);
-  loading?.toggleLoading(false);
-  router.push(`/lobby/${values.gameId}`);
+const onSubmit = handleSubmit(async (values, ctx) => {
+  try {
+    await signalRClient?.hub.joinLobby(values.gameId, values.name);
+    router.push(`/lobby/${values.gameId}`);
+  } catch (err) {
+    console.log(`Unable to join game: ${err}`);
+    ctx.evt?.preventDefault();
+    return false;
+  }
 });
 
 </script>

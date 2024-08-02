@@ -3,7 +3,6 @@ import Button from '@/_shared/components/Button.vue';
 import Form from '@/_shared/components/forms/Form.vue';
 import FormField from '@/_shared/components/forms/FormField.vue';
 import TextInput from '@/_shared/components/forms/TextInput.vue';
-import { Key as LoadingKey, type Loading } from '@/_shared/providers/loading';
 import { Key as SignalRKey, type SignalRClient } from '@/_shared/providers/signalRClient';
 import { useForm } from 'vee-validate';
 import { inject } from 'vue';
@@ -12,7 +11,6 @@ import { object, string } from 'yup';
 
 const router = useRouter();
 const signalRClient = inject<SignalRClient>(SignalRKey);
-const loading = inject<Loading>(LoadingKey);
 
 const { meta, handleSubmit } = useForm({
   validationSchema: object({
@@ -23,13 +21,14 @@ const { meta, handleSubmit } = useForm({
   })
 })
 
-const onSubmit = handleSubmit(async values => {
-  loading?.toggleLoading(true);
+const onSubmit = handleSubmit(async (values, ctx) => {
   try {
     const gameId = await signalRClient?.hub.createLobby(values.name);
     router.push(`/lobby/${gameId}`);
-  } finally {
-    loading?.toggleLoading(false);
+  } catch (err) {
+    console.log(`Unable to create game: ${err}`);
+    ctx.evt?.preventDefault();
+    return false;
   }
 })
 
