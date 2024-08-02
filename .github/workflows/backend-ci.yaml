@@ -60,6 +60,5 @@ jobs:
         region: '${{ vars.GCP_REGION }}'
         image: '${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT }}/${{ vars.GCP_DOCKER_REPO }}/houseauction:latest'
         revision_traffic: 'LATEST=100'
-        env_vars_updated_strategy: 'overwrite'
         env_vars: |-
           Cors__AllowedOrigins__0=https://houseauction.theseguys.games
