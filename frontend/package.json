@@ -9,6 +9,7 @@
     "build": "vite build",
     "test": "vitest",
     "lint": "eslint \"src/**/*.{ts,vue}\" --ignore-pattern \"src/_shared/components/storyblok/schema\"",
+    "signalr:update-types": "dotnet tsrts --project ../backend/src/HouseAuction/HouseAuction.csproj --output ./src/_shared/providers/generated",
     "storyblok:update-types": "npm run storyblok:pull-components && npm run storyblok:generate-types",
     "storyblok:pull-components": "storyblok pull-components --space 298738 --path src/_shared/components/storyblok/schema/",
     "storyblok:generate-types": "storyblok generate-typescript-typedefs --sourceFilePaths ./src/_shared/components/storyblok/schema/components.298738.json --destinationFilePath ./src/_shared/components/storyblok/schema/component-types.d.ts"

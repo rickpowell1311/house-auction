@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key } from '@/_shared/providers/signalRClient';
 import { inject, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
@@ -10,11 +11,14 @@ const gameId = params.gameId;
 const players = ref<string[]>([]);
 
 onMounted(async () => {
-  signalRClient?.handleLobbyMembersChanged((val) => {
-    players.value = val;
-  })
-  const result = await signalRClient?.fetchLobby(gameId);
-  players.value = result?.players ?? [];
+  signalRClient?.subscribe({
+    async onLobbyMembersChanged(members) {
+      players.value = members;
+    }
+  } as IHouseAuctionReceiver)
+
+  const result = await signalRClient?.hub.fetchLobby(gameId);
+  players.value = result ?? [];
 })
 </script>
 

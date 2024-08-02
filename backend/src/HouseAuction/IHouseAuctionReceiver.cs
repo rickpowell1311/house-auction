@@ -3,8 +3,8 @@ using TypedSignalR.Client;
 
 namespace HouseAuction
 {
-    [Hub]
-    public interface IHouseAuctionHub : ILobbyHub
+    [Receiver]
+    public interface IHouseAuctionReceiver : ILobbyReceiver
     {
     }
 }

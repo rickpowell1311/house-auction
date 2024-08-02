@@ -1,8 +1,10 @@
-﻿namespace HouseAuction.Lobby
+﻿using TypedSignalR.Client;
+
+namespace HouseAuction.Lobby
 {
     public interface ILobbyHub
     {
-        Task CreateLobby(string name);
+        Task<string> CreateLobby(string name);
 
         Task<List<string>> FetchLobby(string gameId);
 

@@ -8,38 +8,31 @@ using TypedSignalR.Client;
 namespace HouseAuction.Tests.Lobby
 {
     [Collection(HubClientFixture.CollectionName)]
-    public class LobbyHubClientTests(HubClientFixture.Provider hubClientFixtureProvider) : IAsyncLifetime
+    public class LobbyHubTests(HubClientFixture.Provider hubClientFixtureProvider) : IAsyncLifetime
     {
         private readonly HubClientFixture.Provider _hubClientFixtureProvider = hubClientFixtureProvider;
         private HubConnection _connection;
         private ILobbyHub _hub;
-        private TestLobbyClient _client;
+        private TestLobbyReceiver _client;
 
         public async Task InitializeAsync()
         {
             _connection = await _hubClientFixtureProvider.StartHubConnection<HouseAuctionHub>(HouseAuctionHub.Route);
             _hub = _connection.CreateHubProxy<ILobbyHub>();
-            _client = new TestLobbyClient();
-            _connection.Register<ILobbyClient>(_client);
+            _client = new TestLobbyReceiver();
+            _connection.Register<ILobbyReceiver>(_client);
         }
 
         [Fact]
         public async Task CanCreateLobby()
         {
             await _hub.CreateLobby(Gamers.Sample[0]);
-
-            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
-            Assert.Single(_client.LobbiesCreated);
         }
 
         [Fact]
         public async Task CanFetchLobby()
         {
-            await _hub.CreateLobby(Gamers.Sample[0]);
-            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
-
-            var gameId = _client.LobbiesCreated.Single();
-
+            var gameId = await _hub.CreateLobby(Gamers.Sample[0]);
             var result = await _hub.FetchLobby(gameId);
 
             Assert.Single(result);
@@ -51,13 +44,10 @@ namespace HouseAuction.Tests.Lobby
             var firstGamer = Gamers.Sample[0];
             var secondGamer = Gamers.Sample[1];
 
-            await _hub.CreateLobby(firstGamer);
+            var gameId = await _hub.CreateLobby(firstGamer);
 
-            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
-            var gameId = _client.LobbiesCreated.Single();
-
-            var secondClient = new TestLobbyClient();
-            _connection.Register<ILobbyClient>(secondClient);
+            var secondClient = new TestLobbyReceiver();
+            _connection.Register<ILobbyReceiver>(secondClient);
 
             await _hub.JoinLobby(gameId, secondGamer);
 
@@ -73,10 +63,7 @@ namespace HouseAuction.Tests.Lobby
             var lobbyCreator = gamers[0];
             var otherGamers = gamers.Skip(1).ToList();
 
-            await _hub.CreateLobby(lobbyCreator);
-
-            await WaitFor.Condition(() => _client.LobbiesCreated.Count == 1);
-            var gameId = _client.LobbiesCreated.Single();
+            var gameId = await _hub.CreateLobby(lobbyCreator);
 
             foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
             {

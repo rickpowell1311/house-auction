@@ -1,4 +1,4 @@
-﻿namespace HouseAuction.Lobby
+﻿namespace HouseAuction.Lobby.Domain
 {
     public static class FuzzyNameMatch
     {

@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction
 {
-    public class HouseAuctionHub(LobbyContext context) : Hub<IHouseAuctionClient>, IHouseAuctionHub
+    public class HouseAuctionHub(LobbyContext context) : Hub<IHouseAuctionReceiver>, IHouseAuctionHub
     {
         public const string Route = "/house-auction";
 
         private readonly LobbyContext _context = context;
 
-        public async Task CreateLobby(string name)
+        public async Task<string> CreateLobby(string name)
         {
             var lobby = Lobby.Domain.Lobby.Create(name, Context.ConnectionId);
 
@@ -19,7 +19,7 @@ namespace HouseAuction
 
             await Groups.AddToGroupAsync(Context.ConnectionId, lobby.GameId);
 
-            await Clients.Caller.OnLobbyCreated(lobby.GameId);
+            return lobby.GameId;
         }
 
         public async Task<List<string>> FetchLobby(string gameId)

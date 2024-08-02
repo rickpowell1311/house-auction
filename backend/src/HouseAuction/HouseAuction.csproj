@@ -12,6 +12,15 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <PackageReference Include="Onwrd.EntityFrameworkCore" Version="0.5.40-beta" />
+    <PackageReference Include="Tapper.Analyzer" Version="1.11.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="TypedSignalR.Client.TypeScript.Analyzer" Version="1.12.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="TypedSignalR.Client.TypeScript.Attributes" Version="1.12.0" />
   </ItemGroup>
 
 </Project>

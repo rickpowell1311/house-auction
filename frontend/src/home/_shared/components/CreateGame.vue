@@ -6,14 +6,13 @@ import TextInput from '@/_shared/components/forms/TextInput.vue';
 import { Key as LoadingKey, type Loading } from '@/_shared/providers/loading';
 import { Key as SignalRKey, type SignalRClient } from '@/_shared/providers/signalRClient';
 import { useForm } from 'vee-validate';
-import { inject, ref } from 'vue';
+import { inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { object, string } from 'yup';
 
 const router = useRouter();
 const signalRClient = inject<SignalRClient>(SignalRKey);
 const loading = inject<Loading>(LoadingKey);
-const gameId = ref<string | undefined>();
 
 const { meta, handleSubmit } = useForm({
   validationSchema: object({
@@ -24,14 +23,14 @@ const { meta, handleSubmit } = useForm({
   })
 })
 
-const onSubmit = handleSubmit(values => {
+const onSubmit = handleSubmit(async values => {
   loading?.toggleLoading(true);
-  signalRClient?.handleLobbyCreated(id => {
-    gameId.value = id;
+  try {
+    const gameId = await signalRClient?.hub.createLobby(values.name);
+    router.push(`/lobby/${gameId}`);
+  } finally {
     loading?.toggleLoading(false);
-    router.push(`/lobby/${gameId.value}`);
-  })
-  signalRClient?.createLobby(values.name);
+  }
 })
 
 </script>
