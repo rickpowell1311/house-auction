@@ -40,9 +40,11 @@ jobs:
     - name: Test
       run: dotnet test
     - uses: 'google-github-actions/auth@v2'
+      name: 'Authenticate to GCP'
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
     - uses: 'google-github-actions/deploy-cloudrun@v2'
+      name: 'Deploy to Cloud Run'
       with:
-        service: 'hello-cloud-run'
+        service: 'house-auction'
         image: 'gcr.io/cloudrun/hello'
