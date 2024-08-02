@@ -110,13 +110,16 @@ class IHouseAuctionReceiver_Binder implements ReceiverRegister<IHouseAuctionRece
 
         const __onLobbyMembersChanged = (...args: [string[]]) => receiver.onLobbyMembersChanged(...args);
         const __onGameBegun = (...args: [string]) => receiver.onGameBegun(...args);
+        const __notifyError = (...args: [string]) => receiver.notifyError(...args);
 
         connection.on("OnLobbyMembersChanged", __onLobbyMembersChanged);
         connection.on("OnGameBegun", __onGameBegun);
+        connection.on("NotifyError", __notifyError);
 
         const methodList: ReceiverMethod[] = [
             { methodName: "OnLobbyMembersChanged", method: __onLobbyMembersChanged },
-            { methodName: "OnGameBegun", method: __onGameBegun }
+            { methodName: "OnGameBegun", method: __onGameBegun },
+            { methodName: "NotifyError", method: __notifyError }
         ]
 
         return new ReceiverMethodSubscription(connection, methodList);

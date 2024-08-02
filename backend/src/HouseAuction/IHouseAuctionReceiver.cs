@@ -6,5 +6,6 @@ namespace HouseAuction
     [Receiver]
     public interface IHouseAuctionReceiver : ILobbyReceiver
     {
+        Task NotifyError(string message);
     }
 }

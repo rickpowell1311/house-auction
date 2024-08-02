@@ -40,5 +40,10 @@ export type IHouseAuctionReceiver = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     onGameBegun(gameId: string): Promise<void>;
+    /**
+    * @param message Transpiled from string
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    notifyError(message: string): Promise<void>;
 }
 

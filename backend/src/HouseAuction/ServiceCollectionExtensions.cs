@@ -1,4 +1,5 @@
 ﻿using HouseAuction.Lobby;
+using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction
 {
@@ -6,7 +7,10 @@ namespace HouseAuction
     {
         public static void AddHouseAuction(this IServiceCollection services)
         {
-            services.AddSignalR();
+            services.AddSignalR(cfg =>
+            {
+                cfg.AddFilter<HubExceptionNotifierFilter>();
+            });
             services.AddLobby();
         }
     }
