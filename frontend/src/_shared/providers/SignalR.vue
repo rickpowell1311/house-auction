@@ -18,8 +18,8 @@ provide<SignalRClient>(Key, new SignalRClientImpl(connection.value as HubConnect
 onMounted(async () => {
   await connection.value.start();
 
-  // If we're refreshing a SignalR connection we always want to boot out to the root page
-  router.push("/");
+  // If we're refreshing a SignalR connection we always want to boot out to the home page
+  router.push("/home");
 })
 
 watch(connection.value, val => {

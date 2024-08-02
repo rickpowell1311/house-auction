@@ -5,7 +5,8 @@ import { useRoute } from 'vue-router';
 
 const signalRClient = inject<SignalRClient>(Key);
 const route = useRoute();
-const gameId = route.params["gameId"];
+const params = route.params as Record<string, string>;
+const gameId = params.gameId;
 const players = ref<string[]>([]);
 
 onMounted(async () => {
