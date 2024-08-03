@@ -79,6 +79,10 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
     public constructor(private connection: HubConnection) {
     }
 
+    public readonly getMyName = async (gameId: string): Promise<string> => {
+        return await this.connection.invoke("GetMyName", gameId);
+    }
+
     public readonly createLobby = async (name: string): Promise<string> => {
         return await this.connection.invoke("CreateLobby", name);
     }

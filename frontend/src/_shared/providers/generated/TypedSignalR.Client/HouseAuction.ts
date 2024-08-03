@@ -6,6 +6,11 @@ import type { IStreamResult, Subject } from '@microsoft/signalr';
 
 export type IHouseAuctionHub = {
     /**
+    * @param gameId Transpiled from string
+    * @returns Transpiled from System.Threading.Tasks.Task<string>
+    */
+    getMyName(gameId: string): Promise<string>;
+    /**
     * @param name Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task<string>
     */

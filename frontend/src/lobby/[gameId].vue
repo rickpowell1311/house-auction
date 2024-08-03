@@ -13,6 +13,8 @@ const route = useRoute();
 const params = route.params as Record<string, string>;
 const gameId = params.gameId;
 const players = ref<string[] | undefined>();
+const me = ref<string | undefined>();
+const ready = ref(false);
 
 onMounted(async () => {
   signalRClient?.subscribe({
@@ -21,8 +23,8 @@ onMounted(async () => {
     }
   } as IHouseAuctionReceiver)
 
-  const result = await signalRClient?.hub.fetchLobby(gameId);
-  players.value = result;
+  players.value = await signalRClient?.hub.fetchLobby(gameId);
+  me.value = await signalRClient?.hub.getMyName(gameId);
 })
 </script>
 
@@ -44,7 +46,9 @@ onMounted(async () => {
                 <div v-for="player in players" :key="player"
                   class="animate-fade flex items-center justify-between gap-4">
                   <p>{{ player }}</p>
-                  <Button>Ready Up</Button>
+                  <Button v-if="player === me && !ready" @click="ready = true">Ready Up</Button>
+                  <span v-if="player === me && ready"
+                    class="material-symbols-rounded text-primary animate-flip-down">check</span>
                 </div>
               </div>
             </div>

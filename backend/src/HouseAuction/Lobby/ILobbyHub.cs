@@ -4,6 +4,8 @@ namespace HouseAuction.Lobby
 {
     public interface ILobbyHub
     {
+        Task<string> GetMyName(string gameId);
+
         Task<string> CreateLobby(string name);
 
         Task<List<string>> FetchLobby(string gameId);
