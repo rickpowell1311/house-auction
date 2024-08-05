@@ -4,7 +4,7 @@ const props = defineProps<{ amount: number }>();
 </script>
 
 <template>
-  <div class="w-full h-full overflow-hidden relative rounded-2xl bg-primary-300">
+  <div class="w-full h-full overflow-hidden relative rounded-2xl bg-primary-200">
     <div class="absolute top-0 left-0 w-full h-full z-10">
       <div class="p-2 h-full overflow-clip">
         <div class="w-80 rotate-45 -ml-20 -mt-10">
