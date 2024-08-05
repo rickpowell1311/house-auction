@@ -37,12 +37,14 @@ const removeFromBid = () => {
     </div>
   </div>
   <div v-else class="flex flex-col gap-8">
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 items-center">
+      <CoinStash :amount="currentBid" />
       <div class="flex gap-4 items-center justify-evenly">
-        <span class="material-symbols-rounded cursor-pointer text-primary font-bold"
+        <span class="material-symbols-rounded cursor-pointer select-none text-primary font-bold"
           @click="removeFromBid">remove</span>
-        <div class="text-white text-2xl">{{ currentBid }}</div>
-        <span class="material-symbols-rounded cursor-pointer text-primary font-bold" @click="addToBid">add</span>
+        <p class="text-white text-2xl select-none">{{ currentBid }}</p>
+        <span class="material-symbols-rounded cursor-pointer select-none text-primary font-bold"
+          @click="addToBid">add</span>
       </div>
       <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)">Bid</Button>
     </div>
