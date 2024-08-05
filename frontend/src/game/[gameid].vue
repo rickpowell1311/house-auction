@@ -36,17 +36,21 @@ onMounted(() => {
             </Flip>
           </template>
         </div>
-        <div class="flex gap-8 flex-wrap justify-center items-center w-full">
-          <div class="flex flex-col items-center gap-4">
-            <Bid :available="13" :minimum="4" />
+        <div class="flex gap-8 flex-wrap justify-center items-end w-full">
+          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
+            <Bid :available="13" :minimum="4" :amount="1" :is-bidding="true" />
             <h4>Rick</h4>
           </div>
-          <div class="flex flex-col items-center gap-4">
-            <Bid :available="4" :minimum="4" />
+          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
+            <Bid :available="11" :minimum="4" :amount="0" :is-bidding="false" />
+            <h4>Jimmy</h4>
+          </div>
+          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
+            <Bid :available="2" :minimum="4" :amount="2" :is-bidding="false" />
             <h4>Dave</h4>
           </div>
-          <div class="flex flex-col items-center gap-4">
-            <Bid :available="7" :minimum="4" />
+          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
+            <Bid :available="7" :minimum="4" :amount="3" :is-bidding="false" />
             <h4>Merlin</h4>
           </div>
         </div>
