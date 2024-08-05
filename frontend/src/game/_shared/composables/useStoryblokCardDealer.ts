@@ -25,7 +25,16 @@ export const useStoryblokCardDealer = () => {
       version: import.meta.env.VITE_CMS_SHOW_DRAFTS === "true" ? "draft" : "published",
       per_page: 30
     });
-    return response.data.stories as ISbStoryData<CardStoryblok>[];
+
+    const result = response.data.stories as ISbStoryData<CardStoryblok>[];
+
+    // Preload images
+    result.forEach(x => {
+      const img = new Image();
+      img.src = x.content.picture.filename;
+    })
+
+    return result;
   };
 
   fetchCards()

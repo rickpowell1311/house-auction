@@ -4,7 +4,7 @@ import Main from "../_shared/components/layout/Main.vue";
 import Flip from "./_shared/components/animations/Flip.vue";
 import Card from "./_shared/components/Card.vue";
 import Deck from "./_shared/components/Deck.vue";
-import CardContents from "./_shared/components/storyblok/CardContents.vue";
+import HouseCardContents from "./_shared/components/storyblok/HouseCardContents.vue";
 import Table from "./_shared/components/Table.vue";
 import { useNextCardsDealer } from "./_shared/composables/useNextCardsDealer";
 
@@ -27,7 +27,7 @@ onMounted(() => {
             <template v-for="card in dealtCards" :key="card.content.value">
               <Flip>
                 <Card :is-face-up="true">
-                  <CardContents v-if="card" :blok="card.content" />
+                  <HouseCardContents v-if="card" :blok="card.content" />
                 </Card>
               </Flip>
             </template>
