@@ -10,7 +10,7 @@ import Card from "./Card.vue";
       <div
         class="absolute w-full h-full -mx-2 my-2 rounded-2xl bg-white -z-20 shadow-lg shadow-black border-solid border-black border-l border-b" />
       <div class="border-solid border-black border-l border-b rounded-2xl">
-        <Card :is-face-up="false" class="shadow-none" />
+        <Card :type="'face-down'" class="shadow-none" />
       </div>
     </div>
   </div>
