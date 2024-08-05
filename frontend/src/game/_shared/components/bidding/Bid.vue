@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '@/_shared/components/Button.vue';
 import { computed, ref } from 'vue';
-import CoinStash from './CoinStash.vue';
+import CoinStash from '../coins/CoinStash.vue';
 
 const props = defineProps<{
   isBidding: boolean;
@@ -46,7 +46,10 @@ const removeFromBid = () => {
         <span class="material-symbols-rounded cursor-pointer select-none text-primary font-bold"
           @click="addToBid">add</span>
       </div>
-      <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)">Bid</Button>
+      <div class="flex items-center gap-2">
+        <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)">Bid</Button>
+        <Button>Pass</Button>
+      </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
       <CoinStash :amount="remaining" />

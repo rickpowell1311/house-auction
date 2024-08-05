@@ -30,7 +30,7 @@ onMounted(async () => {
   }
 
   // If we're refreshing a SignalR connection we always want to boot out to the home page
-  router.push("/home");
+  // router.push("/home");
 })
 </script>
 

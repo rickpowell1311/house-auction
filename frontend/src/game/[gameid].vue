@@ -2,10 +2,10 @@
 import { computed, onMounted } from "vue";
 import Main from "../_shared/components/layout/Main.vue";
 import Flip from "./_shared/components/animations/Flip.vue";
+import Player from "./_shared/components/bidding/BiddingPlayer.vue";
 import Card from "./_shared/components/Card.vue";
-import Bid from "./_shared/components/coins/Bid.vue";
 import Deck from "./_shared/components/Deck.vue";
-import HouseCardContents from "./_shared/components/storyblok/HouseCardContents.vue";
+import HouseCardContents from "./_shared/components/HouseCardContents.vue";
 import { useNextCardsDealer } from "./_shared/composables/useNextCardsDealer";
 
 const { allCards, dealtCards, dealNext } = useNextCardsDealer();
@@ -36,23 +36,12 @@ onMounted(() => {
             </Flip>
           </template>
         </div>
+
         <div class="flex gap-8 flex-wrap justify-center items-end w-full">
-          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
-            <Bid :available="13" :minimum="4" :amount="1" :is-bidding="true" />
-            <h4>Rick</h4>
-          </div>
-          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
-            <Bid :available="11" :minimum="4" :amount="0" :is-bidding="false" />
-            <h4>Jimmy</h4>
-          </div>
-          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
-            <Bid :available="2" :minimum="4" :amount="2" :is-bidding="false" />
-            <h4>Dave</h4>
-          </div>
-          <div class="flex flex-col items-center gap-4 min-w-72 min-h-72">
-            <Bid :available="7" :minimum="4" :amount="3" :is-bidding="false" />
-            <h4>Merlin</h4>
-          </div>
+          <Player name="Rick" :is-bidding="true" :coins="{ available: 13, minimum: 4, amount: 1 }" />
+          <Player name="Jimmy" :is-bidding="false" :coins="{ available: 11, minimum: 4, amount: 0 }" />
+          <Player name="Dave" :is-bidding="false" :coins="{ available: 2, minimum: 4, amount: 2 }" />
+          <Player name="Merlin" :is-bidding="false" :coins="{ available: 7, minimum: 4, amount: 3 }" />
         </div>
       </div>
     </Main>
