@@ -5,6 +5,7 @@ import CoinStash from '../coins/CoinStash.vue';
 
 const props = defineProps<{
   isBidding: boolean;
+  isMe: boolean;
   available: number;
   amount?: number;
   minimum?: number;
@@ -36,7 +37,7 @@ const removeFromBid = () => {
           v-if="props.available < (minimum ? minimum : 0)">(cannot place any more bids)</span></p>
     </div>
   </div>
-  <div v-else class="flex flex-col gap-8">
+  <div v-else-if="props.isMe" class="flex flex-col gap-8">
     <div class="flex flex-col gap-3 items-center">
       <CoinStash :amount="currentBid" />
       <div class="flex gap-4 items-center justify-evenly">
@@ -55,5 +56,8 @@ const removeFromBid = () => {
       <CoinStash :amount="remaining" />
       <p class="text-white text-center">{{ remaining }} coins remaining</p>
     </div>
+  </div>
+  <div v-else>
+    <p class="text-primary text-center">"I know <span class="italic">how</span> to bid..."</p>
   </div>
 </template>

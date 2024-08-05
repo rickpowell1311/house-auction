@@ -1,10 +1,11 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { shuffle } from "../helpers/shuffle";
 import { useStoryblokCardDealer } from "./useStoryblokCardDealer";
 
 export const useNextCardsDealer = () => {
   const { allCards, dealtCards, deal } = useStoryblokCardDealer();
   const usedCards = ref<number[]>([]);
+  const dealRequested = ref<number | undefined>();
 
   const availableCards = computed(() => {
     return allCards.value.filter(x => !usedCards.value.includes(x));
@@ -12,6 +13,7 @@ export const useNextCardsDealer = () => {
 
   const dealNext = (numberOfCards: number) => {
     if (availableCards.value.length === 0) {
+      dealRequested.value = 4;
       return;
     }
 
@@ -23,6 +25,13 @@ export const useNextCardsDealer = () => {
     usedCards.value = [...usedCards.value, ...next];
     deal(next);
   };
+
+  watch(availableCards, () => {
+    if (dealRequested.value) {
+      dealNext(dealRequested.value);
+      dealRequested.value = undefined;
+    }
+  })
 
   return { allCards, dealtCards, dealNext };
 }

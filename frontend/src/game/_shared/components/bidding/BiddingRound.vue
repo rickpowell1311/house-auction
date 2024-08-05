@@ -19,7 +19,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div>
+  <div class="flex flex-col gap-6">
     <div class="flex gap-2 flex-wrap justify-center items-center w-full">
       <Deck class="hover:cursor-pointer" @click="() => dealNext(cardsPerRound)" />
       <template v-for="cardIndex in cardIndexes" :key="cardIndex">
@@ -32,10 +32,10 @@ onMounted(() => {
       </template>
     </div>
     <div class="flex gap-8 flex-wrap justify-center items-end w-full">
-      <Player name="Rick" :is-bidding="true" :coins="{ available: 13, minimum: 4, amount: 1 }" />
-      <Player name="Jimmy" :is-bidding="false" :coins="{ available: 11, minimum: 4, amount: 0 }" />
-      <Player name="Dave" :is-bidding="false" :coins="{ available: 2, minimum: 4, amount: 2 }" />
-      <Player name="Merlin" :is-bidding="false" :coins="{ available: 7, minimum: 4, amount: 3 }" />
+      <Player name="Rick" :is-me="true" :is-bidding="true" :coins="{ available: 13, minimum: 4, amount: 1 }" />
+      <Player name="Jimmy" :is-me="false" :is-bidding="false" :coins="{ available: 11, minimum: 4, amount: 0 }" />
+      <Player name="Dave" :is-me="false" :is-bidding="false" :coins="{ available: 2, minimum: 4, amount: 2 }" />
+      <Player name="Merlin" :is-me="false" :is-bidding="true" :coins="{ available: 7, minimum: 4, amount: 3 }" />
     </div>
   </div>
 </template>

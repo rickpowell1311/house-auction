@@ -27,7 +27,7 @@ const piles = computed(() => {
 </script>
 
 <template>
-  <div class="flex gap-[2px] items-end min-h-6">
+  <div class="flex gap-[2px] items-end min-h-8">
     <div v-for="pile in piles" :key="pile.index">
       <div class="flex flex-col gap-[1px]">
         <Coin v-for="coin in pile.coins" :key="coin.index" />
