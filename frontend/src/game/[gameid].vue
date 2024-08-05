@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import Main from "../_shared/components/layout/Main.vue";
 import Flip from "./_shared/components/animations/Flip.vue";
+import BidCardContents from "./_shared/components/BidCardContents.vue";
 import Card from "./_shared/components/Card.vue";
 import Deck from "./_shared/components/Deck.vue";
 import HouseCardContents from "./_shared/components/storyblok/HouseCardContents.vue";
@@ -31,6 +32,9 @@ onMounted(() => {
                 </Card>
               </Flip>
             </template>
+            <Card :is-face-up="true">
+              <BidCardContents :amount="15000" />
+            </Card>
           </div>
         </Table>
       </div>

@@ -11,7 +11,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#d99021",
+        "primary": {
+          DEFAULT: "#d99021",
+          100: '#f7e9d3',
+          200: '#f0d3a6',
+          300: '#e8bc7a',
+          400: '#e1a64d',
+          500: '#d99021',
+          600: '#825614',
+          700: '#573a0d',
+          800: '#2b1d07'
+        },
         "secondary": "#292F4E"
       },
       textShadow: {
