@@ -3,6 +3,7 @@ import { computed, onMounted } from "vue";
 import Main from "../_shared/components/layout/Main.vue";
 import Flip from "./_shared/components/animations/Flip.vue";
 import Card from "./_shared/components/Card.vue";
+import Bid from "./_shared/components/coins/Bid.vue";
 import Deck from "./_shared/components/Deck.vue";
 import HouseCardContents from "./_shared/components/storyblok/HouseCardContents.vue";
 import { useNextCardsDealer } from "./_shared/composables/useNextCardsDealer";
@@ -23,7 +24,7 @@ onMounted(() => {
   <div class="h-1/6" />
   <div class="container mx-auto">
     <Main>
-      <div class="flex items-center">
+      <div class="flex flex-col gap-16">
         <div class="flex gap-2 flex-wrap justify-center items-center w-full">
           <Deck class="hover:cursor-pointer" @click="() => dealNext(cardsPerRound)" />
           <template v-for="cardIndex in cardIndexes" :key="cardIndex">
@@ -34,6 +35,20 @@ onMounted(() => {
               </Card>
             </Flip>
           </template>
+        </div>
+        <div class="flex gap-8 flex-wrap justify-center items-center w-full">
+          <div class="flex flex-col items-center gap-4">
+            <Bid :available="13" :minimum="4" />
+            <h4>Rick</h4>
+          </div>
+          <div class="flex flex-col items-center gap-4">
+            <Bid :available="4" :minimum="4" />
+            <h4>Dave</h4>
+          </div>
+          <div class="flex flex-col items-center gap-4">
+            <Bid :available="7" :minimum="4" />
+            <h4>Merlin</h4>
+          </div>
         </div>
       </div>
     </Main>
