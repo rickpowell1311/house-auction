@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CardStoryblok } from '@/_shared/components/storyblok/schema/component-types';
 import { computed, onMounted } from 'vue';
 import { useNextCardsDealer } from '../../composables/useNextCardsDealer';
 import Card from '../Card.vue';
@@ -26,7 +27,8 @@ onMounted(() => {
         <Card v-if="dealtCards.length <= cardIndex" :type="'place-holder'" />
         <Flip v-else>
           <Card :type="'face-up'">
-            <HouseCardContents v-if="dealtCards[cardIndex]" :blok="dealtCards[cardIndex].content" />
+            <HouseCardContents v-if="dealtCards[cardIndex]"
+              :blok="dealtCards[cardIndex]?.content ?? ({} as CardStoryblok)" />
           </Card>
         </Flip>
       </template>
