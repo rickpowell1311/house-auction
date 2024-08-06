@@ -7,9 +7,11 @@ namespace HouseAuction
     {
         public static void AddHouseAuction(this IServiceCollection services)
         {
+            services.AddScoped<CallingHubContext>();
             services.AddSignalR(cfg =>
             {
                 cfg.AddFilter<HubExceptionNotifierFilter>();
+                cfg.AddFilter<CallingHubContextFilter>();
             });
             services.AddLobby();
         }

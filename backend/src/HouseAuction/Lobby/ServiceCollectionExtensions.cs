@@ -7,6 +7,7 @@ namespace HouseAuction.Lobby
     {
         public static void AddLobby(this IServiceCollection services)
         {
+            services.AddTransient<ILobbyHub, LobbyHub>();
             services.AddDbContext<LobbyContext>(
                 (serviceProvider, builder) =>
                 {
