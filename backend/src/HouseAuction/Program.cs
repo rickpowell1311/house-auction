@@ -1,4 +1,5 @@
 using Google.Cloud.Diagnostics.AspNetCore3;
+using Microsoft.AspNetCore.Routing;
 
 namespace HouseAuction
 {
@@ -38,7 +39,7 @@ namespace HouseAuction
             builder.Services.AddHouseAuction();
 
             var app = builder.Build();
-            app.MapHouseAuctionRoutes();
+            app.MapHub<HouseAuctionHub>(HouseAuctionHub.Route); ;
             app.UseRouting();
             app.UseCors();
 

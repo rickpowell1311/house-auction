@@ -4,8 +4,6 @@ namespace HouseAuction.Lobby
 {
     public interface ILobbyHub
     {
-        Task<GetMyName.GetMyNameResponse> GetMyName(GetMyName.GetMyNameRequest request);
-
         Task<CreateLobby.CreateLobbyResponse> CreateLobby(CreateLobby.CreateLobbyRequest request);
 
         Task<FetchLobby.FetchLobbyResponse> FetchLobby(FetchLobby.FetchLobbyRequest request);

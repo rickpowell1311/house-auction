@@ -13,7 +13,17 @@ namespace HouseAuction.Lobby.Requests
         [TranspilationSource]
         public class FetchLobbyResponse
         {
-            public List<string> Gamers { get; set; }
+            public List<FetchLobbyResponseGamer> Gamers { get; set; }
+        }
+
+        [TranspilationSource]
+        public class FetchLobbyResponseGamer
+        {
+            public string Name { get; set; }
+
+            public bool IsMe { get; set; }
+
+            public bool IsReady { get; set; }
         }
     }
 }

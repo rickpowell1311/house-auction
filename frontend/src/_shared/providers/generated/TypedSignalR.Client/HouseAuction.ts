@@ -4,6 +4,7 @@
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
 import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
+import type { OnLobbyMembersChangedReaction, OnGameBegunReaction } from '../HouseAuction.Lobby.Reactions';
 
 export type IHouseAuctionHub = {
     /**
@@ -35,15 +36,15 @@ export type IHouseAuctionHub = {
 
 export type IHouseAuctionReceiver = {
     /**
-    * @param members Transpiled from System.Collections.Generic.List<string>
+    * @param reaction Transpiled from HouseAuction.Lobby.Reactions.OnLobbyMembersChanged.OnLobbyMembersChangedReaction
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    onLobbyMembersChanged(members: string[]): Promise<void>;
+    onLobbyMembersChanged(reaction: OnLobbyMembersChangedReaction): Promise<void>;
     /**
-    * @param gameId Transpiled from string
+    * @param reaction Transpiled from HouseAuction.Lobby.Reactions.OnGameBegun.OnGameBegunReaction
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    onGameBegun(gameId: string): Promise<void>;
+    onGameBegun(reaction: OnGameBegunReaction): Promise<void>;
     /**
     * @param message Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task

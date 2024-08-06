@@ -5,6 +5,8 @@ using HouseAuction.Tests._Shared.TestData;
 using HouseAuction.Tests.Lobby._Shared;
 using Microsoft.AspNetCore.SignalR.Client;
 using TypedSignalR.Client;
+using Xunit;
+using static HouseAuction.Lobby.Requests.CreateLobby;
 
 namespace HouseAuction.Tests.Lobby
 {
@@ -27,16 +29,7 @@ namespace HouseAuction.Tests.Lobby
         [Fact]
         public async Task CanCreateLobby()
         {
-            await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = Gamers.Sample[0] });
-        }
-
-        [Fact]
-        public async Task CanFetchLobby()
-        {
-            var createLobbyResponse = await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = Gamers.Sample[0] });
-            var result = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
-
-            Assert.Single(result.Gamers);
+            await _hub.CreateLobby(new CreateLobbyRequest { Name = Gamers.Sample[0] });
         }
 
         [Fact]
@@ -52,9 +45,84 @@ namespace HouseAuction.Tests.Lobby
 
             await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = secondGamer });
 
-            await WaitFor.Condition(() => _client.GamersJoined.Count == 2 && secondClient.GamersJoined.Count == 2);
-            Assert.Equal(2, _client.GamersJoined.Count);
-            Assert.Equal(2, secondClient.GamersJoined.Count);
+            await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Count == 2 && secondClient.LobbyMembersChanges.Last().Gamers.Count == 2);
+            Assert.Equal(2, _client.LobbyMembersChanges.Last().Gamers.Count);
+            Assert.Equal(2, secondClient.LobbyMembersChanges.Last().Gamers.Count);
+        }
+
+
+        [Fact]
+        public async Task CanFetchLobby()
+        {
+            var first = Gamers.Sample[0];
+            var second = Gamers.Sample[1];
+
+            var createLobbyResponse = await _hub.CreateLobby(new CreateLobbyRequest { Name = first });
+
+            // Ready up a second gamer, but not the first
+            var secondConnection = await _hubClientFixtureProvider.StartHubConnection<HouseAuctionHub>(HouseAuctionHub.Route);
+            var secondHub = secondConnection.CreateHubProxy<ILobbyHub>();
+            var secondClient = new TestLobbyReceiver();
+            secondConnection.Register<ILobbyReceiver>(secondClient);
+            await secondHub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = second });
+            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = second });
+
+
+            var firstClientResult = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
+            var firstClientNotReadyGamers = firstClientResult.Gamers.Where(x => !x.IsReady).ToList();
+            Assert.Single(firstClientNotReadyGamers);
+            Assert.Equal(first, firstClientNotReadyGamers.Single().Name);
+            Assert.True(firstClientNotReadyGamers.Single().IsMe);
+
+            var secondClientResult = await secondHub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
+            var secondClientNotReadyGamers = secondClientResult.Gamers.Where(x => !x.IsReady).ToList();
+            Assert.Single(secondClientNotReadyGamers);
+            Assert.Equal(first, secondClientNotReadyGamers.Single().Name);
+            Assert.False(secondClientNotReadyGamers.Single().IsMe);
+        }
+
+        [Fact]
+        public async Task CanReadyUp()
+        {
+            var first = Gamers.Sample[0];
+            var second = Gamers.Sample[1];
+
+            var createLobbyResponse = await _hub.CreateLobby(new CreateLobbyRequest { Name = first });
+
+            // Ready up a second gamer, but not the first
+            var secondConnection = await _hubClientFixtureProvider.StartHubConnection<HouseAuctionHub>(HouseAuctionHub.Route);
+            var secondHub = secondConnection.CreateHubProxy<ILobbyHub>();
+            var secondClient = new TestLobbyReceiver();
+            secondConnection.Register<ILobbyReceiver>(secondClient);
+            await secondHub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = second });
+            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = second });
+
+            var result = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
+
+            var ready = result.Gamers.Where(x => x.IsReady).ToList();
+            var notReady = result.Gamers.Where(x => !x.IsReady).ToList();
+
+            Assert.Single(ready);
+            Assert.Equal(second, ready.Single().Name);
+            Assert.False(ready.Single().IsMe);
+
+            Assert.Single(notReady);
+            Assert.Equal(first, notReady.Single().Name);
+            Assert.True(notReady.Single().IsMe);
+
+            await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+            var firstClientGamersReady = _client.LobbyMembersChanges.Last().Gamers.Where(x => x.IsReady).ToList();
+
+            Assert.Single(firstClientGamersReady);
+            Assert.Equal(second, firstClientGamersReady.Single().Name);
+            Assert.False(firstClientGamersReady.Single().IsMe);
+
+            await WaitFor.Condition(() => secondClient.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+            var secondClientGamersReady = secondClient.LobbyMembersChanges.Last().Gamers.Where(x => x.IsReady).ToList();
+
+            Assert.Single(secondClientGamersReady);
+            Assert.Equal(second, secondClientGamersReady.Single().Name);
+            Assert.True(secondClientGamersReady.Single().IsMe);
         }
 
         [Fact]
@@ -69,7 +137,7 @@ namespace HouseAuction.Tests.Lobby
             foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
             {
                 await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = gamer });
-                await WaitFor.Condition(() => _client.GamersJoined.Count >= index + 2);
+                await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Count >= index + 2);
             }
 
             foreach (var gamer in gamers)
@@ -79,7 +147,7 @@ namespace HouseAuction.Tests.Lobby
 
             await WaitFor.Condition(() => _client.GamesBegun.Count >= 1);
 
-            var game = _client.GamesBegun.SingleOrDefault(x => x == createLobbyResponse.GameId);
+            var game = _client.GamesBegun.SingleOrDefault(x => x.GameId == createLobbyResponse.GameId);
             Assert.NotNull(game);
         }
 

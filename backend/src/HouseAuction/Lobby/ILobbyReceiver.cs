@@ -1,11 +1,11 @@
-﻿using TypedSignalR.Client;
+﻿using HouseAuction.Lobby.Reactions;
 
 namespace HouseAuction.Lobby
 {
     public interface ILobbyReceiver
     {
-        Task OnLobbyMembersChanged(List<string> members);
+        Task OnLobbyMembersChanged(OnLobbyMembersChanged.OnLobbyMembersChangedReaction reaction);
 
-        Task OnGameBegun(string gameId);
+        Task OnGameBegun(OnGameBegun.OnGameBegunReaction reaction);
     }
 }

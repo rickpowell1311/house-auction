@@ -1,23 +1,24 @@
 ﻿using HouseAuction.Lobby;
+using HouseAuction.Lobby.Reactions;
 
 namespace HouseAuction.Tests.Lobby._Shared
 {
     public class TestLobbyReceiver : ILobbyReceiver
     {
-        public List<string> GamersJoined { get; private set; } = [];
+        public List<OnLobbyMembersChanged.OnLobbyMembersChangedReaction> LobbyMembersChanges { get; private set; } = [];
 
-        public List<string> GamesBegun { get; } = [];
+        public List<OnGameBegun.OnGameBegunReaction> GamesBegun { get; } = [];
 
-        public Task OnGameBegun(string gameId)
+        public Task OnGameBegun(OnGameBegun.OnGameBegunReaction reaction)
         {
-            GamesBegun.Add(gameId);
+            GamesBegun.Add(reaction);
 
             return Task.CompletedTask;
         }
 
-        public Task OnLobbyMembersChanged(List<string> members)
+        public Task OnLobbyMembersChanged(OnLobbyMembersChanged.OnLobbyMembersChangedReaction reaction)
         {
-            GamersJoined = members;
+            LobbyMembersChanges.Add(reaction);
 
             return Task.CompletedTask;
         }

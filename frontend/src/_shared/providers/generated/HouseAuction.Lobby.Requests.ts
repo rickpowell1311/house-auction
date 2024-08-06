@@ -22,8 +22,18 @@ export type FetchLobbyRequest = {
 
 /** Transpiled from HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponse */
 export type FetchLobbyResponse = {
-    /** Transpiled from System.Collections.Generic.List<string> */
-    gamers?: string[];
+    /** Transpiled from System.Collections.Generic.List<HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponseGamer> */
+    gamers?: FetchLobbyResponseGamer[];
+}
+
+/** Transpiled from HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponseGamer */
+export type FetchLobbyResponseGamer = {
+    /** Transpiled from string */
+    name?: string;
+    /** Transpiled from bool */
+    isMe: boolean;
+    /** Transpiled from bool */
+    isReady: boolean;
 }
 
 /** Transpiled from HouseAuction.Lobby.Requests.GetMyName.GetMyNameRequest */

@@ -5,6 +5,7 @@
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
 import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
 import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
+import type { OnLobbyMembersChangedReaction, OnGameBegunReaction } from '../HouseAuction.Lobby.Reactions';
 
 
 // components
@@ -113,8 +114,8 @@ class IHouseAuctionReceiver_Binder implements ReceiverRegister<IHouseAuctionRece
 
     public readonly register = (connection: HubConnection, receiver: IHouseAuctionReceiver): Disposable => {
 
-        const __onLobbyMembersChanged = (...args: [string[]]) => receiver.onLobbyMembersChanged(...args);
-        const __onGameBegun = (...args: [string]) => receiver.onGameBegun(...args);
+        const __onLobbyMembersChanged = (...args: [OnLobbyMembersChangedReaction]) => receiver.onLobbyMembersChanged(...args);
+        const __onGameBegun = (...args: [OnGameBegunReaction]) => receiver.onGameBegun(...args);
         const __notifyError = (...args: [string]) => receiver.notifyError(...args);
 
         connection.on("OnLobbyMembersChanged", __onLobbyMembersChanged);

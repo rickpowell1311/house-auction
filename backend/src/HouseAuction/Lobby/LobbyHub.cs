@@ -1,8 +1,8 @@
 ﻿
 using HouseAuction.Lobby.Domain;
+using HouseAuction.Lobby.Reactions;
 using HouseAuction.Lobby.Requests;
 using Microsoft.AspNetCore.SignalR;
-using System.Text.RegularExpressions;
 
 namespace HouseAuction.Lobby
 {
@@ -19,7 +19,7 @@ namespace HouseAuction.Lobby
 
         public async Task<CreateLobby.CreateLobbyResponse> CreateLobby(CreateLobby.CreateLobbyRequest request)
         {
-            var lobby = Lobby.Domain.Lobby.Create(
+            var lobby = Domain.Lobby.Create(
                 request.Name, 
                 _callingHubContext.Hub.Context.ConnectionId);
 
@@ -29,6 +29,10 @@ namespace HouseAuction.Lobby
             await _callingHubContext.Hub.Groups.AddToGroupAsync(
                 _callingHubContext.Hub.Context.ConnectionId, 
                 lobby.GameId);
+
+            await _callingHubContext.Hub.Groups.AddToGroupAsync(
+                _callingHubContext.Hub.Context.ConnectionId,
+                request.Name);
 
             return new CreateLobby.CreateLobbyResponse { GameId = lobby.GameId };
         }
@@ -44,21 +48,12 @@ namespace HouseAuction.Lobby
 
             return new FetchLobby.FetchLobbyResponse
             {
-                Gamers = lobby.Gamers.Select(x => x.Name).ToList()
-            };
-        }
-
-        public async Task<GetMyName.GetMyNameResponse> GetMyName(GetMyName.GetMyNameRequest request)
-        {
-            var lobby = await _context.Lobbies.FindAsync(request.GameId)
-                ?? throw new HubException($"Game with Id {request.GameId} not found");
-
-            var gamer = lobby.Gamers
-                .FirstOrDefault(x => x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId);
-
-            return new Requests.GetMyName.GetMyNameResponse
-            {
-                Name = gamer?.Name
+                Gamers = lobby.Gamers.Select(x => new FetchLobby.FetchLobbyResponseGamer
+                {
+                    Name = x.Name,
+                    IsMe = x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId,
+                    IsReady = x.IsReady
+                }).ToList()
             };
         }
 
@@ -90,11 +85,11 @@ namespace HouseAuction.Lobby
                 _callingHubContext.Hub.Context.ConnectionId, 
                 lobby.GameId);
 
-            await _callingHubContext.Hub
-                .Clients
-                .Group(lobby.GameId)
-                .AsReceiver<ILobbyReceiver>()
-                .OnLobbyMembersChanged(lobby.Gamers.Select(x => x.Name).ToList());
+            await _callingHubContext.Hub.Groups.AddToGroupAsync(
+                _callingHubContext.Hub.Context.ConnectionId,
+                request.Name);
+
+            await NotifyMembersChanged(lobby);
         }
 
         public async Task ReadyUp(ReadyUp.ReadyUpRequest request)
@@ -113,13 +108,39 @@ namespace HouseAuction.Lobby
 
             await _context.SaveChangesAsync();
 
+            await NotifyMembersChanged(lobby);
+
             if (lobby.HasGameStarted)
             {
                 await _callingHubContext.Hub
                     .Clients
                     .Group(lobby.GameId)
                     .AsReceiver<ILobbyReceiver>()
-                    .OnGameBegun(lobby.GameId);
+                    .OnGameBegun(new OnGameBegun.OnGameBegunReaction
+                    {
+                        GameId = lobby.GameId
+                    });
+            }
+        }
+
+        private async Task NotifyMembersChanged(Domain.Lobby lobby)
+        {
+            foreach (var gamer in lobby.Gamers)
+            {
+                var reaction = new OnLobbyMembersChanged.OnLobbyMembersChangedReaction
+                {
+                    Gamers = lobby.Gamers.Select(x => new OnLobbyMembersChanged.OnLobbyMembersChangedReactionGamer
+                    {
+                        IsMe = x.Name == gamer.Name,
+                        IsReady = x.IsReady,
+                        Name = x.Name
+                    }).ToList()
+                };
+
+                await _callingHubContext.Hub.Clients
+                    .Group(gamer.Name)
+                    .AsReceiver<ILobbyReceiver>()
+                    .OnLobbyMembersChanged(reaction);
             }
         }
     }

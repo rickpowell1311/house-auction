@@ -34,7 +34,7 @@ namespace HouseAuction.Tests._Shared
                         appBuilder.UseRouting();
                         appBuilder.UseEndpoints(e =>
                         {
-                            e.MapHouseAuctionRoutes();
+                            e.MapHub<HouseAuctionHub>(HouseAuctionHub.Route);
                         });
                     })
                     .UseKestrel()

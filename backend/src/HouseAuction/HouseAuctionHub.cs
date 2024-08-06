@@ -1,5 +1,4 @@
 ﻿using HouseAuction.Lobby;
-using HouseAuction.Lobby.Domain;
 using HouseAuction.Lobby.Requests;
 using Microsoft.AspNetCore.SignalR;
 
@@ -19,11 +18,6 @@ namespace HouseAuction
         public async Task<FetchLobby.FetchLobbyResponse> FetchLobby(FetchLobby.FetchLobbyRequest request)
         {
             return await _lobbyHub.FetchLobby(request);
-        }
-
-        public async Task<GetMyName.GetMyNameResponse> GetMyName(GetMyName.GetMyNameRequest request)
-        {
-            return await _lobbyHub.GetMyName(request);
         }
 
         public async Task JoinLobby(JoinLobby.JoinLobbyRequest request)
