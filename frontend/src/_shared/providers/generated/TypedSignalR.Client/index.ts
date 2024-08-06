@@ -4,6 +4,7 @@
 // @ts-nocheck
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
 import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
+import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
 
 
 // components
@@ -79,24 +80,24 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
     public constructor(private connection: HubConnection) {
     }
 
-    public readonly getMyName = async (gameId: string): Promise<string> => {
-        return await this.connection.invoke("GetMyName", gameId);
+    public readonly getMyName = async (request: GetMyNameRequest): Promise<GetMyNameResponse> => {
+        return await this.connection.invoke("GetMyName", request);
     }
 
-    public readonly createLobby = async (name: string): Promise<string> => {
-        return await this.connection.invoke("CreateLobby", name);
+    public readonly createLobby = async (request: CreateLobbyRequest): Promise<CreateLobbyResponse> => {
+        return await this.connection.invoke("CreateLobby", request);
     }
 
-    public readonly fetchLobby = async (gameId: string): Promise<string[]> => {
-        return await this.connection.invoke("FetchLobby", gameId);
+    public readonly fetchLobby = async (request: FetchLobbyRequest): Promise<FetchLobbyResponse> => {
+        return await this.connection.invoke("FetchLobby", request);
     }
 
-    public readonly joinLobby = async (gameId: string, name: string): Promise<void> => {
-        return await this.connection.invoke("JoinLobby", gameId, name);
+    public readonly joinLobby = async (request: JoinLobbyRequest): Promise<void> => {
+        return await this.connection.invoke("JoinLobby", request);
     }
 
-    public readonly readyUp = async (gameId: string, name: string): Promise<void> => {
-        return await this.connection.invoke("ReadyUp", gameId, name);
+    public readonly readyUp = async (request: ReadyUpRequest): Promise<void> => {
+        return await this.connection.invoke("ReadyUp", request);
     }
 }
 

@@ -1,17 +1,17 @@
-﻿using TypedSignalR.Client;
+﻿using HouseAuction.Lobby.Requests;
 
 namespace HouseAuction.Lobby
 {
     public interface ILobbyHub
     {
-        Task<string> GetMyName(string gameId);
+        Task<GetMyName.GetMyNameResponse> GetMyName(GetMyName.GetMyNameRequest request);
 
-        Task<string> CreateLobby(string name);
+        Task<CreateLobby.CreateLobbyResponse> CreateLobby(CreateLobby.CreateLobbyRequest request);
 
-        Task<List<string>> FetchLobby(string gameId);
+        Task<FetchLobby.FetchLobbyResponse> FetchLobby(FetchLobby.FetchLobbyRequest request);
 
-        Task JoinLobby(string gameId, string name);
+        Task JoinLobby(JoinLobby.JoinLobbyRequest request);
 
-        Task ReadyUp(string gameId, string name);
+        Task ReadyUp(ReadyUp.ReadyUpRequest request);
     }
 }

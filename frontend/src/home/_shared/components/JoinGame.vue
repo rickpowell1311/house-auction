@@ -34,7 +34,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
         joinGameError.value = message;
       }
     } as IHouseAuctionReceiver)
-    await signalRClient?.hub.joinLobby(values.gameId, values.name);
+    await signalRClient?.hub.joinLobby({ name: values.name, gameId: values.gameId });
     router.push(`/lobby/${values.gameId}`);
   } catch (err) {
     console.log(`Unable to join game: ${err}`);

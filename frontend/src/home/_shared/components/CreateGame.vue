@@ -31,8 +31,8 @@ const onSubmit = handleSubmit(async (values, ctx) => {
         createGameError.value = message;
       }
     } as IHouseAuctionReceiver)
-    const gameId = await signalRClient?.hub.createLobby(values.name);
-    router.push(`/lobby/${gameId}`);
+    const response = await signalRClient?.hub.createLobby({ name: values.name });
+    router.push(`/lobby/${response?.gameId}`);
   } catch (err) {
     console.log(`Unable to create game: ${err}`);
     ctx.evt?.preventDefault();

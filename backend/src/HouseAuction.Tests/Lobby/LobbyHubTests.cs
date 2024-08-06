@@ -1,4 +1,5 @@
 ﻿using HouseAuction.Lobby;
+using HouseAuction.Lobby.Requests;
 using HouseAuction.Tests._Shared;
 using HouseAuction.Tests._Shared.TestData;
 using HouseAuction.Tests.Lobby._Shared;
@@ -26,16 +27,16 @@ namespace HouseAuction.Tests.Lobby
         [Fact]
         public async Task CanCreateLobby()
         {
-            await _hub.CreateLobby(Gamers.Sample[0]);
+            await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = Gamers.Sample[0] });
         }
 
         [Fact]
         public async Task CanFetchLobby()
         {
-            var gameId = await _hub.CreateLobby(Gamers.Sample[0]);
-            var result = await _hub.FetchLobby(gameId);
+            var createLobbyResponse = await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = Gamers.Sample[0] });
+            var result = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
 
-            Assert.Single(result);
+            Assert.Single(result.Gamers);
         }
 
         [Fact]
@@ -44,12 +45,12 @@ namespace HouseAuction.Tests.Lobby
             var firstGamer = Gamers.Sample[0];
             var secondGamer = Gamers.Sample[1];
 
-            var gameId = await _hub.CreateLobby(firstGamer);
+            var createLobbyResponse = await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = firstGamer });
 
             var secondClient = new TestLobbyReceiver();
             _connection.Register<ILobbyReceiver>(secondClient);
 
-            await _hub.JoinLobby(gameId, secondGamer);
+            await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = secondGamer });
 
             await WaitFor.Condition(() => _client.GamersJoined.Count == 2 && secondClient.GamersJoined.Count == 2);
             Assert.Equal(2, _client.GamersJoined.Count);
@@ -63,22 +64,22 @@ namespace HouseAuction.Tests.Lobby
             var lobbyCreator = gamers[0];
             var otherGamers = gamers.Skip(1).ToList();
 
-            var gameId = await _hub.CreateLobby(lobbyCreator);
+            var createLobbyResponse = await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = lobbyCreator });
 
             foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
             {
-                await _hub.JoinLobby(gameId, gamer);
+                await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = gamer });
                 await WaitFor.Condition(() => _client.GamersJoined.Count >= index + 2);
             }
 
             foreach (var gamer in gamers)
             {
-                await _hub.ReadyUp(gameId, gamer);
+                await _hub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = gamer });
             }
 
             await WaitFor.Condition(() => _client.GamesBegun.Count >= 1);
 
-            var game = _client.GamesBegun.SingleOrDefault(x => x == gameId);
+            var game = _client.GamesBegun.SingleOrDefault(x => x == createLobbyResponse.GameId);
             Assert.NotNull(game);
         }
 

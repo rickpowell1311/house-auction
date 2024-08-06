@@ -3,35 +3,34 @@
 /* tslint:disable */
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
+import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
 
 export type IHouseAuctionHub = {
     /**
-    * @param gameId Transpiled from string
-    * @returns Transpiled from System.Threading.Tasks.Task<string>
+    * @param request Transpiled from HouseAuction.Lobby.Requests.GetMyName.GetMyNameRequest
+    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.GetMyName.GetMyNameResponse>
     */
-    getMyName(gameId: string): Promise<string>;
+    getMyName(request: GetMyNameRequest): Promise<GetMyNameResponse>;
     /**
-    * @param name Transpiled from string
-    * @returns Transpiled from System.Threading.Tasks.Task<string>
+    * @param request Transpiled from HouseAuction.Lobby.Requests.CreateLobby.CreateLobbyRequest
+    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.CreateLobby.CreateLobbyResponse>
     */
-    createLobby(name: string): Promise<string>;
+    createLobby(request: CreateLobbyRequest): Promise<CreateLobbyResponse>;
     /**
-    * @param gameId Transpiled from string
-    * @returns Transpiled from System.Threading.Tasks.Task<System.Collections.Generic.List<string>>
+    * @param request Transpiled from HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyRequest
+    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponse>
     */
-    fetchLobby(gameId: string): Promise<string[]>;
+    fetchLobby(request: FetchLobbyRequest): Promise<FetchLobbyResponse>;
     /**
-    * @param gameId Transpiled from string
-    * @param name Transpiled from string
+    * @param request Transpiled from HouseAuction.Lobby.Requests.JoinLobby.JoinLobbyRequest
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    joinLobby(gameId: string, name: string): Promise<void>;
+    joinLobby(request: JoinLobbyRequest): Promise<void>;
     /**
-    * @param gameId Transpiled from string
-    * @param name Transpiled from string
+    * @param request Transpiled from HouseAuction.Lobby.Requests.ReadyUp.ReadyUpRequest
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    readyUp(gameId: string, name: string): Promise<void>;
+    readyUp(request: ReadyUpRequest): Promise<void>;
 }
 
 export type IHouseAuctionReceiver = {

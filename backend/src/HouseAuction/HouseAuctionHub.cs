@@ -1,5 +1,6 @@
 ﻿using HouseAuction.Lobby;
 using HouseAuction.Lobby.Domain;
+using HouseAuction.Lobby.Requests;
 using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction
@@ -10,29 +11,29 @@ namespace HouseAuction
 
         private readonly ILobbyHub _lobbyHub = lobbyHub;
 
-        public async Task<string> CreateLobby(string name)
+        public async Task<CreateLobby.CreateLobbyResponse> CreateLobby(CreateLobby.CreateLobbyRequest request)
         {
-            return await _lobbyHub.CreateLobby(name);
+            return await _lobbyHub.CreateLobby(request);
         }
 
-        public async Task<List<string>> FetchLobby(string gameId)
+        public async Task<FetchLobby.FetchLobbyResponse> FetchLobby(FetchLobby.FetchLobbyRequest request)
         {
-            return await _lobbyHub.FetchLobby(gameId);
+            return await _lobbyHub.FetchLobby(request);
         }
 
-        public async Task<string> GetMyName(string gameId)
+        public async Task<GetMyName.GetMyNameResponse> GetMyName(GetMyName.GetMyNameRequest request)
         {
-            return await _lobbyHub.GetMyName(gameId);
+            return await _lobbyHub.GetMyName(request);
         }
 
-        public async Task JoinLobby(string gameId, string name)
+        public async Task JoinLobby(JoinLobby.JoinLobbyRequest request)
         {
-            await _lobbyHub.JoinLobby(gameId, name);
+            await _lobbyHub.JoinLobby(request);
         }
 
-        public async Task ReadyUp(string gameId, string name)
+        public async Task ReadyUp(ReadyUp.ReadyUpRequest request)
         {
-            await _lobbyHub.ReadyUp(gameId, name);
+            await _lobbyHub.ReadyUp(request);
         }
     }
 }

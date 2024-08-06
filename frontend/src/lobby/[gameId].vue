@@ -23,8 +23,8 @@ onMounted(async () => {
     }
   } as IHouseAuctionReceiver)
 
-  players.value = await signalRClient?.hub.fetchLobby(gameId);
-  me.value = await signalRClient?.hub.getMyName(gameId);
+  players.value = (await signalRClient?.hub.fetchLobby({ gameId: gameId }))?.gamers;
+  me.value = (await signalRClient?.hub.getMyName({ gameId: gameId }))?.name;
 })
 </script>
 
