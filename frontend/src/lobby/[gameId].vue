@@ -42,9 +42,17 @@ const startGame = async () => {
 }
 
 onMounted(async () => {
-  const lobby = await signalRClient?.hub.fetchLobby({ gameId: gameId });
-  players.value = lobby?.gamers;
 
+  try {
+    const lobby = await signalRClient?.hub.fetchLobby({ gameId: gameId });
+    players.value = lobby?.gamers;
+  }
+  catch {
+    // If we can't load the lobby, it might be because of a refresh of the page.
+    // In this case, push to home and force a rejoin
+    router.push('/home');
+  }
+  
   signalRClient?.subscribe({
     onLobbyMembersChanged(reaction) {
       players.value = reaction.gamers;
