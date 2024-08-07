@@ -43,7 +43,6 @@ const startGame = async () => {
 
 onMounted(async () => {
   const lobby = await signalRClient?.hub.fetchLobby({ gameId: gameId });
-  console.log(lobby)
   players.value = lobby?.gamers;
 
   signalRClient?.subscribe({
@@ -85,7 +84,9 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <Button v-if="iAmCreator" :disabled="!isGameReady" @click="startGame">Start Game</Button>
+            <div>
+              <Button v-if="iAmCreator" :disabled="!isGameReady" @click="startGame">Start Game</Button>
+            </div>
           </div>
         </div>
       </Main>
