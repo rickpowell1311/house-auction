@@ -2,6 +2,7 @@
 import Button from '@/_shared/components/Button.vue';
 import { computed, ref } from 'vue';
 import CoinStash from '../coins/CoinStash.vue';
+import { PhMinus, PhPlus } from '@phosphor-icons/vue';
 
 const props = defineProps<{
   isBidding: boolean;
@@ -41,11 +42,9 @@ const removeFromBid = () => {
     <div class="flex flex-col gap-3 items-center">
       <CoinStash :amount="currentBid" />
       <div class="flex gap-4 items-center justify-evenly">
-        <span class="material-symbols-rounded cursor-pointer select-none text-primary font-bold"
-          @click="removeFromBid">remove</span>
+        <PhMinus class="cursor-pointer select-none text-primary font-bold" weight="bold" @click="removeFromBid" />
         <p class="text-white text-2xl select-none">{{ currentBid }}</p>
-        <span class="material-symbols-rounded cursor-pointer select-none text-primary font-bold"
-          @click="addToBid">add</span>
+        <PhPlus class="cursor-pointer select-none text-primary font-bold" weight="bold" @click="addToBid" />
       </div>
       <div class="flex items-center gap-2">
         <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)">Bid</Button>

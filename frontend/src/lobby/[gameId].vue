@@ -9,6 +9,7 @@ import { type SignalRClient, Key } from '@/_shared/providers/signalRClient';
 import { computed, inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Button from '../_shared/components/Button.vue';
+import { PhCheck } from '@phosphor-icons/vue';
 
 const signalRClient = inject<SignalRClient>(Key);
 const route = useRoute();
@@ -86,8 +87,7 @@ onMounted(async () => {
                   class="animate-fade flex items-center justify-between gap-4 min-h-8">
                   <p>{{ player.name }}</p>
                   <Button v-if="player.isMe && !player.isReady" @click="readyUp">Ready Up</Button>
-                  <span v-if="player.isReady"
-                    class="material-symbols-rounded text-primary animate-flip-down">check</span>
+                  <PhCheck v-if="player.isReady" class="text-primary animate-flip-down text-lg" weight="bold" />
                 </div>
               </div>
             </div>

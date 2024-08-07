@@ -1,7 +1,10 @@
+<script setup lang="ts">
+import { PhArrowLeft } from '@phosphor-icons/vue';
+</script>
 <template>
   <div>
     <span class="flex gap-2 items-center cursor-pointer">
-      <span class="material-symbols-rounded">arrow_back</span>
+      <PhArrowLeft class="text-lg" weight="bold" />
       <span>Back</span>
     </span>
   </div>

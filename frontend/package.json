@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@microsoft/signalr": "^8.0.7",
+    "@phosphor-icons/vue": "^2.2.1",
     "@storyblok/vue": "^8.0.8",
     "@vee-validate/yup": "^4.13.2",
     "house-auction": "file:",
