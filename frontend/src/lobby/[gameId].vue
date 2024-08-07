@@ -16,14 +16,15 @@ const router = useRouter();
 const params = route.params as Record<string, string>;
 const gameId = params.gameId;
 const players = ref<OnLobbyMembersChangedReactionGamer[] | FetchLobbyResponseGamer[] | undefined>();
-const isReady = ref(false);
 const isGameReady = ref(false);
+const creator = computed(() => {
+  return players.value?.find(x => x.isCreator);
+})
 
 const iAmCreator = computed(() => {
   const me = players.value?.find(x => x.isMe);
-  const creator = players.value?.find(x => x.isCreator);
 
-  return creator && me && creator.name == me.name;
+  return creator.value && me && creator.value.name == me.name;
 })
 
 const readyUp = async () => {
@@ -31,7 +32,6 @@ const readyUp = async () => {
     gameId: gameId,
     name: players.value?.find(x => x.isMe)?.name
   })
-  isReady.value = true;
 }
 
 const startGame = async () => {
@@ -85,14 +85,15 @@ onMounted(async () => {
                 <div v-for="player in players" :key="player.name"
                   class="animate-fade flex items-center justify-between gap-4 min-h-8">
                   <p>{{ player.name }}</p>
-                  <Button v-if="player.isMe && !isReady" @click="readyUp">Ready Up</Button>
-                  <span v-if="(player.isMe && isReady) || player.isReady"
+                  <Button v-if="player.isMe && !player.isReady" @click="readyUp">Ready Up</Button>
+                  <span v-if="player.isReady"
                     class="material-symbols-rounded text-primary animate-flip-down">check</span>
                 </div>
               </div>
             </div>
             <div>
               <Button v-if="iAmCreator" :disabled="!isGameReady" @click="startGame">Start Game</Button>
+              <p v-else-if="isGameReady" class="text-primary">Waiting <span v-if="creator">for {{ creator?.name }}</span> to start the game</p>
             </div>
           </div>
         </div>

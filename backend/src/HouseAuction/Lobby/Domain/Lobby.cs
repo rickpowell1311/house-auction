@@ -108,5 +108,19 @@
             HasGameStarted = true;
             return true;
         }
+
+        public void Disconnect(string connectionId)
+        {
+            if (!HasGameStarted)
+            {
+                var disconnected = new List<Gamer>(
+                    Gamers.Where(x => x.ConnectionId == connectionId));
+
+                foreach (var gamer in disconnected)
+                {
+                    Gamers.Remove(gamer);
+                }
+            }
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace HouseAuction.Lobby.Domain
 
         public string Name { get; private set; }
 
+        public bool IsDisconnected { get; private set; }
+
         public string ConnectionId { get; private set; }
 
         public bool IsReady { get; private set; }

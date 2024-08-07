@@ -18,5 +18,19 @@ namespace HouseAuction
 
             return await next(invocationContext);
         }
+
+        public async Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
+        {
+            _context.Hub = context.Hub;
+
+            await next(context);
+        }
+
+        public async Task OnDisconnectedAsync(HubLifetimeContext context, Exception exception, Func<HubLifetimeContext, Exception, Task> next)
+        {
+            _context.Hub = context.Hub;
+
+            await next(context, exception);
+        }
     }
 }

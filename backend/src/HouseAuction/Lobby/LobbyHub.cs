@@ -3,6 +3,7 @@ using HouseAuction.Lobby.Domain;
 using HouseAuction.Lobby.Reactions;
 using HouseAuction.Lobby.Requests;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseAuction.Lobby
 {
@@ -146,6 +147,26 @@ namespace HouseAuction.Lobby
                 .Group(lobby.GameId)
                 .AsReceiver<ILobbyReceiver>()
                 .OnGameStarted(new OnGameStarted.OnGameStartedReaction());
+        }
+
+        public async Task OnDisconnectedAsync(Exception exception)
+        {
+            var lobbies = await _context.Lobbies
+                .Where(x => x.Gamers
+                    .Any(y => y.ConnectionId == _callingHubContext.Hub.Context.ConnectionId))
+                .ToListAsync();
+
+            foreach (var lobby in lobbies)
+            {
+                lobby.Disconnect(_callingHubContext.Hub.Context.ConnectionId);
+            }
+
+            await _context.SaveChangesAsync();
+
+            foreach (var lobby in lobbies)
+            {
+                await NotifyMembersChanged(lobby);
+            }
         }
 
         private async Task NotifyMembersChanged(Domain.Lobby lobby)
