@@ -12,6 +12,6 @@ namespace HouseAuction.Lobby
 
         Task ReadyUp(ReadyUp.ReadyUpRequest request);
 
-        Task StartGame(StartGame.Request request);
+        Task StartGame(StartGame.StartGameRequest request);
     }
 }

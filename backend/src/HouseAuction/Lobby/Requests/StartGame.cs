@@ -1,8 +1,11 @@
-﻿namespace HouseAuction.Lobby.Requests
+﻿using Tapper;
+
+namespace HouseAuction.Lobby.Requests
 {
     public static class StartGame
     {
-        public class Request
+        [TranspilationSource]
+        public class StartGameRequest
         {
             public string GameId { get; set; }
 

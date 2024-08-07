@@ -7,5 +7,7 @@ namespace HouseAuction.Lobby
         Task OnLobbyMembersChanged(OnLobbyMembersChanged.OnLobbyMembersChangedReaction reaction);
 
         Task OnGameReadinessChanged(OnGameReadinessChanged.OnGameReadinessChangedReaction reaction);
+
+        Task OnGameStarted(OnGameStarted.OnGameStartedReaction reaction);
     }
 }

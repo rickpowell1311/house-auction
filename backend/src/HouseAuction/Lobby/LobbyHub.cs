@@ -52,6 +52,7 @@ namespace HouseAuction.Lobby
                 {
                     Name = x.Name,
                     IsMe = x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId,
+                    IsCreator = lobby.Creator.Name == x.Name,
                     IsReady = x.IsReady
                 }).ToList()
             };
@@ -120,13 +121,12 @@ namespace HouseAuction.Lobby
                     .AsReceiver<ILobbyReceiver>()
                     .OnGameReadinessChanged(new OnGameReadinessChanged.OnGameReadinessChangedReaction
                     {
-                        GameId = lobby.GameId,
                         IsReadyToStart = lobby.IsReadyToStartGame
                     });
             }
         }
 
-        public async Task StartGame(StartGame.Request request)
+        public async Task StartGame(StartGame.StartGameRequest request)
         {
             var lobby = await _context.Lobbies.FindAsync(request.GameId);
 
@@ -141,6 +141,11 @@ namespace HouseAuction.Lobby
             }
 
             await _context.SaveChangesAsync();
+
+            await _callingHubContext.Hub.Clients
+                .Group(lobby.GameId)
+                .AsReceiver<ILobbyReceiver>()
+                .OnGameStarted(new OnGameStarted.OnGameStartedReaction());
         }
 
         private async Task NotifyMembersChanged(Domain.Lobby lobby)
@@ -152,6 +157,7 @@ namespace HouseAuction.Lobby
                     Gamers = lobby.Gamers.Select(x => new OnLobbyMembersChanged.OnLobbyMembersChangedReactionGamer
                     {
                         IsMe = x.Name == gamer.Name,
+                        IsCreator = lobby.Creator.Name == x.Name,
                         IsReady = x.IsReady,
                         Name = x.Name
                     }).ToList()

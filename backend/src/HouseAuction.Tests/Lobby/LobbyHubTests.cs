@@ -161,12 +161,11 @@ namespace HouseAuction.Tests.Lobby
             await WaitFor.Condition(() => _client.GameReadinessChanges.Count >= 1);
             Assert.Single(_client.GameReadinessChanges);
 
-            var game = _client.GameReadinessChanges
-                .Single(x => x.GameId == createLobbyResponse.GameId);
+            var game = _client.GameReadinessChanges.Single();
 
             Assert.True(game.IsReadyToStart);
 
-            await _hub.StartGame(new StartGame.Request
+            await _hub.StartGame(new StartGame.StartGameRequest
             {
                 Name = lobbyCreator,
                 GameId = createLobbyResponse.GameId

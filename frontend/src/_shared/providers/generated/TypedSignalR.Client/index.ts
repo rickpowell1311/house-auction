@@ -4,8 +4,8 @@
 // @ts-nocheck
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
 import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
-import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
-import type { OnLobbyMembersChangedReaction, OnGameBegunReaction } from '../HouseAuction.Lobby.Reactions';
+import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 
 
 // components
@@ -81,10 +81,6 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
     public constructor(private connection: HubConnection) {
     }
 
-    public readonly getMyName = async (request: GetMyNameRequest): Promise<GetMyNameResponse> => {
-        return await this.connection.invoke("GetMyName", request);
-    }
-
     public readonly createLobby = async (request: CreateLobbyRequest): Promise<CreateLobbyResponse> => {
         return await this.connection.invoke("CreateLobby", request);
     }
@@ -99,6 +95,10 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
 
     public readonly readyUp = async (request: ReadyUpRequest): Promise<void> => {
         return await this.connection.invoke("ReadyUp", request);
+    }
+
+    public readonly startGame = async (request: StartGameRequest): Promise<void> => {
+        return await this.connection.invoke("StartGame", request);
     }
 }
 
@@ -115,16 +115,19 @@ class IHouseAuctionReceiver_Binder implements ReceiverRegister<IHouseAuctionRece
     public readonly register = (connection: HubConnection, receiver: IHouseAuctionReceiver): Disposable => {
 
         const __onLobbyMembersChanged = (...args: [OnLobbyMembersChangedReaction]) => receiver.onLobbyMembersChanged(...args);
-        const __onGameBegun = (...args: [OnGameBegunReaction]) => receiver.onGameBegun(...args);
+        const __onGameReadinessChanged = (...args: [OnGameReadinessChangedReaction]) => receiver.onGameReadinessChanged(...args);
+        const __onGameStarted = (...args: [OnGameStartedReaction]) => receiver.onGameStarted(...args);
         const __notifyError = (...args: [string]) => receiver.notifyError(...args);
 
         connection.on("OnLobbyMembersChanged", __onLobbyMembersChanged);
-        connection.on("OnGameBegun", __onGameBegun);
+        connection.on("OnGameReadinessChanged", __onGameReadinessChanged);
+        connection.on("OnGameStarted", __onGameStarted);
         connection.on("NotifyError", __notifyError);
 
         const methodList: ReceiverMethod[] = [
             { methodName: "OnLobbyMembersChanged", method: __onLobbyMembersChanged },
-            { methodName: "OnGameBegun", method: __onGameBegun },
+            { methodName: "OnGameReadinessChanged", method: __onGameReadinessChanged },
+            { methodName: "OnGameStarted", method: __onGameStarted },
             { methodName: "NotifyError", method: __notifyError }
         ]
 

@@ -33,19 +33,9 @@ export type FetchLobbyResponseGamer = {
     /** Transpiled from bool */
     isMe: boolean;
     /** Transpiled from bool */
+    isCreator: boolean;
+    /** Transpiled from bool */
     isReady: boolean;
-}
-
-/** Transpiled from HouseAuction.Lobby.Requests.GetMyName.GetMyNameRequest */
-export type GetMyNameRequest = {
-    /** Transpiled from string */
-    gameId?: string;
-}
-
-/** Transpiled from HouseAuction.Lobby.Requests.GetMyName.GetMyNameResponse */
-export type GetMyNameResponse = {
-    /** Transpiled from string */
-    name?: string;
 }
 
 /** Transpiled from HouseAuction.Lobby.Requests.JoinLobby.JoinLobbyRequest */
@@ -58,6 +48,14 @@ export type JoinLobbyRequest = {
 
 /** Transpiled from HouseAuction.Lobby.Requests.ReadyUp.ReadyUpRequest */
 export type ReadyUpRequest = {
+    /** Transpiled from string */
+    gameId?: string;
+    /** Transpiled from string */
+    name?: string;
+}
+
+/** Transpiled from HouseAuction.Lobby.Requests.StartGame.StartGameRequest */
+export type StartGameRequest = {
     /** Transpiled from string */
     gameId?: string;
     /** Transpiled from string */

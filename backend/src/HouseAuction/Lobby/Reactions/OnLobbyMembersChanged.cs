@@ -17,6 +17,8 @@ namespace HouseAuction.Lobby.Reactions
 
             public bool IsMe { get; set; }
 
+            public bool IsCreator { get; set; }
+
             public bool IsReady { get; set; }
         }
     }

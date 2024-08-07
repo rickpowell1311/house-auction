@@ -2,10 +2,14 @@
 /* eslint-disable */
 /* tslint:disable */
 
-/** Transpiled from HouseAuction.Lobby.Reactions.OnGameBegun.OnGameBegunReaction */
-export type OnGameBegunReaction = {
-    /** Transpiled from string */
-    gameId?: string;
+/** Transpiled from HouseAuction.Lobby.Reactions.OnGameReadinessChanged.OnGameReadinessChangedReaction */
+export type OnGameReadinessChangedReaction = {
+    /** Transpiled from bool */
+    isReadyToStart: boolean;
+}
+
+/** Transpiled from HouseAuction.Lobby.Reactions.OnGameStarted.OnGameStartedReaction */
+export type OnGameStartedReaction = {
 }
 
 /** Transpiled from HouseAuction.Lobby.Reactions.OnLobbyMembersChanged.OnLobbyMembersChangedReaction */
@@ -20,6 +24,8 @@ export type OnLobbyMembersChangedReactionGamer = {
     name?: string;
     /** Transpiled from bool */
     isMe: boolean;
+    /** Transpiled from bool */
+    isCreator: boolean;
     /** Transpiled from bool */
     isReady: boolean;
 }

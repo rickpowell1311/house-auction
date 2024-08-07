@@ -3,15 +3,10 @@
 /* tslint:disable */
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
-import type { GetMyNameRequest, GetMyNameResponse, CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest } from '../HouseAuction.Lobby.Requests';
-import type { OnLobbyMembersChangedReaction, OnGameBegunReaction } from '../HouseAuction.Lobby.Reactions';
+import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 
 export type IHouseAuctionHub = {
-    /**
-    * @param request Transpiled from HouseAuction.Lobby.Requests.GetMyName.GetMyNameRequest
-    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.GetMyName.GetMyNameResponse>
-    */
-    getMyName(request: GetMyNameRequest): Promise<GetMyNameResponse>;
     /**
     * @param request Transpiled from HouseAuction.Lobby.Requests.CreateLobby.CreateLobbyRequest
     * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.CreateLobby.CreateLobbyResponse>
@@ -32,6 +27,11 @@ export type IHouseAuctionHub = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     readyUp(request: ReadyUpRequest): Promise<void>;
+    /**
+    * @param request Transpiled from HouseAuction.Lobby.Requests.StartGame.StartGameRequest
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    startGame(request: StartGameRequest): Promise<void>;
 }
 
 export type IHouseAuctionReceiver = {
@@ -41,10 +41,15 @@ export type IHouseAuctionReceiver = {
     */
     onLobbyMembersChanged(reaction: OnLobbyMembersChangedReaction): Promise<void>;
     /**
-    * @param reaction Transpiled from HouseAuction.Lobby.Reactions.OnGameBegun.OnGameBegunReaction
+    * @param reaction Transpiled from HouseAuction.Lobby.Reactions.OnGameReadinessChanged.OnGameReadinessChangedReaction
     * @returns Transpiled from System.Threading.Tasks.Task
     */
-    onGameBegun(reaction: OnGameBegunReaction): Promise<void>;
+    onGameReadinessChanged(reaction: OnGameReadinessChangedReaction): Promise<void>;
+    /**
+    * @param reaction Transpiled from HouseAuction.Lobby.Reactions.OnGameStarted.OnGameStartedReaction
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    onGameStarted(reaction: OnGameStartedReaction): Promise<void>;
     /**
     * @param message Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task

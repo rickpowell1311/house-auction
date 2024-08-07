@@ -23,6 +23,8 @@ namespace HouseAuction.Lobby.Requests
 
             public bool IsMe { get; set; }
 
+            public bool IsCreator { get; set; }
+
             public bool IsReady { get; set; }
         }
     }

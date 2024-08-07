@@ -7,8 +7,6 @@ namespace HouseAuction.Lobby.Reactions
         [TranspilationSource]
         public class OnGameReadinessChangedReaction
         {
-            public string GameId { get; set; }
-
             public bool IsReadyToStart { get; set; }
         }
     }
