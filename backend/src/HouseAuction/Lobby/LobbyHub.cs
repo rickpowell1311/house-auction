@@ -126,6 +126,23 @@ namespace HouseAuction.Lobby
             }
         }
 
+        public async Task StartGame(StartGame.Request request)
+        {
+            var lobby = await _context.Lobbies.FindAsync(request.GameId);
+
+            if (lobby == null)
+            {
+                throw new HubException($"Game with Id {request.GameId} not found");
+            }
+
+            if (!lobby.TryBeginGame(request.Name, out var error))
+            {
+                throw new HubException(error);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         private async Task NotifyMembersChanged(Domain.Lobby lobby)
         {
             foreach (var gamer in lobby.Gamers)

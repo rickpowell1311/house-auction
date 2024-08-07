@@ -51,7 +51,8 @@ namespace HouseAuction.Tests.Lobby.Domain
                 Assert.True(isReady);
             }
 
-            lobby.StartGame();
+            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+            Assert.True(isGameBegun);
 
             var lateJoinResult = lobby.Join(joiningAfterGameStarted, Guid.NewGuid().ToString());
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, lateJoinResult.Type);
@@ -86,8 +87,58 @@ namespace HouseAuction.Tests.Lobby.Domain
         [Fact]
         public void ReadyUp_WhenAllPlayersReadyAndEnoughPlayers_IsReadyToStart()
         {
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
-            foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers))
+            var creator = Gamers.Sample[0];
+            var gamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers);
+
+            LobbyReadyToStartGame(creator, gamers);
+        }
+
+        [Fact]
+        public void BeginGame_WhenIsNotReadyToStart_ReturnsFalse()
+        {
+            var creator = Gamers.Sample[0];
+            var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
+
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, Guid.NewGuid().ToString());
+            foreach (var gamer in otherGamers)
+            {
+                var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
+                Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
+            }
+
+            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+
+            Assert.False(isGameBegun);
+        }
+
+        [Fact]
+        public void BeginGame_WhenGamerIsNotCreator_ReturnsFalse()
+        {
+            var creator = Gamers.Sample[0];
+            var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
+
+            var lobby = LobbyReadyToStartGame(creator, otherGamers);
+
+            var isGameBegun = lobby.TryBeginGame(otherGamers.First(), out var _);
+            Assert.False(isGameBegun);
+        }
+
+        [Fact]
+        public void BeginGame_ReturnsTrue()
+        {
+            var creator = Gamers.Sample[0];
+            var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers);
+
+            var lobby = LobbyReadyToStartGame(creator, otherGamers);
+
+            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+            Assert.True(isGameBegun);
+        }
+
+        private static HouseAuction.Lobby.Domain.Lobby LobbyReadyToStartGame(string creator, IEnumerable<string> otherGamers)
+        {
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, Guid.NewGuid().ToString());
+            foreach (var gamer in otherGamers)
             {
                 var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
@@ -100,6 +151,8 @@ namespace HouseAuction.Tests.Lobby.Domain
             }
 
             Assert.True(lobby.IsReadyToStartGame);
+
+            return lobby;
         }
     }
 }

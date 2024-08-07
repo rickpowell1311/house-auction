@@ -74,7 +74,7 @@
 
             if (gamer == null)
             {
-                error = $"Cannot ready up - Gamer {name} is not part of lobby for game {GameId}";
+                error = $"Cannot ready up - {name} is not part of lobby for game {GameId}";
                 return false;
             }
 
@@ -83,9 +83,30 @@
             return true;
         }
 
-        public void StartGame()
+        public bool TryBeginGame(string name, out string error)
         {
+            error = null;
+
+            if (HasGameStarted)
+            {
+                error = $"Game {GameId} already started";
+                return false;
+            }
+
+            if (!IsReadyToStartGame)
+            {
+                error = $"Game {GameId} is not ready to start";
+                return false;
+            }
+
+            if (name != Creator.Name)
+            {
+                error = $"Cannot ready up - {name} is not the creator of game {GameId}";
+                return false;
+            }
+
             HasGameStarted = true;
+            return true;
         }
     }
 }

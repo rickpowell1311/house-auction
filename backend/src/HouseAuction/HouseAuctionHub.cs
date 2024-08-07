@@ -29,5 +29,10 @@ namespace HouseAuction
         {
             await _lobbyHub.ReadyUp(request);
         }
+
+        public async Task StartGame(StartGame.Request request)
+        {
+            await _lobbyHub.StartGame(request);
+        }
     }
 }

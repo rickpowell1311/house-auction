@@ -165,6 +165,12 @@ namespace HouseAuction.Tests.Lobby
                 .Single(x => x.GameId == createLobbyResponse.GameId);
 
             Assert.True(game.IsReadyToStart);
+
+            await _hub.StartGame(new StartGame.Request
+            {
+                Name = lobbyCreator,
+                GameId = createLobbyResponse.GameId
+            });
         }
 
         public async Task DisposeAsync()
