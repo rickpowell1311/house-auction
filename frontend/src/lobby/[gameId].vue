@@ -56,7 +56,6 @@ onMounted(async () => {
   signalRClient?.subscribe({
     onLobbyMembersChanged(reaction) {
       players.value = reaction.gamers;
-      console.log(reaction);
     },
     onGameReadinessChanged(reaction) {
       isGameReady.value = reaction.isReadyToStart;
