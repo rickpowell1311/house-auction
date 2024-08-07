@@ -7,11 +7,11 @@ namespace HouseAuction.Tests.Lobby._Shared
     {
         public List<OnLobbyMembersChanged.OnLobbyMembersChangedReaction> LobbyMembersChanges { get; private set; } = [];
 
-        public List<OnGameBegun.OnGameBegunReaction> GamesBegun { get; } = [];
+        public List<OnGameReadinessChanged.OnGameReadinessChangedReaction> GameReadinessChanges { get; } = [];
 
-        public Task OnGameBegun(OnGameBegun.OnGameBegunReaction reaction)
+        public Task OnGameReadinessChanged(OnGameReadinessChanged.OnGameReadinessChangedReaction reaction)
         {
-            GamesBegun.Add(reaction);
+            GameReadinessChanges.Add(reaction);
 
             return Task.CompletedTask;
         }

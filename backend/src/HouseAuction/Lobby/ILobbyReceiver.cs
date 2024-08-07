@@ -6,6 +6,6 @@ namespace HouseAuction.Lobby
     {
         Task OnLobbyMembersChanged(OnLobbyMembersChanged.OnLobbyMembersChangedReaction reaction);
 
-        Task OnGameBegun(OnGameBegun.OnGameBegunReaction reaction);
+        Task OnGameReadinessChanged(OnGameReadinessChanged.OnGameReadinessChangedReaction reaction);
     }
 }

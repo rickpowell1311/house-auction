@@ -101,6 +101,8 @@ namespace HouseAuction.Lobby
                 throw new HubException($"Game with Id {request.GameId} not found");
             }
 
+            var gameIsReady = lobby.IsReadyToStartGame;
+
             if (!lobby.TryReadyUp(request.Name, out var error))
             {
                 throw new HubException(error);
@@ -110,15 +112,16 @@ namespace HouseAuction.Lobby
 
             await NotifyMembersChanged(lobby);
 
-            if (lobby.HasGameStarted)
+            if (gameIsReady != lobby.IsReadyToStartGame)
             {
                 await _callingHubContext.Hub
                     .Clients
                     .Group(lobby.GameId)
                     .AsReceiver<ILobbyReceiver>()
-                    .OnGameBegun(new OnGameBegun.OnGameBegunReaction
+                    .OnGameReadinessChanged(new OnGameReadinessChanged.OnGameReadinessChangedReaction
                     {
-                        GameId = lobby.GameId
+                        GameId = lobby.GameId,
+                        IsReadyToStart = lobby.IsReadyToStartGame
                     });
             }
         }

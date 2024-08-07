@@ -51,14 +51,14 @@ namespace HouseAuction.Tests.Lobby.Domain
                 Assert.True(isReady);
             }
 
-            Assert.True(lobby.HasGameStarted);
+            lobby.StartGame();
 
             var lateJoinResult = lobby.Join(joiningAfterGameStarted, Guid.NewGuid().ToString());
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, lateJoinResult.Type);
         }
 
         [Fact]
-        public void ReadyUp_WhenAllGamersReadyButNotEnoughPlayers_DoesNotStartGame()
+        public void ReadyUp_WhenAllGamersReadyButNotEnoughPlayers_IsNotReadyToStart()
         {
             var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
 
@@ -67,11 +67,11 @@ namespace HouseAuction.Tests.Lobby.Domain
                 gamer.ReadyUp();
             }
 
-            Assert.False(lobby.HasGameStarted);
+            Assert.False(lobby.IsReadyToStartGame);
         }
 
         [Fact]
-        public void ReadyUp_WhenNotAllPlayersReady_DoesNotStartGame()
+        public void ReadyUp_WhenNotAllPlayersReady_IsNotReadyToStart()
         {
             var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
             foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1))
@@ -80,11 +80,11 @@ namespace HouseAuction.Tests.Lobby.Domain
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 
-            Assert.False(lobby.HasGameStarted);
+            Assert.False(lobby.IsReadyToStartGame);
         }
 
         [Fact]
-        public void ReadyUp_WhenAllPlayersReadyAndEnoughPlayers_ReturnsTrue()
+        public void ReadyUp_WhenAllPlayersReadyAndEnoughPlayers_IsReadyToStart()
         {
             var lobby = HouseAuction.Lobby.Domain.Lobby.Create(Gamers.Sample[0], Guid.NewGuid().ToString());
             foreach (var gamer in Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers))
@@ -99,7 +99,7 @@ namespace HouseAuction.Tests.Lobby.Domain
                 Assert.True(isReady);
             }
 
-            Assert.True(lobby.HasGameStarted);
+            Assert.True(lobby.IsReadyToStartGame);
         }
     }
 }

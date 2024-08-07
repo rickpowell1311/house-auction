@@ -80,12 +80,12 @@
 
             gamer.ReadyUp();
 
-            if (IsReadyToStartGame)
-            {
-                HasGameStarted = true;
-            }
-
             return true;
+        }
+
+        public void StartGame()
+        {
+            HasGameStarted = true;
         }
     }
 }

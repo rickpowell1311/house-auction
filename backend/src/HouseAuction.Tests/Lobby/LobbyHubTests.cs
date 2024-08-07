@@ -45,7 +45,12 @@ namespace HouseAuction.Tests.Lobby
 
             await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = secondGamer });
 
-            await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Count == 2 && secondClient.LobbyMembersChanges.Last().Gamers.Count == 2);
+            await WaitFor.Condition(() => 
+                _client.LobbyMembersChanges.Any()
+                && _client.LobbyMembersChanges.Last().Gamers.Count == 2 
+                && secondClient.LobbyMembersChanges.Any()
+                && secondClient.LobbyMembersChanges.Last().Gamers.Count == 2);
+
             Assert.Equal(2, _client.LobbyMembersChanges.Last().Gamers.Count);
             Assert.Equal(2, secondClient.LobbyMembersChanges.Last().Gamers.Count);
         }
@@ -110,14 +115,20 @@ namespace HouseAuction.Tests.Lobby
             Assert.Equal(first, notReady.Single().Name);
             Assert.True(notReady.Single().IsMe);
 
-            await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+            await WaitFor.Condition(() => 
+                _client.LobbyMembersChanges.Any()
+                && _client.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+
             var firstClientGamersReady = _client.LobbyMembersChanges.Last().Gamers.Where(x => x.IsReady).ToList();
 
             Assert.Single(firstClientGamersReady);
             Assert.Equal(second, firstClientGamersReady.Single().Name);
             Assert.False(firstClientGamersReady.Single().IsMe);
 
-            await WaitFor.Condition(() => secondClient.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+            await WaitFor.Condition(() => 
+                secondClient.LobbyMembersChanges.Any()
+                && secondClient.LobbyMembersChanges.Last().Gamers.Any(x => x.IsReady));
+
             var secondClientGamersReady = secondClient.LobbyMembersChanges.Last().Gamers.Where(x => x.IsReady).ToList();
 
             Assert.Single(secondClientGamersReady);
@@ -137,7 +148,9 @@ namespace HouseAuction.Tests.Lobby
             foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
             {
                 await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = gamer });
-                await WaitFor.Condition(() => _client.LobbyMembersChanges.Last().Gamers.Count >= index + 2);
+                await WaitFor.Condition(() => 
+                    _client.LobbyMembersChanges.Any()
+                    && _client.LobbyMembersChanges.Last().Gamers.Count >= index + 2);
             }
 
             foreach (var gamer in gamers)
@@ -145,10 +158,13 @@ namespace HouseAuction.Tests.Lobby
                 await _hub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = gamer });
             }
 
-            await WaitFor.Condition(() => _client.GamesBegun.Count >= 1);
+            await WaitFor.Condition(() => _client.GameReadinessChanges.Count >= 1);
+            Assert.Single(_client.GameReadinessChanges);
 
-            var game = _client.GamesBegun.SingleOrDefault(x => x.GameId == createLobbyResponse.GameId);
-            Assert.NotNull(game);
+            var game = _client.GameReadinessChanges
+                .Single(x => x.GameId == createLobbyResponse.GameId);
+
+            Assert.True(game.IsReadyToStart);
         }
 
         public async Task DisposeAsync()

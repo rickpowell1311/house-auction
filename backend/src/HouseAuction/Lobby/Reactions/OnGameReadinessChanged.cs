@@ -2,12 +2,14 @@
 
 namespace HouseAuction.Lobby.Reactions
 {
-    public static class OnGameBegun
+    public static class OnGameReadinessChanged
     {
         [TranspilationSource]
-        public class OnGameBegunReaction
+        public class OnGameReadinessChangedReaction
         {
             public string GameId { get; set; }
+
+            public bool IsReadyToStart { get; set; }
         }
     }
 }
