@@ -1,6 +1,9 @@
-﻿namespace HouseAuction.Lobby.Domain
+﻿using HouseAuction.Messages.Lobby;
+using Onwrd.EntityFrameworkCore;
+
+namespace HouseAuction.Lobby.Domain
 {
-    public class Lobby
+    public class Lobby : EventRaiser
     {
         public const int MinGamers = 3;
 
@@ -107,6 +110,19 @@
             }
 
             HasGameStarted = true;
+
+            RaiseEvent(new LobbyConfirmed
+            {
+                GameId = GameId,
+                Gamers = Gamers.Select(x => new LobbyConfirmed.Gamer
+                {
+                    IsHost = x.ConnectionId == Creator.ConnectionId,
+                    Name = x.Name,
+                    GroupName = x.GroupName,
+                    ConnectionId = x.ConnectionId
+                }).ToList()
+            });
+
             return true;
         }
 

@@ -17,10 +17,7 @@ namespace HouseAuction.Lobby
                 onwrdConfig =>
                 {
                     // Outboxing configuration here
-                    onwrdConfig.UseOnwardProcessors(x =>
-                    {
-                        x.ScanAssemblies(typeof(ServiceCollectionExtensions).Assembly);
-                    });
+                    onwrdConfig.UseOnwardProcessor<ForwardMessageEvents>();
                 });
         }
     }
