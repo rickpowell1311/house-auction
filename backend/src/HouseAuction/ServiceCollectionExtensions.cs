@@ -1,6 +1,7 @@
 ﻿using HouseAuction.ExceptionHandling;
 using HouseAuction.HubContext;
 using HouseAuction.Lobby;
+using HouseAuction.Messaging;
 using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction
@@ -15,6 +16,7 @@ namespace HouseAuction
                 cfg.AddFilter<HubExceptionNotifierFilter>();
                 cfg.AddFilter<CallingHubContextFilter>();
             });
+            services.AddMessaging();
             services.AddLobby();
         }
     }
