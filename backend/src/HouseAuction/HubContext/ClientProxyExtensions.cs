@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace HouseAuction
+namespace HouseAuction.HubContext
 {
     public static class ClientProxyExtensions
     {
@@ -15,7 +15,7 @@ namespace HouseAuction
 
         public class ClientDispatchProxy<T> : DispatchProxy
             where T : class
-{
+        {
             private IClientProxy _clientProxy;
 
             public static T Decorate(IClientProxy target)

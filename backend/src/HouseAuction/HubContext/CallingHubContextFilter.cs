@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace HouseAuction
+namespace HouseAuction.HubContext
 {
     public class CallingHubContextFilter : IHubFilter
     {

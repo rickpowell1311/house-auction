@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace HouseAuction
+namespace HouseAuction.ExceptionHandling
 {
     public class HubExceptionNotifierFilter : IHubFilter
     {
@@ -13,7 +13,7 @@ namespace HouseAuction
             }
             catch (HubException ex)
             {
-                var hub = (invocationContext.Hub as Hub<IHouseAuctionReceiver>);
+                var hub = invocationContext.Hub as Hub<IHouseAuctionReceiver>;
                 hub?.Clients.Caller.NotifyError(ex.Message);
                 throw;
             }
