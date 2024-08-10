@@ -8,8 +8,6 @@ namespace HouseAuction.Lobby.Requests
         public class StartGameRequest
         {
             public string GameId { get; set; }
-
-            public string Name { get; set; }
         }
     }
 }

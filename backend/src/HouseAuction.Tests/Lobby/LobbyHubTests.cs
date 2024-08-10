@@ -70,8 +70,7 @@ namespace HouseAuction.Tests.Lobby
             var secondClient = new TestLobbyReceiver();
             secondConnection.Register<ILobbyReceiver>(secondClient);
             await secondHub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = second });
-            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = second });
-
+            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId });
 
             var firstClientResult = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
             var firstClientNotReadyGamers = firstClientResult.Gamers.Where(x => !x.IsReady).ToList();
@@ -100,7 +99,7 @@ namespace HouseAuction.Tests.Lobby
             var secondClient = new TestLobbyReceiver();
             secondConnection.Register<ILobbyReceiver>(secondClient);
             await secondHub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = second });
-            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = second });
+            await secondHub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId });
 
             var result = await _hub.FetchLobby(new FetchLobby.FetchLobbyRequest { GameId = createLobbyResponse.GameId });
 
@@ -144,18 +143,19 @@ namespace HouseAuction.Tests.Lobby
             var otherGamers = gamers.Skip(1).ToList();
 
             var createLobbyResponse = await _hub.CreateLobby(new CreateLobby.CreateLobbyRequest { Name = lobbyCreator });
+            await _hub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId });
 
             foreach (var (gamer, index) in otherGamers.Select((x, i) => (gamer: x, index: i)))
             {
-                await _hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = gamer });
+                var conn = await _hubClientFixtureProvider.StartHubConnection<HouseAuctionHub>(HouseAuctionHub.Route);
+                var hub = conn.CreateHubProxy<ILobbyHub>();
+
+                await hub.JoinLobby(new JoinLobby.JoinLobbyRequest { GameId = createLobbyResponse.GameId, Name = gamer });
                 await WaitFor.Condition(() => 
                     _client.LobbyMembersChanges.Any()
                     && _client.LobbyMembersChanges.Last().Gamers.Count >= index + 2);
-            }
 
-            foreach (var gamer in gamers)
-            {
-                await _hub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId, Name = gamer });
+                await hub.ReadyUp(new ReadyUp.ReadyUpRequest { GameId = createLobbyResponse.GameId });
             }
 
             await WaitFor.Condition(() => _client.GameReadinessChanges.Count >= 1);
@@ -167,7 +167,6 @@ namespace HouseAuction.Tests.Lobby
 
             await _hub.StartGame(new StartGame.StartGameRequest
             {
-                Name = lobbyCreator,
                 GameId = createLobbyResponse.GameId
             });
         }

@@ -25,8 +25,9 @@ namespace HouseAuction.Tests.Lobby.Domain
         public void TryJoin_WhenAlreadyJoined_ReturnsFalse()
         {
             var gamer = Gamers.Sample[0];
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(gamer, Guid.NewGuid().ToString());
-            var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
+            var connectionId = Guid.NewGuid().ToString();
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(gamer, connectionId);
+            var joinResult = lobby.Join(gamer, connectionId);
 
             Assert.Equal(LobbyJoinResult.JoinResultType.Error, joinResult.Type);
         }
@@ -35,10 +36,11 @@ namespace HouseAuction.Tests.Lobby.Domain
         public void TryJoin_WhenGameStarted_ReturnsFalse()
         {
             var creator = Gamers.Sample[0];
+            var creatorConnectionId = Guid.NewGuid().ToString();
             var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
             var joiningAfterGameStarted = Gamers.Sample.Skip(HouseAuction.Lobby.Domain.Lobby.MinGamers).Take(1).Single();
 
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, Guid.NewGuid().ToString());
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, creatorConnectionId);
             foreach (var gamer in otherGamers)
             {
                 var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
@@ -47,11 +49,11 @@ namespace HouseAuction.Tests.Lobby.Domain
 
             foreach (var gamer in lobby.Gamers)
             {
-                var isReady = lobby.TryReadyUp(gamer.Name, out var _);
+                var isReady = lobby.TryReadyUp(gamer.ConnectionId, out var _);
                 Assert.True(isReady);
             }
 
-            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+            var isGameBegun = lobby.TryBeginGame(creatorConnectionId, out var _);
             Assert.True(isGameBegun);
 
             var lateJoinResult = lobby.Join(joiningAfterGameStarted, Guid.NewGuid().ToString());
@@ -97,16 +99,17 @@ namespace HouseAuction.Tests.Lobby.Domain
         public void BeginGame_WhenIsNotReadyToStart_ReturnsFalse()
         {
             var creator = Gamers.Sample[0];
+            var creatorConnectionId = Guid.NewGuid().ToString();
             var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
 
-            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, Guid.NewGuid().ToString());
+            var lobby = HouseAuction.Lobby.Domain.Lobby.Create(creator, creatorConnectionId);
             foreach (var gamer in otherGamers)
             {
                 var joinResult = lobby.Join(gamer, Guid.NewGuid().ToString());
                 Assert.Equal(LobbyJoinResult.JoinResultType.Success, joinResult.Type);
             }
 
-            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+            var isGameBegun = lobby.TryBeginGame(creatorConnectionId, out var _);
 
             Assert.False(isGameBegun);
         }
@@ -118,8 +121,9 @@ namespace HouseAuction.Tests.Lobby.Domain
             var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers - 1);
 
             var lobby = LobbyReadyToStartGame(creator, otherGamers);
+            var otherGamer = lobby.Gamers.First(x => x.Name != creator);
 
-            var isGameBegun = lobby.TryBeginGame(otherGamers.First(), out var _);
+            var isGameBegun = lobby.TryBeginGame(otherGamer.ConnectionId, out var _);
             Assert.False(isGameBegun);
         }
 
@@ -130,8 +134,9 @@ namespace HouseAuction.Tests.Lobby.Domain
             var otherGamers = Gamers.Sample.Skip(1).Take(HouseAuction.Lobby.Domain.Lobby.MinGamers);
 
             var lobby = LobbyReadyToStartGame(creator, otherGamers);
+            var creatorConnectionId = lobby.Creator.ConnectionId;
 
-            var isGameBegun = lobby.TryBeginGame(creator, out var _);
+            var isGameBegun = lobby.TryBeginGame(creatorConnectionId, out var _);
             Assert.True(isGameBegun);
         }
 
@@ -146,7 +151,7 @@ namespace HouseAuction.Tests.Lobby.Domain
 
             foreach (var gamer in lobby.Gamers)
             {
-                var isReady = lobby.TryReadyUp(gamer.Name, out var _);
+                var isReady = lobby.TryReadyUp(gamer.ConnectionId, out var _);
                 Assert.True(isReady);
             }
 

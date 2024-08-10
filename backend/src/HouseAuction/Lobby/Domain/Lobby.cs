@@ -67,14 +67,15 @@
             return LobbyJoinResult.Success();
         }
 
-        public bool TryReadyUp(string name, out string error)
+        public bool TryReadyUp(string connectionId, out string error)
         {
             error = null;
-            var gamer = Gamers.SingleOrDefault(x => x.Name == name);
+            var gamer = Gamers
+                .SingleOrDefault(x => x.ConnectionId == connectionId);
 
             if (gamer == null)
             {
-                error = $"Cannot ready up - {name} is not part of lobby for game {GameId}";
+                error = $"Cannot ready up - not part of lobby for game {GameId}";
                 return false;
             }
 
@@ -83,7 +84,7 @@
             return true;
         }
 
-        public bool TryBeginGame(string name, out string error)
+        public bool TryBeginGame(string connectionId, out string error)
         {
             error = null;
 
@@ -99,9 +100,9 @@
                 return false;
             }
 
-            if (name != Creator.Name)
+            if (connectionId != Creator.ConnectionId)
             {
-                error = $"Cannot ready up - {name} is not the creator of game {GameId}";
+                error = $"Cannot ready up - not the creator of game {GameId}";
                 return false;
             }
 

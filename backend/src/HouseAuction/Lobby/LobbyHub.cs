@@ -109,7 +109,7 @@ namespace HouseAuction.Lobby
 
             var gameIsReady = lobby.IsReadyToStartGame;
 
-            if (!lobby.TryReadyUp(request.Name, out var error))
+            if (!lobby.TryReadyUp(_callingHubContext.Hub.Context.ConnectionId, out var error))
             {
                 throw new HubException(error);
             }
@@ -140,7 +140,7 @@ namespace HouseAuction.Lobby
                 throw new HubException($"Game with Id {request.GameId} not found");
             }
 
-            if (!lobby.TryBeginGame(request.Name, out var error))
+            if (!lobby.TryBeginGame(_callingHubContext.Hub.Context.ConnectionId, out var error))
             {
                 throw new HubException(error);
             }
