@@ -31,9 +31,11 @@ namespace HouseAuction.Lobby
                 _callingHubContext.Hub.Context.ConnectionId, 
                 lobby.GameId);
 
+            var gamer = lobby.Gamers.Single(x => x.Name == request.Name);
+
             await _callingHubContext.Hub.Groups.AddToGroupAsync(
                 _callingHubContext.Hub.Context.ConnectionId,
-                request.Name);
+                gamer.GroupName);
 
             return new CreateLobby.CreateLobbyResponse { GameId = lobby.GameId };
         }
@@ -87,9 +89,11 @@ namespace HouseAuction.Lobby
                 _callingHubContext.Hub.Context.ConnectionId, 
                 lobby.GameId);
 
+            var gamer = lobby.Gamers.Single(x => x.Name == request.Name);
+
             await _callingHubContext.Hub.Groups.AddToGroupAsync(
                 _callingHubContext.Hub.Context.ConnectionId,
-                request.Name);
+                gamer.GroupName);
 
             await NotifyMembersChanged(lobby);
         }
@@ -185,7 +189,7 @@ namespace HouseAuction.Lobby
                 };
 
                 await _callingHubContext.Hub.Clients
-                    .Group(gamer.Name)
+                    .Group(gamer.GroupName)
                     .AsReceiver<ILobbyReceiver>()
                     .OnLobbyMembersChanged(reaction);
             }
