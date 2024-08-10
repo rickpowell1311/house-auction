@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace HouseAuction.Messaging
+namespace HouseAuction.Infrastructure.Messaging
 {
     public static class ServiceCollectionExtensions
     {
@@ -13,7 +13,7 @@ namespace HouseAuction.Messaging
                 .GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => t.GetInterfaces()
-                    .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() 
+                    .Any(i => i.IsGenericType && i.GetGenericTypeDefinition()
                         == typeof(IMessageSubscriber<>)));
 
             foreach (var subscriberType in subscriberTypes)

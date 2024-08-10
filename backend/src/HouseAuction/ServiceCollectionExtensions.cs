@@ -1,7 +1,7 @@
-﻿using HouseAuction.ExceptionHandling;
-using HouseAuction.HubContext;
+﻿using HouseAuction.Infrastructure.ExceptionHandling;
+using HouseAuction.Infrastructure.HubContext;
+using HouseAuction.Infrastructure.Messaging;
 using HouseAuction.Lobby;
-using HouseAuction.Messaging;
 using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction

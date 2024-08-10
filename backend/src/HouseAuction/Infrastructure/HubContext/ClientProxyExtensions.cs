@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace HouseAuction.HubContext
+namespace HouseAuction.Infrastructure.HubContext
 {
     public static class ClientProxyExtensions
     {

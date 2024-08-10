@@ -1,5 +1,4 @@
-﻿
-using HouseAuction.HubContext;
+﻿using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Lobby.Domain;
 using HouseAuction.Lobby.Reactions;
 using HouseAuction.Lobby.Requests;

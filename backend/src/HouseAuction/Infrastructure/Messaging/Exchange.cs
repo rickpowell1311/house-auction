@@ -1,4 +1,4 @@
-﻿namespace HouseAuction.Messaging
+﻿namespace HouseAuction.Infrastructure.Messaging
 {
     public class Exchange
     {

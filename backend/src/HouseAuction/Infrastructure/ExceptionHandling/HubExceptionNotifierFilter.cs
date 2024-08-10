@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace HouseAuction.ExceptionHandling
+namespace HouseAuction.Infrastructure.ExceptionHandling
 {
     public class HubExceptionNotifierFilter : IHubFilter
     {
