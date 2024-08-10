@@ -50,15 +50,11 @@ export type JoinLobbyRequest = {
 export type ReadyUpRequest = {
     /** Transpiled from string */
     gameId?: string;
-    /** Transpiled from string */
-    name?: string;
 }
 
 /** Transpiled from HouseAuction.Lobby.Requests.StartGame.StartGameRequest */
 export type StartGameRequest = {
     /** Transpiled from string */
     gameId?: string;
-    /** Transpiled from string */
-    name?: string;
 }
 

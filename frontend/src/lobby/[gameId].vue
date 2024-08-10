@@ -6,10 +6,10 @@ import type { OnLobbyMembersChangedReactionGamer } from '@/_shared/providers/gen
 import type { FetchLobbyResponseGamer } from '@/_shared/providers/generated/HouseAuction.Lobby.Requests';
 import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key } from '@/_shared/providers/signalRClient';
+import { PhCheck } from '@phosphor-icons/vue';
 import { computed, inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Button from '../_shared/components/Button.vue';
-import { PhCheck } from '@phosphor-icons/vue';
 
 const signalRClient = inject<SignalRClient>(Key);
 const route = useRoute();
@@ -30,15 +30,13 @@ const iAmCreator = computed(() => {
 
 const readyUp = async () => {
   await signalRClient?.hub.readyUp({
-    gameId: gameId,
-    name: players.value?.find(x => x.isMe)?.name
+    gameId: gameId
   })
 }
 
 const startGame = async () => {
   await signalRClient?.hub?.startGame({
-    gameId: gameId,
-    name: players.value?.find(x => x.isMe)?.name
+    gameId: gameId
   })
 }
 
@@ -53,7 +51,7 @@ onMounted(async () => {
     // In this case, push to home and force a rejoin
     router.push('/home');
   }
-  
+
   signalRClient?.subscribe({
     onLobbyMembersChanged(reaction) {
       players.value = reaction.gamers;
@@ -93,7 +91,8 @@ onMounted(async () => {
             </div>
             <div>
               <Button v-if="iAmCreator" :disabled="!isGameReady" @click="startGame">Start Game</Button>
-              <p v-else-if="isGameReady" class="text-primary">Waiting <span v-if="creator">for {{ creator?.name }}</span> to start the game</p>
+              <p v-else-if="isGameReady" class="text-primary">Waiting <span v-if="creator">for {{ creator?.name
+                  }}</span> to start the game</p>
             </div>
           </div>
         </div>

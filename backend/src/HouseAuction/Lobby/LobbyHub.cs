@@ -153,7 +153,7 @@ namespace HouseAuction.Lobby
                 .OnGameStarted(new OnGameStarted.OnGameStartedReaction());
         }
 
-        public async Task OnDisconnectedAsync(Exception exception)
+        public async Task OnDisconnectedAsync()
         {
             var lobbies = await _context.Lobbies
                 .Where(x => x.Gamers

@@ -100,6 +100,10 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
     public readonly startGame = async (request: StartGameRequest): Promise<void> => {
         return await this.connection.invoke("StartGame", request);
     }
+
+    public readonly onDisconnectedAsync = async (): Promise<void> => {
+        return await this.connection.invoke("OnDisconnectedAsync");
+    }
 }
 
 

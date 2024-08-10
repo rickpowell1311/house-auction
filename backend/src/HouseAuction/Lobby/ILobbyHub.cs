@@ -14,6 +14,6 @@ namespace HouseAuction.Lobby
 
         Task StartGame(StartGame.StartGameRequest request);
 
-        Task OnDisconnectedAsync(Exception exception);
+        Task OnDisconnectedAsync();
     }
 }

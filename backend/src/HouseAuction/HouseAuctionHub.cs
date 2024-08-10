@@ -10,9 +10,14 @@ namespace HouseAuction
 
         private readonly ILobbyHub _lobbyHub = lobbyHub;
 
+        public async Task OnDisconnectedAsync()
+        {
+            await _lobbyHub.OnDisconnectedAsync();
+        }
+
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await _lobbyHub.OnDisconnectedAsync(exception);
+            await OnDisconnectedAsync();
         }
 
         public async Task<CreateLobby.CreateLobbyResponse> CreateLobby(CreateLobby.CreateLobbyRequest request)

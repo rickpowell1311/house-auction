@@ -32,6 +32,10 @@ export type IHouseAuctionHub = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     startGame(request: StartGameRequest): Promise<void>;
+    /**
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    onDisconnectedAsync(): Promise<void>;
 }
 
 export type IHouseAuctionReceiver = {
