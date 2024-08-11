@@ -3,21 +3,20 @@
     public class PlayerCycle
     {
         private readonly Dictionary<int, string> _players;
+        public IReadOnlyDictionary<int, string> Players => _players;
 
-        private int _currentPlayerIndex = 0;
+        public int CurrentPlayerIndex { get; private set; }
 
-        public int TotalPlayers => _players.Count;
+        public string CurrentPlayer => _players[CurrentPlayerIndex];
 
         public PlayerCycle(Dictionary<int, string> players)
         {
             _players = players;
         }
 
-        public string CurrentPlayer => _players[_currentPlayerIndex];
-
         public void Next()
         {
-            _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.Count;
+            CurrentPlayerIndex = (CurrentPlayerIndex + 1) % _players.Count;
         }
     }
 }

@@ -2,15 +2,18 @@
 {
     public class BiddingRound
     {
-        private readonly PlayerCycle _playerCycle;
+        public PlayerCycle PlayerCycle { get; }
+
         private readonly Dictionary<string, Play> _plays;
+        public IReadOnlyDictionary<string, Play> Plays => _plays;
         
-        public bool HasFinished => _plays.Count == _playerCycle.TotalPlayers
-            && _plays.Values.Where(x => !x.IsPass).Count() <= 1;
+        public bool HasFinished => 
+            (Plays.Count == PlayerCycle.Players.Count && Plays.Values.Where(x => !x.IsPass).Count() <= 1)
+            || (Plays.Count == PlayerCycle.Players.Count - 1 && Plays.Values.All(x => x.IsPass));
 
         public BiddingRound(PlayerCycle playerCycle)
         {
-            _playerCycle = playerCycle;
+            PlayerCycle = playerCycle;
             _plays = [];
         }
 
@@ -21,12 +24,12 @@
                 throw new InvalidOperationException("Round has finished");
             }
 
-            if (_playerCycle.CurrentPlayer != player)
+            if (PlayerCycle.CurrentPlayer != player)
             {
                 throw new InvalidOperationException($"It's not {player}'s turn");
             }
 
-            var highestBid = _plays.Values
+            var highestBid = Plays.Values
                 .Select(x => x.Amount)
                 .DefaultIfEmpty(0)
                 .Max();
@@ -40,13 +43,13 @@
 
             if (!HasFinished)
             {
-                _playerCycle.Next();
+                PlayerCycle.Next();
 
-                var nextPlayer = _playerCycle.CurrentPlayer;
-                while (_plays.ContainsKey(nextPlayer) && _plays[nextPlayer].IsPass)
+                var nextPlayer = PlayerCycle.CurrentPlayer;
+                while (Plays.ContainsKey(nextPlayer) && Plays[nextPlayer].IsPass)
                 {
-                    _playerCycle.Next();
-                    nextPlayer = _playerCycle.CurrentPlayer;
+                    PlayerCycle.Next();
+                    nextPlayer = PlayerCycle.CurrentPlayer;
                 }
             }
         }
