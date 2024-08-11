@@ -11,9 +11,7 @@ namespace HouseAuction.Tests.Bidding.Domain
             IEnumerable<(string Player, Play Play)> plays)
         {
             var biddingRound = new BiddingRound(
-                new PlayerCycle(players
-                    .Select((x, i) => new { Player = x, Order = i })
-                    .ToDictionary(x => x.Order, x => x.Player)));
+                new PlayerCycle(players));
             
             foreach (var (player, play) in plays)
             {

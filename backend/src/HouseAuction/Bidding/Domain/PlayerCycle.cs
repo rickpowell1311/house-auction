@@ -9,9 +9,14 @@
 
         public string CurrentPlayer => _players[CurrentPlayerIndex];
 
-        public PlayerCycle(Dictionary<int, string> players)
+        public PlayerCycle(IEnumerable<string> players)
         {
-            _players = players;
+            var shuffledOrder = players
+                .OrderBy(x => new Random().NextDouble())
+                .Select((x, i) => (x, i))
+                .ToDictionary(y => y.i, y => y.x);
+
+            _players = shuffledOrder;
         }
 
         public void Next()
