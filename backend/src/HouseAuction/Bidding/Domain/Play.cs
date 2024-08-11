@@ -12,7 +12,7 @@
             IsPass = isPass;
         }
 
-        public static Play Pass(string player) => new(0, true);
+        public static Play Pass => new(0, true);
 
         public static Play Bid(int amount)
         {

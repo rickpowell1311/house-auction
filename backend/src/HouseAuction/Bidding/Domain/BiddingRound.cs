@@ -34,7 +34,7 @@
                 .DefaultIfEmpty(0)
                 .Max();
 
-            if (play.Amount <= highestBid)
+            if (!play.IsPass && play.Amount <= highestBid)
             {
                 throw new InvalidOperationException($"Bid must be higher than {highestBid}");
             }
