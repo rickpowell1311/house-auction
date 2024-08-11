@@ -116,10 +116,8 @@ namespace HouseAuction.Lobby.Domain
                 GameId = GameId,
                 Gamers = Gamers.Select(x => new LobbyConfirmed.Gamer
                 {
-                    IsHost = x.ConnectionId == Creator.ConnectionId,
                     Name = x.Name,
-                    GroupName = x.GroupName,
-                    ConnectionId = x.ConnectionId
+                    GroupName = x.GroupName
                 }).ToList()
             });
 
