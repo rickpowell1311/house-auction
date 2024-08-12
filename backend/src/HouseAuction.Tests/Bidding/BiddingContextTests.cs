@@ -62,6 +62,7 @@ namespace HouseAuction.Tests.Bidding
             Assert.NotNull(rehydratedBiddingPhase.PlayerCycle);
             Assert.NotNull(rehydratedBiddingPhase.Deck);
             Assert.NotEmpty(rehydratedBiddingPhase.BiddingRounds);
+            Assert.NotEmpty(rehydratedBiddingPhase.Hands);
 
             return rehydratedBiddingPhase;
         }

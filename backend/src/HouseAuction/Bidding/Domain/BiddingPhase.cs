@@ -8,6 +8,9 @@
 
         public IEnumerable<BiddingRound> BiddingRounds => _rounds;
 
+        private readonly List<Hand> _hands;
+        public IEnumerable<Hand> Hands => _hands;
+
         public Deck Deck { get; private set; }
 
         public PlayerCycle PlayerCycle { get; private set; }
@@ -30,6 +33,15 @@
             for (var i = 0; i < Deck.Properties.Count() / Deck.DealSizePerRound; i++)
             {
                 _rounds.Add(new BiddingRound(i, this));
+            }
+
+            _hands = [];
+            for (var i = 0; i < players.Count; i++)
+            {
+                _hands.Add(Hand.ForPlayer(
+                    gameId, 
+                    players[i],
+                    players.Count));
             }
         }
 

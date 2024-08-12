@@ -11,20 +11,21 @@
 
         public int Coins { get; private set; }
 
-        public Hand(string biddingPhaseId, string player, List<string> players)
+        public static Hand ForPlayer(
+            string biddingPhaseId, 
+            string player, 
+            int numberOfPlayers)
         {
-            Coins = players.Count switch
+            var coins = numberOfPlayers switch
             {
                 3 => 28,
                 4 => 21,
                 5 => 16,
                 6 => 14,
-                _ => throw new ArgumentOutOfRangeException(nameof(players))
+                _ => throw new ArgumentOutOfRangeException(nameof(numberOfPlayers))
             };
 
-            Player = player;
-
-            _properties = [];
+            return new Hand(biddingPhaseId, player, coins);
         }
 
         private Hand(string biddingPhaseId, string player, int coins)

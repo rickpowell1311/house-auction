@@ -18,9 +18,9 @@
             return new Deck(numberOfPlayers) { _properties = properties };
         }
 
-        private Deck(int dealSize)
+        private Deck(int dealSizePerRound)
         {
-            DealSizePerRound = dealSize;
+            DealSizePerRound = dealSizePerRound;
         }
 
         public List<int> ForRound(int round)

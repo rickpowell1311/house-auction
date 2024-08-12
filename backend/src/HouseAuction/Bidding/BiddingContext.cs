@@ -22,6 +22,9 @@ namespace HouseAuction.Bidding
             biddingPhaseConfig.OwnsOne(x => x.Deck);
             biddingPhaseConfig.HasMany(x => x.BiddingRounds)
                 .WithOne(x => x.BiddingPhase);
+            biddingPhaseConfig.HasMany(x => x.Hands)
+                .WithOne()
+                .HasForeignKey(x => x.BiddingPhaseId);
             biddingPhaseConfig.HasOne(x => x.PlayerCycle)
                 .WithOne()
                 .HasForeignKey<PlayerCycle>(x => x.BiddingPhaseId);
