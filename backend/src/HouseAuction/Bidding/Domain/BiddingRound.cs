@@ -2,18 +2,25 @@
 {
     public class BiddingRound
     {
+        public int RoundNumber { get; }
+
+        public string GameId { get; }
+
         public PlayerCycle PlayerCycle { get; }
 
         private readonly Dictionary<string, Play> _plays;
+
         public IReadOnlyDictionary<string, Play> Plays => _plays;
         
         public bool HasFinished => 
             (Plays.Count == PlayerCycle.Players.Count && Plays.Values.Where(x => !x.IsPass).Count() <= 1)
             || (Plays.Count == PlayerCycle.Players.Count - 1 && Plays.Values.All(x => x.IsPass));
 
-        public BiddingRound(PlayerCycle playerCycle)
+        public BiddingRound(int roundNumber, string gameId, PlayerCycle playerCycle)
         {
+            GameId = gameId;
             PlayerCycle = playerCycle;
+
             _plays = [];
         }
 
