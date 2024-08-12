@@ -27,7 +27,7 @@
             GameId = gameId;
 
             _rounds = [];
-            for (var i = 0; i < Deck.Properties.Count() / Deck.DealSize; i++)
+            for (var i = 0; i < Deck.Properties.Count() / Deck.DealSizePerRound; i++)
             {
                 _rounds.Add(new BiddingRound(i, this));
             }

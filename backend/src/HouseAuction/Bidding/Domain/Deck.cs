@@ -2,7 +2,7 @@
 {
     public class Deck
     {
-        public int DealSize { get; private set; }
+        public int DealSizePerRound { get; private set; }
 
         private List<int> _properties;
         public IEnumerable<int> Properties => _properties;
@@ -20,12 +20,17 @@
 
         private Deck(int dealSize)
         {
-            DealSize = dealSize;
+            DealSizePerRound = dealSize;
         }
 
         public List<int> ForRound(int round)
         {
-            return _properties.Skip(round * DealSize).Take(DealSize).ToList();
+            if (round * DealSizePerRound >= _properties.Count)
+            {
+                throw new InvalidOperationException("Deck does not have any more properties to deal");
+            }
+
+            return _properties.Skip(round * DealSizePerRound).Take(DealSizePerRound).ToList();
         }
     }
 }
