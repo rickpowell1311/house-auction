@@ -23,7 +23,7 @@ namespace HouseAuction.Tests.Bidding
             using var context = Context();
             var biddingPhase = await CreateBiddingPhase(context);
 
-            Assert.Single(biddingPhase.BiddingRounds);
+            Assert.NotEmpty(biddingPhase.BiddingRounds);
 
             var biddingRound = await GetFirstBiddingRound(context, biddingPhase);
 

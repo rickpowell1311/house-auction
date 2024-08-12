@@ -12,31 +12,30 @@
 
         public PlayerCycle PlayerCycle { get; private set; }
 
-        public bool HasFinished => BiddingRounds.Count() * PlayerCycle.Players.Count >= 28
-            && BiddingRounds.All(x => x.HasFinished);
+        public BiddingRound CurrentRound => BiddingRounds
+            .OrderBy(x => x.RoundNumber)
+            .FirstOrDefault(x => !x.HasFinished);
+
+        public List<int> CurrentDeal => Deck.ForRound(CurrentRound.RoundNumber);
+
+        public bool HasFinished => BiddingRounds.All(x => x.HasFinished);
 
         public BiddingPhase(string gameId, List<string> players)
         {
-            Deck = new Deck(players.Count);
+            Deck = Deck.ForNumberOfPlayers(players.Count);
             PlayerCycle = new PlayerCycle(gameId, players);
             GameId = gameId;
 
-            _rounds = new List<BiddingRound>();
-            NextRound();
+            _rounds = [];
+            for (var i = 0; i < Deck.Properties.Count() / Deck.DealSize; i++)
+            {
+                _rounds.Add(new BiddingRound(i, this));
+            }
         }
 
         private BiddingPhase(string gameId)
         {
             GameId = gameId;
-        }
-
-        public void NextRound()
-        {
-            var nextRound = _rounds.Select(x => x.RoundNumber).DefaultIfEmpty(-1).Max() + 1;
-
-            _rounds.Add(new BiddingRound(nextRound, this));
-
-            Deck.DealNext();
         }
     }
 }
