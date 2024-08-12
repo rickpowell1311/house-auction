@@ -1,42 +1,45 @@
-﻿namespace HouseAuction.Bidding.Domain
+﻿using System.Linq;
+
+namespace HouseAuction.Bidding.Domain
 {
     public class BiddingRound
     {
         public int RoundNumber { get; }
 
-        public string GameId { get; }
+        public string BiddingPhaseId { get; }
 
         public PlayerCycle PlayerCycle { get; }
 
-        private readonly Dictionary<string, Play> _plays;
 
-        public IReadOnlyDictionary<string, Play> Plays => _plays;
+        private readonly List<Play> _plays;
+
+        public IEnumerable<Play> Plays => _plays;
         
-        public bool HasFinished => 
-            (Plays.Count == PlayerCycle.Players.Count && Plays.Values.Where(x => !x.IsPass).Count() <= 1)
-            || (Plays.Count == PlayerCycle.Players.Count - 1 && Plays.Values.All(x => x.IsPass));
+        public bool HasFinished =>
+            (_plays.Players().Count() == PlayerCycle.Players.Count && _plays.PlayersWhoPassed().Count() >= (PlayerCycle.Players.Count - 1))
+            || (_plays.Count == PlayerCycle.Players.Count - 1 && _plays.All(x => x.IsPass));
 
-        public BiddingRound(int roundNumber, string gameId, PlayerCycle playerCycle)
+        public BiddingRound(int roundNumber, string biddingPhaseId, PlayerCycle playerCycle)
         {
-            GameId = gameId;
+            BiddingPhaseId = biddingPhaseId;
             PlayerCycle = playerCycle;
 
             _plays = [];
         }
 
-        public void MakePlay(string player, Play play)
+        public void MakePlay(Play play)
         {
             if (HasFinished)
             {
                 throw new InvalidOperationException("Round has finished");
             }
 
-            if (PlayerCycle.CurrentPlayer != player)
+            if (PlayerCycle.CurrentPlayer != play.Player)
             {
-                throw new InvalidOperationException($"It's not {player}'s turn");
+                throw new InvalidOperationException($"It's not {play.Player}'s turn");
             }
 
-            var highestBid = Plays.Values
+            var highestBid = _plays
                 .Select(x => x.Amount)
                 .DefaultIfEmpty(0)
                 .Max();
@@ -46,17 +49,15 @@
                 throw new InvalidOperationException($"Bid must be higher than {highestBid}");
             }
 
-            _plays[player] = play;
+            _plays.Add(play);
 
             if (!HasFinished)
             {
                 PlayerCycle.Next();
 
-                var nextPlayer = PlayerCycle.CurrentPlayer;
-                while (Plays.ContainsKey(nextPlayer) && Plays[nextPlayer].IsPass)
+                while (Plays.PlayersWhoPassed().Contains(PlayerCycle.CurrentPlayer))
                 {
                     PlayerCycle.Next();
-                    nextPlayer = PlayerCycle.CurrentPlayer;
                 }
             }
         }

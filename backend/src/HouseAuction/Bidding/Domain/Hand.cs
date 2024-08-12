@@ -2,6 +2,8 @@
 {
     public class Hand
     {
+        public string BiddingPhaseId { get; }
+
         public string Player { get; }
 
         private List<int> _properties;
@@ -9,7 +11,7 @@
 
         public int Coins { get; private set; }
 
-        public Hand(string player, int numberOfPlayers)
+        public Hand(string biddingPhaseId, string player, int numberOfPlayers)
         {
             Coins = numberOfPlayers switch
             {
@@ -25,11 +27,21 @@
             _properties = [];
         }
 
+        public Hand(string biddingPhaseId, string player, int coins, List<int> properties)
+        {
+            BiddingPhaseId = biddingPhaseId;
+            Player = player;
+            Coins = coins;
+            _properties = properties;
+        }
+
         public void BuyProperty(int property, Play play, bool isBiddingRoundWinner)
         {
             _properties.Add(property);
 
-            Coins -= isBiddingRoundWinner ? play.Amount : ((play.Amount / 2) + (play.Amount % 2));
+            var coinsBid = play.Amount ?? 0;
+
+            Coins -= isBiddingRoundWinner ? coinsBid : ((coinsBid / 2) + (coinsBid % 2));
         }
     }
 }

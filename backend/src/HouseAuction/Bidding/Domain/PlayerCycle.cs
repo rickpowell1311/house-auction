@@ -19,6 +19,12 @@
             _players = shuffledOrder;
         }
 
+        public PlayerCycle(Dictionary<int, string> players, int currentPlayerIndex)
+        {
+            _players = players;
+            CurrentPlayerIndex = currentPlayerIndex;
+        }
+
         public void Next()
         {
             CurrentPlayerIndex = (CurrentPlayerIndex + 1) % _players.Count;

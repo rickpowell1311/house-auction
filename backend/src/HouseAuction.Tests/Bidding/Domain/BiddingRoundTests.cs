@@ -8,14 +8,15 @@ namespace HouseAuction.Tests.Bidding.Domain
         [Theory, MemberData(nameof(RoundEndingScenarios))]
         public void RoundEndsWhenExpected(
             List<string> players, 
-            IEnumerable<(string Player, Play Play)> plays)
+            IEnumerable<Play> plays)
         {
-            var biddingRound = new BiddingRound(
-                new PlayerCycle(players));
+            var biddingRound = new BiddingRound(0, "XGHLK", new PlayerCycle(players
+                .Select((x, i) => new { Player = x, Order = i })
+                .ToDictionary(x => x.Order, x => x.Player), 0));
             
-            foreach (var (player, play) in plays)
+            foreach (var play in plays)
             {
-                biddingRound.MakePlay(player, play);
+                biddingRound.MakePlay(play);
             }
 
             Assert.True(biddingRound.HasFinished);
@@ -35,7 +36,7 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = gamers.Take(2).Select(x => (x, Play.Pass));
+                var plays = gamers.Take(2).Select(Play.Pass);
 
                 return [gamers, plays];
             }
@@ -46,11 +47,11 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<(string, Play)>
+                var plays = new List<Play>
                 {
-                    (gamers[0], Play.Pass),
-                    (gamers[1], Play.Bid(1)),
-                    (gamers[2], Play.Pass)
+                    Play.Pass(gamers[0]),
+                    Play.Bid(gamers[1], 1),
+                    Play.Pass(gamers[2])
                 };
 
                 return [gamers, plays];
@@ -62,13 +63,13 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<(string, Play)>
+                var plays = new List<Play>
                 {
-                    (gamers[0], Play.Bid(1)),
-                    (gamers[1], Play.Bid(2)),
-                    (gamers[2], Play.Pass),
-                    (gamers[0], Play.Bid(3)),
-                    (gamers[1], Play.Pass)
+                    Play.Bid(gamers[0], 1),
+                    Play.Bid(gamers[1], 2),
+                    Play.Pass(gamers[2]),
+                    Play.Bid(gamers[0], 3),
+                    Play.Pass(gamers[1])
                 };
 
                 return [gamers, plays];
@@ -80,14 +81,14 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<(string, Play)>
+                var plays = new List<Play>
                 {
-                    (gamers[0], Play.Bid(1)),
-                    (gamers[1], Play.Bid(2)),
-                    (gamers[2], Play.Pass),
-                    (gamers[0], Play.Bid(3)),
-                    (gamers[1], Play.Bid(4)),
-                    (gamers[0], Play.Pass)
+                    Play.Bid(gamers[0], 1),
+                    Play.Bid(gamers[1], 2),
+                    Play.Pass(gamers[2]),
+                    Play.Bid(gamers[0], 3),
+                    Play.Bid(gamers[1], 4),
+                    Play.Pass(gamers[0])
                 };
 
                 return [gamers, plays];
