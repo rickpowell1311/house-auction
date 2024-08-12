@@ -8,14 +8,17 @@ namespace HouseAuction.Tests.Bidding.Domain
         [Theory, MemberData(nameof(RoundEndingScenarios))]
         public void RoundEndsWhenExpected(
             List<string> players, 
-            IEnumerable<Play> plays)
+            IEnumerable<(int playerNumber, int? amount, bool isPass)> plays)
         {
-            var biddingRound = new BiddingRound(0, "XGHLK", new PlayerCycle(players
-                .Select((x, i) => new { Player = x, Order = i })
-                .ToDictionary(x => x.Order, x => x.Player), 0));
-            
-            foreach (var play in plays)
+            var biddingPhase = new BiddingPhase(GameId.Generate(), players);
+
+            var biddingRound = new BiddingRound(0, biddingPhase);
+
+            foreach (var (playerNumber, amount, isPass) in plays)
             {
+                var player = biddingPhase.PlayerCycle.Players[playerNumber];
+                var play = isPass ? Play.Pass(player) : Play.Bid(player, amount.Value);
+
                 biddingRound.MakePlay(play);
             }
 
@@ -36,7 +39,11 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = gamers.Take(2).Select(Play.Pass);
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
+                {
+                    (0, null, true),
+                    (1, null, true)
+                };
 
                 return [gamers, plays];
             }
@@ -47,11 +54,11 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<Play>
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
                 {
-                    Play.Pass(gamers[0]),
-                    Play.Bid(gamers[1], 1),
-                    Play.Pass(gamers[2])
+                    (0, null, true),
+                    (1, 1, false),
+                    (2, null, true),
                 };
 
                 return [gamers, plays];
@@ -63,13 +70,14 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<Play>
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
                 {
-                    Play.Bid(gamers[0], 1),
-                    Play.Bid(gamers[1], 2),
-                    Play.Pass(gamers[2]),
-                    Play.Bid(gamers[0], 3),
-                    Play.Pass(gamers[1])
+                    (0, 1, false),
+                    (1, 2, false),
+                    (2, null, true),
+                    (0, 3, false),
+                    (1, 4, false),
+                    (0, null, true)
                 };
 
                 return [gamers, plays];
@@ -81,14 +89,14 @@ namespace HouseAuction.Tests.Bidding.Domain
             get
             {
                 var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
-                var plays = new List<Play>
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
                 {
-                    Play.Bid(gamers[0], 1),
-                    Play.Bid(gamers[1], 2),
-                    Play.Pass(gamers[2]),
-                    Play.Bid(gamers[0], 3),
-                    Play.Bid(gamers[1], 4),
-                    Play.Pass(gamers[0])
+                    (0, 1, false),
+                    (1, 2, false),
+                    (2, null, true),
+                    (0, 3, false),
+                    (1, 4, false),
+                    (0, null, true)
                 };
 
                 return [gamers, plays];

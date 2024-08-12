@@ -4,7 +4,7 @@ namespace HouseAuction.Bidding.Domain
 {
     public class Play
     {
-        public string Player { get; }
+        public string Player { get; private set; }
 
         public int? Amount { get; private set; }
 

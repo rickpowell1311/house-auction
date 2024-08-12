@@ -4,11 +4,11 @@ namespace HouseAuction.Bidding.Domain
 {
     public class BiddingRound
     {
-        public int RoundNumber { get; }
+        public Guid Id { get; private set; }
 
-        public string BiddingPhaseId { get; }
+        public int RoundNumber { get; private set; }
 
-        public PlayerCycle PlayerCycle { get; }
+        public BiddingPhase BiddingPhase { get; private set; }
 
 
         private readonly List<Play> _plays;
@@ -16,15 +16,21 @@ namespace HouseAuction.Bidding.Domain
         public IEnumerable<Play> Plays => _plays;
         
         public bool HasFinished =>
-            (_plays.Players().Count() == PlayerCycle.Players.Count && _plays.PlayersWhoPassed().Count() >= (PlayerCycle.Players.Count - 1))
-            || (_plays.Count == PlayerCycle.Players.Count - 1 && _plays.All(x => x.IsPass));
+            (_plays.Players().Count() == BiddingPhase.PlayerCycle.Players.Count && _plays.PlayersWhoPassed().Count() >= (BiddingPhase.PlayerCycle.Players.Count - 1))
+            || (_plays.Count == BiddingPhase.PlayerCycle.Players.Count - 1 && _plays.All(x => x.IsPass));
 
-        public BiddingRound(int roundNumber, string biddingPhaseId, PlayerCycle playerCycle)
+        public BiddingRound(int roundNumber, BiddingPhase biddingPhase)
         {
-            BiddingPhaseId = biddingPhaseId;
-            PlayerCycle = playerCycle;
+            Id = Guid.NewGuid();
+            BiddingPhase = biddingPhase;
 
             _plays = [];
+        }
+
+        private BiddingRound(Guid id, int roundNumber)
+        {
+            Id = id;
+            RoundNumber = roundNumber;
         }
 
         public void MakePlay(Play play)
@@ -34,7 +40,7 @@ namespace HouseAuction.Bidding.Domain
                 throw new InvalidOperationException("Round has finished");
             }
 
-            if (PlayerCycle.CurrentPlayer != play.Player)
+            if (BiddingPhase.PlayerCycle.CurrentPlayer != play.Player)
             {
                 throw new InvalidOperationException($"It's not {play.Player}'s turn");
             }
@@ -53,11 +59,11 @@ namespace HouseAuction.Bidding.Domain
 
             if (!HasFinished)
             {
-                PlayerCycle.Next();
+                BiddingPhase.PlayerCycle.Next();
 
-                while (Plays.PlayersWhoPassed().Contains(PlayerCycle.CurrentPlayer))
+                while (Plays.PlayersWhoPassed().Contains(BiddingPhase.PlayerCycle.CurrentPlayer))
                 {
-                    PlayerCycle.Next();
+                    BiddingPhase.PlayerCycle.Next();
                 }
             }
         }

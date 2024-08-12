@@ -1,7 +1,7 @@
 ﻿using HouseAuction.Lobby;
 using HouseAuction.Lobby.Domain;
 using HouseAuction.Tests._Shared.TestData;
-using HouseAuction.Tests.Lobby._Shared;
+using HouseAuction.Tests._Shared;
 
 namespace HouseAuction.Tests.Lobby
 {

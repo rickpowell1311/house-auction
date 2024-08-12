@@ -1,4 +1,5 @@
-﻿using HouseAuction.Infrastructure.ExceptionHandling;
+﻿using HouseAuction.Bidding;
+using HouseAuction.Infrastructure.ExceptionHandling;
 using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Messaging;
 using HouseAuction.Lobby;
@@ -18,6 +19,7 @@ namespace HouseAuction
             });
             services.AddMessaging();
             services.AddLobby();
+            services.AddBidding();
         }
     }
 }

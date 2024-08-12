@@ -25,12 +25,10 @@
             _properties = new List<int>(shuffledCards.Take(numberOfCards));
         }
 
-        public Deck(int dealSize, int dealt, List<int> properties)
+        private Deck(int dealSize, int dealt)
         {
             DealSize = dealSize;
             Dealt = dealt;
-
-            _properties = properties;
         }
 
         public void DealNext()

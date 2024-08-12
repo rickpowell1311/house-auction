@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using static HouseAuction.Tests.Lobby._Shared.HouseAuctionServicesFixture;
+﻿using Microsoft.Extensions.DependencyInjection;
+using static HouseAuction.Tests._Shared.HouseAuctionServicesFixture;
 
-namespace HouseAuction.Tests.Lobby._Shared
+namespace HouseAuction.Tests._Shared
 {
     [CollectionDefinition(CollectionName)]
     public class HouseAuctionServicesFixture : ICollectionFixture<Provider>
