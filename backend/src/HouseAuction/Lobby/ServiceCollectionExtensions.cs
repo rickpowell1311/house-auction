@@ -18,7 +18,8 @@ namespace HouseAuction.Lobby
                 {
                     // Outboxing configuration here
                     onwrdConfig.UseOnwardProcessor<ForwardMessageEvents>();
-                });
+                },
+                contextLifetime: ServiceLifetime.Transient);
         }
     }
 }
