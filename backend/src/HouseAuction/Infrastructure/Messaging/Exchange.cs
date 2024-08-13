@@ -2,16 +2,21 @@
 {
     public class Exchange
     {
-        private readonly IEnumerable<IMessageSubscriber> _subscribers;
+        private readonly IServiceProvider _serviceProvider;
 
-        public Exchange(IEnumerable<IMessageSubscriber> subscribers)
+        public Exchange(IServiceProvider serviceProvider)
         {
-            _subscribers = subscribers;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Publish<T>(T message)
         {
-            foreach (var subscriber in _subscribers.OfType<IMessageSubscriber<T>>())
+            using var messageExchangeScope = _serviceProvider.CreateScope();
+
+            foreach (var subscriber in messageExchangeScope.ServiceProvider
+                .GetRequiredService<IEnumerable<IMessageSubscriber>>()
+                .Select(x => x as IMessageSubscriber<T>)
+                .Where(x => x != default))
             {
                 await subscriber.Handle(message);
             }

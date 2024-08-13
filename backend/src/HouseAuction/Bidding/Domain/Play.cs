@@ -50,15 +50,25 @@ namespace HouseAuction.Bidding.Domain
                 .Distinct();
         }
 
-        public static int HighestBid(
+        public static int? HighestBid(
             this IEnumerable<Play> plays,
             string player)
         {
             return plays.GroupBy(x => x.Player)
                 .Where(x => x.Key == player)
-                .SelectMany(x => x.ToList().Select(y => y.Amount ?? 0))
-                .DefaultIfEmpty(0)
+                .SelectMany(x => x.ToList().Select(y => y.Amount))
+                .DefaultIfEmpty(null)
                 .Max();
+        }
+
+        public static string HighestBidder(
+            this IEnumerable<Play> plays)
+        {
+            return plays
+                .Where(x => !x.IsPass)
+                .OrderByDescending(x => x.Amount)
+                .Select(x => x.Player)
+                .FirstOrDefault();
         }
     }
 }

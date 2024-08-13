@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace HouseAuction.Infrastructure.HubContext

@@ -15,6 +15,16 @@
 
         public PlayerCycle PlayerCycle { get; private set; }
 
+        public BiddingRound CurrentBiddingRound => BiddingRounds
+            .Where(x => !x.HasFinished)
+            .OrderBy(x => x.RoundNumber)
+            .FirstOrDefault();
+
+        public BiddingRound PreviousBiddingRound => BiddingRounds
+            .Where(x => x.HasFinished)
+            .OrderByDescending(x => x.RoundNumber)
+            .FirstOrDefault();
+
         public bool HasFinished => BiddingRounds.All(x => x.HasFinished);
 
         public BiddingPhase(string gameId, List<string> players)

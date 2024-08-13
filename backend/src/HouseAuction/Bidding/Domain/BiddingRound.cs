@@ -50,7 +50,7 @@ namespace HouseAuction.Bidding.Domain
             RaiseEvent(new PlayerFinishedBidding
             {
                 Player = player,
-                BidAmount = highestBid,
+                BidAmount = highestBid ?? 0,
                 BiddingRoundId = Id,
                 FinishingPosition = finishingPosition,
             });
@@ -67,7 +67,7 @@ namespace HouseAuction.Bidding.Domain
                 RaiseEvent(new PlayerFinishedBidding
                 {
                     Player = winner,
-                    BidAmount = winningBid,
+                    BidAmount = winningBid ?? 0,
                     FinishingPosition = 0,
                     BiddingRoundId = Id
                 });

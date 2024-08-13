@@ -11,8 +11,6 @@ namespace HouseAuction.Messages.Lobby
         public class Gamer
         {
             public string Name { get; set; }
-
-            public string GroupName { get; set; }
         }
     }
 }

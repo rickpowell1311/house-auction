@@ -17,7 +17,7 @@ namespace HouseAuction.Bidding
 
             if (biddingPhase == null)
             {
-                biddingPhase = new Domain.BiddingPhase(message.GameId, message.Gamers.Select(x => x.GroupName).ToList());
+                biddingPhase = new Domain.BiddingPhase(message.GameId, message.Gamers.Select(x => x.Name).ToList());
 
                 _context.BiddingPhases.Add(biddingPhase);
 

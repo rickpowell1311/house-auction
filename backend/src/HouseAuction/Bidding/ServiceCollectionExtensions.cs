@@ -1,4 +1,5 @@
 ﻿using HouseAuction.Bidding.Domain.Events;
+using HouseAuction.Lobby;
 using Microsoft.EntityFrameworkCore;
 using Onwrd.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace HouseAuction.Bidding
     {
         public static void AddBidding(this IServiceCollection services)
         {
+            services.AddTransient<IBiddingHub, BiddingHub>();
             services.AddDbContext<BiddingContext>(
                 (serviceProvider, builder) =>
                 {

@@ -1,14 +1,17 @@
-﻿using HouseAuction.Lobby;
+﻿using HouseAuction.Bidding;
+using HouseAuction.Bidding.Requests;
+using HouseAuction.Lobby;
 using HouseAuction.Lobby.Requests;
 using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction
 {
-    public class HouseAuctionHub(ILobbyHub lobbyHub) : Hub<IHouseAuctionReceiver>, IHouseAuctionHub
+    public class HouseAuctionHub(ILobbyHub lobbyHub, IBiddingHub biddingHub) : Hub<IHouseAuctionReceiver>, IHouseAuctionHub
     {
         public const string Route = "/house-auction";
 
         private readonly ILobbyHub _lobbyHub = lobbyHub;
+        private readonly IBiddingHub _biddingHub = biddingHub;
 
         public async Task OnDisconnectedAsync()
         {
@@ -43,6 +46,11 @@ namespace HouseAuction
         public async Task StartGame(StartGame.StartGameRequest request)
         {
             await _lobbyHub.StartGame(request);
+        }
+
+        public async Task<GetBiddingPhase.GetBiddingPhaseResponse> GetBiddingPhase(GetBiddingPhase.GetBiddingPhaseRequest request)
+        {
+            return await _biddingHub.GetBiddingPhase(request);
         }
     }
 }

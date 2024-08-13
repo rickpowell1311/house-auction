@@ -1,10 +1,11 @@
-﻿using HouseAuction.Lobby;
+﻿using HouseAuction.Bidding;
+using HouseAuction.Lobby;
 using TypedSignalR.Client;
 
 namespace HouseAuction
 {
     [Hub]
-    public interface IHouseAuctionHub : ILobbyHub
+    public interface IHouseAuctionHub : ILobbyHub, IBiddingHub
     {
     }
 }

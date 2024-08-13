@@ -1,5 +1,4 @@
-﻿using Google.Cloud.Diagnostics.Common;
-using HouseAuction.Bidding.Domain;
+﻿using HouseAuction.Bidding.Domain;
 using HouseAuction.Tests._Shared.TestData;
 
 namespace HouseAuction.Tests.Bidding.Domain
