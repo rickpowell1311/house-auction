@@ -46,6 +46,26 @@ namespace HouseAuction.Tests.Bidding
             Assert.Single(biddingRound.Plays);
         }
 
+        [Fact]
+        public async Task CanCreateAndRehydrateHand()
+        {
+            using var context = Context();
+            var biddingPhase = await CreateBiddingPhase(context);
+            var biddingRound = await GetFirstBiddingRound(context, biddingPhase);
+
+            var player = biddingPhase.PlayerCycle.CurrentPlayer;
+            var hand = await context.Hands.FindAsync([biddingPhase.Hands.First().BiddingPhaseId, biddingPhase.Hands.First().Player]);
+            hand.BuyProperty(1, 1, false);
+            await context.SaveChangesAsync();
+
+            using var rehydrationContext = Context();
+            var rehydratedHand = await rehydrationContext.Hands.FindAsync([hand.BiddingPhaseId, hand.Player]);
+
+            Assert.NotNull(rehydratedHand);
+            Assert.NotEmpty(rehydratedHand.Properties);
+            Assert.Equal(hand.Coins, rehydratedHand.Coins);
+        }
+
         private async Task<BiddingPhase> CreateBiddingPhase(
             BiddingContext context)
         {

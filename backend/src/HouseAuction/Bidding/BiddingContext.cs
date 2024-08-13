@@ -49,7 +49,6 @@ namespace HouseAuction.Bidding
             var handConfig = modelBuilder.Entity<Hand>();
             handConfig.HasKey(x => new { x.BiddingPhaseId, x.Player });
             handConfig.Property(x => x.Properties)
-                .HasField("_properties")
                 .HasConversion(
                     x => JsonSerializer.Serialize(x, default(JsonSerializerOptions)),
                     x => JsonSerializer.Deserialize<List<int>>(x, default(JsonSerializerOptions)));

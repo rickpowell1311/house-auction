@@ -6,8 +6,7 @@
 
         public string Player { get; private set; }
 
-        private readonly List<int> _properties;
-        public IEnumerable<int> Properties => _properties;
+        public IReadOnlyList<int> Properties { get; private set; }
 
         public int Coins { get; private set; }
 
@@ -34,12 +33,12 @@
             Player = player;
             Coins = coins;
 
-            _properties = [];
+            Properties = [];
         }
 
         public void BuyProperty(int property, int? amount, bool isBiddingRoundWinner)
         {
-            _properties.Add(property);
+            Properties = Properties.Append(property).ToList();
 
             var coinsBid = amount ?? 0;
 

@@ -15,12 +15,6 @@
 
         public PlayerCycle PlayerCycle { get; private set; }
 
-        public BiddingRound CurrentRound => BiddingRounds
-            .OrderBy(x => x.RoundNumber)
-            .FirstOrDefault(x => !x.HasFinished);
-
-        public List<int> CurrentDeal => Deck.ForRound(CurrentRound.RoundNumber);
-
         public bool HasFinished => BiddingRounds.All(x => x.HasFinished);
 
         public BiddingPhase(string gameId, List<string> players)

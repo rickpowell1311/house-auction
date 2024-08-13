@@ -43,6 +43,35 @@ namespace HouseAuction.Bidding.Domain
             var play = Play.Pass(player, order);
 
             MakePlay(play);
+
+            var highestBid = Plays.HighestBid(player);
+            var finishingPosition = BiddingPhase.PlayerCycle.Players.Count - Plays.PlayersWhoPassed().Count();
+
+            RaiseEvent(new PlayerFinishedBidding
+            {
+                Player = player,
+                BidAmount = highestBid,
+                BiddingRoundId = Id,
+                FinishingPosition = finishingPosition,
+            });
+
+            var remainingPlayers = BiddingPhase.PlayerCycle.Players.Values
+                .Except(Plays.PlayersWhoPassed())
+                .ToList();
+
+            if (remainingPlayers.Count == 1)
+            {
+                var winner = remainingPlayers.Single();
+                var winningBid = Plays.HighestBid(winner);
+
+                RaiseEvent(new PlayerFinishedBidding
+                {
+                    Player = winner,
+                    BidAmount = winningBid,
+                    FinishingPosition = 0,
+                    BiddingRoundId = Id
+                });
+            }
         }
 
         public void Bid(string player, int amount)
@@ -86,13 +115,13 @@ namespace HouseAuction.Bidding.Domain
                     BiddingPhase.PlayerCycle.Next();
                 }
             }
-            else
-            {
-                RaiseEvent(new BiddingRoundComplete
-                {
-                    BiddingRoundId = this.Id
-                });
-            }
+            //else
+            //{
+            //    RaiseEvent(new BiddingRoundComplete
+            //    {
+            //        BiddingRoundId = this.Id
+            //    });
+            //}
         }
     }
 }

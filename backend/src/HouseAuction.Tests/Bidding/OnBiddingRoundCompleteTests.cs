@@ -54,6 +54,8 @@ namespace HouseAuction.Tests.Bidding
             Assert.Equal(
                 rehydratedBiddingPhase.Hands.Count(), 
                 rehydratedBiddingPhase.Hands.DistinctBy(x => x.Coins).Count());
+            Assert.Single(rehydratedBiddingPhase.BiddingRounds
+                .Where(x => x.HasFinished));
         }
 
         private BiddingContext Context()
