@@ -6,7 +6,7 @@
 
         public string Player { get; private set; }
 
-        private List<int> _properties;
+        private readonly List<int> _properties;
         public IEnumerable<int> Properties => _properties;
 
         public int Coins { get; private set; }
@@ -33,13 +33,15 @@
             BiddingPhaseId = biddingPhaseId;
             Player = player;
             Coins = coins;
+
+            _properties = [];
         }
 
-        public void BuyProperty(int property, Play play, bool isBiddingRoundWinner)
+        public void BuyProperty(int property, int? amount, bool isBiddingRoundWinner)
         {
             _properties.Add(property);
 
-            var coinsBid = play.Amount ?? 0;
+            var coinsBid = amount ?? 0;
 
             Coins -= isBiddingRoundWinner ? coinsBid : ((coinsBid / 2) + (coinsBid % 2));
         }

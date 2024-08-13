@@ -4,7 +4,7 @@
     {
         public int DealSizePerRound { get; private set; }
 
-        private List<int> _properties;
+        private readonly List<int> _properties;
         public IEnumerable<int> Properties => _properties;
 
         public static Deck ForNumberOfPlayers(int numberOfPlayers)
@@ -15,12 +15,17 @@
             var shuffledCards = cards.OrderBy(x => new Random().NextDouble()).ToList();
             var properties = new List<int>(shuffledCards.Take(numberOfCards));
 
-            return new Deck(numberOfPlayers) { _properties = properties };
+            var deck = new Deck(numberOfPlayers);
+            deck._properties.AddRange(properties);
+
+            return deck;
         }
 
         private Deck(int dealSizePerRound)
         {
             DealSizePerRound = dealSizePerRound;
+
+            _properties = [];
         }
 
         public List<int> ForRound(int round)

@@ -1,4 +1,5 @@
-﻿using HouseAuction.Bidding.Domain;
+﻿using Google.Cloud.Diagnostics.Common;
+using HouseAuction.Bidding.Domain;
 using HouseAuction.Tests._Shared.TestData;
 
 namespace HouseAuction.Tests.Bidding.Domain
@@ -8,7 +9,7 @@ namespace HouseAuction.Tests.Bidding.Domain
         [Theory, MemberData(nameof(RoundEndingScenarios))]
         public void RoundEndsWhenExpected(
             List<string> players, 
-            IEnumerable<(int playerNumber, int? amount, bool isPass)> plays)
+            List<(int playerNumber, int? amount, bool isPass)> plays)
         {
             var biddingPhase = new BiddingPhase(GameId.Generate(), players);
 
@@ -17,9 +18,15 @@ namespace HouseAuction.Tests.Bidding.Domain
             foreach (var (playerNumber, amount, isPass) in plays)
             {
                 var player = biddingPhase.PlayerCycle.Players[playerNumber];
-                var play = isPass ? Play.Pass(player) : Play.Bid(player, amount.Value);
 
-                biddingRound.MakePlay(play);
+                if (isPass)
+                {
+                    biddingRound.Pass(player);
+                }
+                else
+                {
+                    biddingRound.Bid(player, amount.Value);
+                }
             }
 
             Assert.True(biddingRound.HasFinished);

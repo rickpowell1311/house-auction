@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using HouseAuction.Bidding.Domain.Events;
+using Onwrd.EntityFrameworkCore;
+using System.Linq;
 
 namespace HouseAuction.Bidding.Domain
 {
-    public class BiddingRound
+    public class BiddingRound : EventRaiser
     {
         public Guid Id { get; private set; }
 
@@ -11,9 +13,9 @@ namespace HouseAuction.Bidding.Domain
         public BiddingPhase BiddingPhase { get; private set; }
 
 
-        private readonly List<Play> _plays;
+        private readonly ICollection<Play> _plays;
 
-        public IEnumerable<Play> Plays => _plays;
+        public IReadOnlyCollection<Play> Plays => _plays.ToList();
         
         public bool HasFinished =>
             (_plays.Players().Count() == BiddingPhase.PlayerCycle.Players.Count && _plays.PlayersWhoPassed().Count() >= (BiddingPhase.PlayerCycle.Players.Count - 1))
@@ -31,9 +33,27 @@ namespace HouseAuction.Bidding.Domain
         {
             Id = id;
             RoundNumber = roundNumber;
+
+            _plays = [];
         }
 
-        public void MakePlay(Play play)
+        public void Pass(string player)
+        {
+            var order = Plays.Select(x => x.Order).DefaultIfEmpty(-1).Max() + 1;
+            var play = Play.Pass(player, order);
+
+            MakePlay(play);
+        }
+
+        public void Bid(string player, int amount)
+        {
+            var order = Plays.Select(x => x.Order).DefaultIfEmpty(-1).Max() + 1;
+            var play = Play.Bid(player, order, amount);
+
+            MakePlay(play);
+        }
+
+        private void MakePlay(Play play)
         {
             if (HasFinished)
             {
@@ -65,6 +85,13 @@ namespace HouseAuction.Bidding.Domain
                 {
                     BiddingPhase.PlayerCycle.Next();
                 }
+            }
+            else
+            {
+                RaiseEvent(new BiddingRoundComplete
+                {
+                    BiddingRoundId = this.Id
+                });
             }
         }
     }

@@ -4,11 +4,11 @@
     {
         public string GameId { get; private set; }
 
-        private readonly List<BiddingRound> _rounds;
+        private readonly ICollection<BiddingRound> _rounds;
 
         public IEnumerable<BiddingRound> BiddingRounds => _rounds;
 
-        private readonly List<Hand> _hands;
+        private readonly ICollection<Hand> _hands;
         public IEnumerable<Hand> Hands => _hands;
 
         public Deck Deck { get; private set; }
@@ -48,6 +48,9 @@
         private BiddingPhase(string gameId)
         {
             GameId = gameId;
+
+            _rounds = [];
+            _hands = [];
         }
     }
 }

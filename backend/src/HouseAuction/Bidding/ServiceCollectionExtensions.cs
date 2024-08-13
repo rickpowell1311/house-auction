@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HouseAuction.Bidding.Domain.Events;
+using Microsoft.EntityFrameworkCore;
 using Onwrd.EntityFrameworkCore;
 
 namespace HouseAuction.Bidding
@@ -14,7 +15,10 @@ namespace HouseAuction.Bidding
                 },
                 onwrdConfig =>
                 {
-                    onwrdConfig.UseOnwardProcessor<ForwardMessageEvents>();
+                    onwrdConfig.UseOnwardProcessors(x =>
+                    {
+                        x.Register<BiddingRoundComplete, OnBiddingRoundComplete>();
+                    });
                 },
                 contextLifetime: ServiceLifetime.Transient);
         }

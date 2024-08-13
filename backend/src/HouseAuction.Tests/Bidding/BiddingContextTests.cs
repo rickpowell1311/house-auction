@@ -38,12 +38,12 @@ namespace HouseAuction.Tests.Bidding
             var biddingRound = await GetFirstBiddingRound(context, biddingPhase);
 
             var player = biddingPhase.PlayerCycle.CurrentPlayer;
-            biddingRound.MakePlay(Play.Bid(player, 1));
+            biddingRound.Bid(player, 1);
 
             await context.SaveChangesAsync();
 
-            var rehydrated = await context.BiddingRounds.FindAsync(biddingRound.Id);
-            Assert.Single(rehydrated.Plays);
+            await context.Entry(biddingRound).ReloadAsync();
+            Assert.Single(biddingRound.Plays);
         }
 
         private async Task<BiddingPhase> CreateBiddingPhase(
@@ -57,14 +57,17 @@ namespace HouseAuction.Tests.Bidding
 
             await context.SaveChangesAsync();
 
-            var rehydratedBiddingPhase = await context.BiddingPhases.FindAsync(biddingPhase.GameId);
-            Assert.NotNull(rehydratedBiddingPhase);
+            using var rehydrationContext = Context();
+            var rehydratedBiddingPhase = await rehydrationContext.BiddingPhases
+                .FindAsync(biddingPhase.GameId);
+
             Assert.NotNull(rehydratedBiddingPhase.PlayerCycle);
             Assert.NotNull(rehydratedBiddingPhase.Deck);
+            Assert.NotEmpty(rehydratedBiddingPhase.Deck.Properties);
             Assert.NotEmpty(rehydratedBiddingPhase.BiddingRounds);
             Assert.NotEmpty(rehydratedBiddingPhase.Hands);
 
-            return rehydratedBiddingPhase;
+            return biddingPhase;
         }
 
         private async Task<BiddingRound> GetFirstBiddingRound(BiddingContext context, BiddingPhase biddingPhase)

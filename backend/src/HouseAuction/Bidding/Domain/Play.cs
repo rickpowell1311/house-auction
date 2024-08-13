@@ -6,27 +6,30 @@ namespace HouseAuction.Bidding.Domain
     {
         public string Player { get; private set; }
 
+        public int Order { get; private set; }
+
         public int? Amount { get; private set; }
 
         public bool IsPass { get; private set; }
 
-        private Play(string player, int? amount, bool isPass)
+        private Play(string player, int order, int? amount, bool isPass)
         {
             Player = player;
+            Order = order;
             Amount = amount;
             IsPass = isPass;
         }
 
-        public static Play Pass(string player) => new(player, null, true);
+        public static Play Pass(string player, int order) => new(player, order, null, true);
 
-        public static Play Bid(string player, int amount)
+        public static Play Bid(string player, int order, int amount)
         {
             if (amount <= 0)
             {
                 throw new InvalidOperationException("Cannot bid zero or less");
             };
 
-            return new(player, amount, false);
+            return new(player, order, amount, false);
         }
     }
 
