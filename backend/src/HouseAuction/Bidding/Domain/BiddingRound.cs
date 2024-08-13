@@ -115,13 +115,13 @@ namespace HouseAuction.Bidding.Domain
                     BiddingPhase.PlayerCycle.Next();
                 }
             }
-            //else
-            //{
-            //    RaiseEvent(new BiddingRoundComplete
-            //    {
-            //        BiddingRoundId = this.Id
-            //    });
-            //}
+            else
+            {
+                RaiseEvent(new BiddingRoundComplete
+                {
+                    BiddingRoundId = Id
+                });
+            }
         }
     }
 }

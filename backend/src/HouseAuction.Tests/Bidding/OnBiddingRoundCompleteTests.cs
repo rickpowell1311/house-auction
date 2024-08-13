@@ -11,7 +11,7 @@ namespace HouseAuction.Tests.Bidding
         private readonly HouseAuctionServicesFixture.Provider _servicesFixtureProvider = servicesFixtureProvider;
 
         [Fact]
-        public async Task CompleteBiddingRound_HandsAreUpdated()
+        public async Task CompleteBiddingRound_HandsAreUpdatedAndBiddingRoundHasFinished()
         {
             using var context = Context();
 
