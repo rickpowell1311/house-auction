@@ -5,6 +5,7 @@
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
 import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
 import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 
 
@@ -103,6 +104,18 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
 
     public readonly onDisconnectedAsync = async (): Promise<void> => {
         return await this.connection.invoke("OnDisconnectedAsync");
+    }
+
+    public readonly getBiddingPhase = async (request: GetBiddingPhaseRequest): Promise<GetBiddingPhaseResponse> => {
+        return await this.connection.invoke("GetBiddingPhase", request);
+    }
+
+    public readonly bid = async (request: BidRequest): Promise<void> => {
+        return await this.connection.invoke("Bid", request);
+    }
+
+    public readonly pass = async (request: PassRequest): Promise<void> => {
+        return await this.connection.invoke("Pass", request);
     }
 }
 

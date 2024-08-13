@@ -1,8 +1,7 @@
 ﻿using HouseAuction.Bidding.Domain;
 using HouseAuction.Bidding.Requests;
-using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Identity;
-using System.Numerics;
+using Microsoft.AspNetCore.SignalR;
 
 namespace HouseAuction.Bidding
 {
@@ -29,6 +28,32 @@ namespace HouseAuction.Bidding
                 Deck = MapToDeck(biddingPhase),
                 Players = MapToPlayers(biddingPhase)
             };
+        }
+
+        public async Task Bid(Bid.BidRequest request)
+        {
+            var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
+                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
+
+            var round = biddingPhase.CurrentBiddingRound 
+                ?? throw new HubException($"Unable to make a bit for game {request.GameId} at this time");
+
+            round.Bid(_userContext[request.GameId].Player, request.Amount);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Pass(Pass.PassRequest request)
+        {
+            var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
+                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
+
+            var round = biddingPhase.CurrentBiddingRound
+                ?? throw new HubException($"Unable to make a bit for game {request.GameId} at this time");
+
+            round.Pass(_userContext[request.GameId].Player);
+
+            await _context.SaveChangesAsync();
         }
 
         private GetBiddingPhase.GetBiddingPhaseDeckResponse MapToDeck(BiddingPhase biddingPhase)

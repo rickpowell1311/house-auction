@@ -52,5 +52,15 @@ namespace HouseAuction
         {
             return await _biddingHub.GetBiddingPhase(request);
         }
+
+        public async Task Bid(Bid.BidRequest request)
+        {
+            await _biddingHub.Bid(request);
+        }
+
+        public async Task Pass(Pass.PassRequest request)
+        {
+            await _biddingHub.Pass(request);
+        }
     }
 }

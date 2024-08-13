@@ -4,6 +4,7 @@
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
 import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 
 export type IHouseAuctionHub = {
@@ -36,6 +37,21 @@ export type IHouseAuctionHub = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     onDisconnectedAsync(): Promise<void>;
+    /**
+    * @param request Transpiled from HouseAuction.Bidding.Requests.GetBiddingPhase.GetBiddingPhaseRequest
+    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Bidding.Requests.GetBiddingPhase.GetBiddingPhaseResponse>
+    */
+    getBiddingPhase(request: GetBiddingPhaseRequest): Promise<GetBiddingPhaseResponse>;
+    /**
+    * @param request Transpiled from HouseAuction.Bidding.Requests.Bid.BidRequest
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    bid(request: BidRequest): Promise<void>;
+    /**
+    * @param request Transpiled from HouseAuction.Bidding.Requests.Pass.PassRequest
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    pass(request: PassRequest): Promise<void>;
 }
 
 export type IHouseAuctionReceiver = {
