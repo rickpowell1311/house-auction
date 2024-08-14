@@ -2,6 +2,14 @@
 {
     public class Hand
     {
+        public static Dictionary<int, int> StartingCoinsByPlayerCount => new()
+        {
+            { 3, 28 },
+            { 4, 21 },
+            { 5, 16 },
+            { 6, 14 }
+        };
+
         public string BiddingPhaseId { get; private set; }
 
         public string Player { get; private set; }
@@ -15,16 +23,15 @@
             string player, 
             int numberOfPlayers)
         {
-            var coins = numberOfPlayers switch
+            if (!StartingCoinsByPlayerCount.ContainsKey(numberOfPlayers))
             {
-                3 => 28,
-                4 => 21,
-                5 => 16,
-                6 => 14,
-                _ => throw new ArgumentOutOfRangeException(nameof(numberOfPlayers))
-            };
+                throw new ArgumentOutOfRangeException(nameof(numberOfPlayers));
+            }
 
-            return new Hand(biddingPhaseId, player, coins);
+            return new Hand(
+                biddingPhaseId, 
+                player, 
+                StartingCoinsByPlayerCount[numberOfPlayers]);
         }
 
         private Hand(string biddingPhaseId, string player, int coins)

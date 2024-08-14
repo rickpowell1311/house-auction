@@ -1,5 +1,6 @@
 ﻿using HouseAuction.Bidding.Domain;
 using HouseAuction.Bidding.Requests;
+using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,13 +10,16 @@ namespace HouseAuction.Bidding
     {
         private readonly UserContext _userContext;
         private readonly BiddingContext _context;
+        private readonly CallingHubContext _callingHubContext;
 
         public BiddingHub(
             UserContext userContext,
-            BiddingContext context)
+            BiddingContext context,
+            CallingHubContext callingHubContext)
         {
             _userContext = userContext;
             _context = context;
+            _callingHubContext = callingHubContext;
         }
 
         public async Task<GetBiddingPhase.GetBiddingPhaseResponse> GetBiddingPhase(GetBiddingPhase.GetBiddingPhaseRequest request)
@@ -35,12 +39,34 @@ namespace HouseAuction.Bidding
             var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
                 ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
 
-            var round = biddingPhase.CurrentBiddingRound 
+            var round = biddingPhase.CurrentBiddingRound
                 ?? throw new HubException($"Unable to make a bit for game {request.GameId} at this time");
+
+            var hand = biddingPhase.Hands
+                .Single(x => x.Player == _userContext[request.GameId].Player);
+
+            if (hand.Coins < request.Amount)
+            {
+                throw new InvalidOperationException(
+                    $"Player {_userContext[request.GameId].Player} doesn't have enough coins to bid {request.Amount}");
+            }
 
             round.Bid(_userContext[request.GameId].Player, request.Amount);
 
             await _context.SaveChangesAsync();
+
+            await _callingHubContext.Hub.Clients
+                .Group(request.GameId)
+                .AsReceiver<IBiddingReceiver>()
+                .OnPlayerTurnFinished(new Reactions.OnPlayerTurnFinished
+                {
+                    Player = _userContext[request.GameId].Player,
+                    NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
+                    Result = new Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult
+                    {
+                        Bid = request.Amount
+                    }
+                });
         }
 
         public async Task Pass(Pass.PassRequest request)
@@ -54,6 +80,19 @@ namespace HouseAuction.Bidding
             round.Pass(_userContext[request.GameId].Player);
 
             await _context.SaveChangesAsync();
+
+            await _callingHubContext.Hub.Clients
+                .Group(request.GameId)
+                .AsReceiver<IBiddingReceiver>()
+                .OnPlayerTurnFinished(new Reactions.OnPlayerTurnFinished
+                {
+                    Player = _userContext[request.GameId].Player,
+                    NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
+                    Result = new Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult
+                    {
+                        Passed = true
+                    }
+                });
         }
 
         private GetBiddingPhase.GetBiddingPhaseDeckResponse MapToDeck(BiddingPhase biddingPhase)
