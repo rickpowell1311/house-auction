@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HouseAuction.Messages.Lobby;
+using Microsoft.EntityFrameworkCore;
 using Onwrd.EntityFrameworkCore;
 
 namespace HouseAuction.Lobby
@@ -17,7 +18,10 @@ namespace HouseAuction.Lobby
                 onwrdConfig =>
                 {
                     // Outboxing configuration here
-                    onwrdConfig.UseOnwardProcessor<ForwardMessageEvents>();
+                    onwrdConfig.UseOnwardProcessors(x =>
+                    {
+                        x.Register<LobbyConfirmed, ForwardLobbyConfirmedMessage>();
+                    });
                 },
                 contextLifetime: ServiceLifetime.Transient);
         }

@@ -2,42 +2,22 @@ import { ref } from "vue";
 
 export const useDealer = (options?: { delay: number }) => {
 
-  const dealt = ref<Array<{ number: number, dealt: boolean, order: number }>>([]);
+  const dealt = ref<Array<number>>([]);
   const toDeal = ref<number[]>([]);
 
   const dealNextCard = () => {
     setTimeout(() => {
-      let next = undefined as number | undefined;
-      for (let i = 0; i < toDeal.value.length; i++) {
-        const target = dealt.value.find(x => x.number == toDeal.value[i]);
-        if (!target) {
-          break;
-        }
-        if (!target.dealt) {
-          next = i;
-          break;
-        }
-      }
-
-      if (next === undefined) {
+      if (dealt.value.length === toDeal.value.length) {
         return;
       }
 
-      const update = [...dealt.value];
-      update[next].dealt = true;
-
-      dealt.value = update;
+      dealt.value = toDeal.value.slice(0, dealt.value.length + 1)
       dealNextCard();
     }, options?.delay ?? 200)
   }
 
   const deal = (numbers: number[]) => {
-    const initial = new Array<{ number: number, dealt: boolean, order: number }>();
-    for (let i = 0; i < numbers.length; i++) {
-      initial.push({ number: numbers[i], dealt: false, order: i });
-    }
-
-    dealt.value = initial;
+    dealt.value = new Array<number>();
     toDeal.value = numbers;
 
     dealNextCard();

@@ -1,8 +1,7 @@
-﻿using HouseAuction.Infrastructure.HubContext;
-using HouseAuction.Lobby;
-using HouseAuction.Messages.Lobby;
+﻿using HouseAuction.Lobby;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace HouseAuction.Infrastructure.Identity
 {
@@ -10,11 +9,13 @@ namespace HouseAuction.Infrastructure.Identity
     {
         private readonly UserContext _userContext;
         private readonly LobbyContext _lobbyContext;
+        private readonly TestMode _testModeOptions;
 
-        public UserContextFilter(UserContext userContext, LobbyContext lobbyContext)
+        public UserContextFilter(UserContext userContext, LobbyContext lobbyContext, IOptions<TestMode> testModeOptions)
         {
             _userContext = userContext;
             _lobbyContext = lobbyContext;
+            _testModeOptions = testModeOptions.Value;
         }
 
         public async ValueTask<object> InvokeMethodAsync(
@@ -43,6 +44,16 @@ namespace HouseAuction.Infrastructure.Identity
                     .ToList();
             }
 
+            if (_testModeOptions.Enabled)
+            {
+                _userContext.Games.Add(new UserContext.Game
+                {
+                    GameId = "123",
+                    Player = "Alice",
+                    PlayerGroupName = $"123-Alice"
+                });
+            }
+            
             return await next(invocationContext);
         }
     }

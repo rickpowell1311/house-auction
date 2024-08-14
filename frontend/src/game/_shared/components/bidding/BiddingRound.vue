@@ -1,43 +1,51 @@
 <script setup lang="ts">
-import type { CardStoryblok } from '@/_shared/components/storyblok/schema/component-types';
-import { computed, onMounted } from 'vue';
-import { useNextCardsDealer } from '../../composables/useNextCardsDealer';
+import { type GetBiddingPhaseResponse } from '@/_shared/providers/generated/HouseAuction.Bidding.Requests';
+import { watch } from 'vue';
+import { useStoryblokCardDealer } from '../../composables/useStoryblokCardDealer';
+import { shift } from '../../helpers/shift';
 import Card from '../Card.vue';
 import Deck from '../Deck.vue';
 import HouseCardContents from '../HouseCardContents.vue';
 import Flip from '../animations/Flip.vue';
-import Player from './BiddingPlayer.vue';
+import BiddingPlayer from './BiddingPlayer.vue';
 
-const { dealtCards, dealNext } = useNextCardsDealer();
-const cardsPerRound = 4;
+const props = defineProps<GetBiddingPhaseResponse>();
+const { isReadyToDeal, cards, deal, dealt } = useStoryblokCardDealer();
 
-const cardIndexes = computed(() => {
-  return Array.from({ length: cardsPerRound }, (_, i) => i);
-});
+const me = props.players?.me;
+const all = [...(props.players?.others ?? []), me];
+const others = shift(all, x => x?.order ?? 0, me)
+  .filter(x => x?.name !== me?.name);
+const numberOfPlayers = others.length + 1;
+const cardIndexes = Array.from(Array(numberOfPlayers).keys());
+const allBids = [props.players?.me?.bid?.amount ?? 0, ...others.map(x => x?.bid?.amount ?? 0)].sort((a, b) => b - a);
+const minBid = Math.max(...allBids) + 1;
 
-onMounted(() => {
-  dealNext(cardsPerRound);
-});
+watch(isReadyToDeal, val => {
+  if (val) {
+    deal(props.deck?.propertiesOnTheTable ?? []);
+  }
+})
+
 </script>
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex gap-2 flex-wrap justify-center items-center w-full">
-      <Deck class="hover:cursor-pointer" @click="() => dealNext(cardsPerRound)" />
+    <div v-if="isReadyToDeal" class="flex gap-2 flex-wrap justify-center items-center w-full">
+      <Deck />
       <template v-for="cardIndex in cardIndexes" :key="cardIndex">
-        <Card v-if="dealtCards.length <= cardIndex" :type="'place-holder'" />
+        <Card v-if="dealt.length <= cardIndex" :type="'place-holder'" />
         <Flip v-else>
           <Card :type="'face-up'">
-            <HouseCardContents v-if="dealtCards[cardIndex]"
-              :blok="dealtCards[cardIndex]?.content ?? ({} as CardStoryblok)" />
+            <HouseCardContents v-if="dealt[cardIndex]" :blok="cards[dealt[cardIndex] - 1].content" />
           </Card>
         </Flip>
       </template>
     </div>
     <div class="flex gap-8 flex-wrap justify-center items-end w-full">
-      <Player name="Rick" :is-me="true" :is-bidding="true" :coins="{ available: 13, minimum: 4, amount: 1 }" />
-      <Player name="Jimmy" :is-me="false" :is-bidding="false" :coins="{ available: 11, minimum: 4, amount: 0 }" />
-      <Player name="Dave" :is-me="false" :is-bidding="false" :coins="{ available: 2, minimum: 4, amount: 2 }" />
-      <Player name="Merlin" :is-me="false" :is-bidding="true" :coins="{ available: 7, minimum: 4, amount: 3 }" />
+      <BiddingPlayer :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.isTurn === true"
+        :coins="{ available: me?.coins ?? 0, minimum: minBid }" />
+      <BiddingPlayer v-for="player in others" :key="player?.name ?? ''" :name="player?.name ?? ''" :is-me="false"
+        :is-bidding="player?.isTurn === true" :coins="{ available: 0, minimum: minBid, amount: player?.bid?.amount }" />
     </div>
   </div>
 </template>

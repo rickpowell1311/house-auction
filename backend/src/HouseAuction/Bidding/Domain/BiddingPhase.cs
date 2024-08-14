@@ -26,7 +26,7 @@
             .FirstOrDefault();
 
         public bool HasFinished => BiddingRounds.All(x => x.HasFinished);
-
+        
         public BiddingPhase(string gameId, List<string> players)
         {
             Deck = Deck.ForNumberOfPlayers(players.Count);

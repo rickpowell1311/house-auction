@@ -6,6 +6,11 @@
 
         public string ConnectionId { get; set; }
 
+        public UserContext()
+        {
+            Games = new List<Game>();
+        }
+
         public class Game
         {
             public string GameId { get; set; }
