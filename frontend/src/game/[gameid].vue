@@ -19,7 +19,7 @@ const biddingPhase = useBiddingPhaseLoader(gameId);
     <div class="container mx-auto">
       <Main>
         <div class="flex flex-col gap-16">
-          <BiddingPhase :="biddingPhase" />
+          <BiddingPhase :game-id="gameId" :="biddingPhase" />
         </div>
       </Main>
     </div>

@@ -6,6 +6,7 @@ import type { IStreamResult, Subject } from '@microsoft/signalr';
 import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
 import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
+import type { OnPlayerTurnFinished } from '../HouseAuction.Bidding.Reactions';
 
 export type IHouseAuctionHub = {
     /**
@@ -70,6 +71,11 @@ export type IHouseAuctionReceiver = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     onGameStarted(reaction: OnGameStartedReaction): Promise<void>;
+    /**
+    * @param reaction Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnFinished
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    onPlayerTurnFinished(reaction: OnPlayerTurnFinished): Promise<void>;
     /**
     * @param message Transpiled from string
     * @returns Transpiled from System.Threading.Tasks.Task

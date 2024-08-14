@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Button from '@/_shared/components/Button.vue';
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import CoinStash from '../coins/CoinStash.vue';
 import { PhMinus, PhPlus } from '@phosphor-icons/vue';
+import { type SignalRClient, Key as SignalRClientKey } from '@/_shared/providers/signalRClient';
 
 const props = defineProps<{
+  gameId: string;
   isBidding: boolean;
   isMe: boolean;
   available: number;
@@ -12,6 +14,7 @@ const props = defineProps<{
   minimum?: number;
 }>();
 
+const singalRClient = inject<SignalRClient>(SignalRClientKey);
 const currentBid = ref(props.amount ? props.amount : 0);
 const remaining = computed(() => props.available - currentBid.value);
 
@@ -26,6 +29,13 @@ const removeFromBid = () => {
     currentBid.value--;
   }
 };
+
+const makeBid = async () => {
+  await singalRClient?.hub.bid({
+    amount: currentBid.value,
+    gameId: props.gameId
+  })
+}
 
 </script>
 
@@ -46,8 +56,8 @@ const removeFromBid = () => {
         <p class="text-white text-2xl select-none">{{ currentBid }}</p>
         <PhPlus class="cursor-pointer select-none text-primary font-bold" weight="bold" @click="addToBid" />
       </div>
-      <div class="flex items-center gap-2">
-        <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)">Bid</Button>
+      <div class="flex items-center gap-5">
+        <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)" @click="makeBid">Bid</Button>
         <Button>Pass</Button>
       </div>
     </div>
