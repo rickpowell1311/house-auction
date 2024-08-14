@@ -50,8 +50,16 @@ namespace HouseAuction.Infrastructure.Identity
                 {
                     GameId = "123",
                     Player = "Alice",
-                    PlayerGroupName = $"123-Alice"
+                    PlayerGroupName = "123-Alice"
                 });
+
+                await invocationContext.Hub.Groups.AddToGroupAsync(
+                    invocationContext.Context.ConnectionId,
+                    "123");
+
+                await invocationContext.Hub.Groups.AddToGroupAsync(
+                    invocationContext.Context.ConnectionId,
+                    "123-Alice");
             }
             
             return await next(invocationContext);
