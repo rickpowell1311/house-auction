@@ -2,7 +2,7 @@
 import Loader from "@/_shared/components/Loader.vue";
 import { useRoute } from "vue-router";
 import Main from "../_shared/components/layout/Main.vue";
-import BiddingRound from "./_shared/components/bidding/BiddingRound.vue";
+import BiddingPhase from "./_shared/components/bidding/BiddingPhase.vue";
 import { useBiddingPhaseLoader } from "./_shared/composables/useBiddingPhaseLoader";
 
 const route = useRoute();
@@ -19,7 +19,7 @@ const biddingPhase = useBiddingPhaseLoader(gameId);
     <div class="container mx-auto">
       <Main>
         <div class="flex flex-col gap-16">
-          <BiddingRound :="biddingPhase" />
+          <BiddingPhase :="biddingPhase" />
         </div>
       </Main>
     </div>
