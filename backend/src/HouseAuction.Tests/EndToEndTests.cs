@@ -110,9 +110,11 @@ namespace HouseAuction.Tests
                 }
                 else
                 {
+                    highestBid++;
+
                     await players[activePlayer].Hub.Bid(new Bid.BidRequest
                     {
-                        Amount = highestBid++,
+                        Amount = highestBid,
                         GameId = gameId
                     });
 
