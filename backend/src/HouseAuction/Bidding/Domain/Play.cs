@@ -50,6 +50,14 @@ namespace HouseAuction.Bidding.Domain
                 .Distinct();
         }
 
+        public static int HighestBid(this IEnumerable<Play> plays)
+        {
+            return plays
+                .Select(x => x.Amount ?? 0)
+                .DefaultIfEmpty(0)
+                .Max();
+        }
+
         public static int? HighestBid(
             this IEnumerable<Play> plays,
             string player)

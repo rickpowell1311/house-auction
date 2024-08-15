@@ -1,4 +1,6 @@
 ﻿using HouseAuction.Bidding.Domain.Events;
+using HouseAuction.Bidding.Requests;
+using HouseAuction.Lobby.Domain;
 using Onwrd.EntityFrameworkCore;
 
 namespace HouseAuction.Bidding

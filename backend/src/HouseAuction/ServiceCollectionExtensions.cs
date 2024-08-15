@@ -14,11 +14,13 @@ namespace HouseAuction
         {
             services.AddScoped<CallingHubContext>();
             services.AddScoped<UserContext>();
+            services.AddTransient<AutoPlay>();
             services.AddSignalR(cfg =>
             {
                 cfg.AddFilter<HubExceptionNotifierFilter>();
                 cfg.AddFilter<CallingHubContextFilter>();
                 cfg.AddFilter<UserContextFilter>();
+                cfg.AddFilter<TestModeFilter>();
             });
             services.AddMessaging();
             services.AddLobby();

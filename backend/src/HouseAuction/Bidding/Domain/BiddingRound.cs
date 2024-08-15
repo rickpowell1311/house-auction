@@ -106,6 +106,14 @@ namespace HouseAuction.Bidding.Domain
 
             _plays.Add(play);
 
+            RaiseEvent(new PlayerTurnComplete
+            {
+                BiddingRoundId = Id,
+                BidAmount = play.Amount,
+                HasPassed = play.IsPass,
+                Player = play.Player
+            });
+
             if (!HasFinished)
             {
                 BiddingPhase.PlayerCycle.Next();

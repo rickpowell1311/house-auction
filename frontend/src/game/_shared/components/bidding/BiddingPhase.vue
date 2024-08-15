@@ -2,7 +2,7 @@
 import { type GetBiddingPhaseResponse } from '@/_shared/providers/generated/HouseAuction.Bidding.Requests';
 import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key as SignalRClientKey } from '@/_shared/providers/signalRClient';
-import { computed, inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { shift } from '../../helpers/shift';
 import BiddingDeal from './BiddingDeal.vue';
 import BiddingPlayer from './BiddingPlayer.vue';
@@ -23,17 +23,13 @@ const previousPlays = ref<{ name: string, bid?: number, passed: boolean }[]>([])
 const activePlayer = ref(all.find(x => x?.isTurn === true)?.name ?? undefined);
 const highestBid = ref<number>(Math.max(...allBids))
 
-const otherPlayerBidStates = computed(() => {
-  let states = {} as Record<string, number | undefined>;
-  for (const player of all) {
-    const isPass = previousPlays.value.filter(x => x.name === player?.name).some(x => x.passed);
-    states[player?.name ?? ''] = !isPass
-      ? Math.max(...previousPlays.value.filter(x => x.name === player?.name).map(x => x.bid ?? 0))
-      : undefined;
-  }
+const onBid = (amount: number) => {
+  highestBid.value = amount;
+}
 
-  return states;
-})
+const onPass = () => {
+
+}
 
 onMounted(() => {
   signalRClient?.subscribe({
@@ -56,12 +52,14 @@ onMounted(() => {
 <template>
   <div class="flex flex-col gap-6">
     <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" />
-    <div class="flex gap-8 flex-wrap justify-center items-end w-full">
+    <div class="flex gap-8 flex-wrap justify-center w-full">
       <BiddingPlayer :game-id="gameId" :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.name === activePlayer"
-        :coins="{ available: me?.coins ?? 0, minimum: highestBid + 1 }" />
+        :coins="{ available: me?.coins ?? 0, minimum: highestBid + 1 }" :has-passed="me?.bid?.hasPassed === true"
+        bid="onBid" @pass="onPass" />
       <BiddingPlayer v-for="player in others" :key="player?.name ?? ''" :game-id="gameId" :name="player?.name ?? ''"
         :is-me="false" :is-bidding="player?.name === activePlayer"
-        :coins="{ available: 0, minimum: highestBid + 1, amount: otherPlayerBidStates[player?.name ?? ''] ?? 0 }" />
+        :coins="{ available: 0, minimum: highestBid + 1, amount: player?.bid?.amount ?? 0 }"
+        :has-passed="player?.bid?.hasPassed === true" @bid="onBid" @pass="onPass" />
     </div>
   </div>
 </template>

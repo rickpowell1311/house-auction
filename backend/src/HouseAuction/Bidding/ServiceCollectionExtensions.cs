@@ -1,5 +1,4 @@
 ﻿using HouseAuction.Bidding.Domain.Events;
-using HouseAuction.Lobby;
 using Microsoft.EntityFrameworkCore;
 using Onwrd.EntityFrameworkCore;
 

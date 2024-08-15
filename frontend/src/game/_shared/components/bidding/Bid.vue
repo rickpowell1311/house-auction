@@ -1,22 +1,53 @@
 <script setup lang="ts">
 import Button from '@/_shared/components/Button.vue';
-import { computed, inject, ref } from 'vue';
-import CoinStash from '../coins/CoinStash.vue';
-import { PhMinus, PhPlus } from '@phosphor-icons/vue';
+import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key as SignalRClientKey } from '@/_shared/providers/signalRClient';
+import { PhMinus, PhPlus } from '@phosphor-icons/vue';
+import { computed, inject, onMounted, ref } from 'vue';
+import CoinStash from '../coins/CoinStash.vue';
 
 const props = defineProps<{
   gameId: string;
   isBidding: boolean;
   isMe: boolean;
+  hasPassed: boolean;
+  name: string;
   available: number;
   amount?: number;
   minimum?: number;
 }>();
 
-const singalRClient = inject<SignalRClient>(SignalRClientKey);
+const isBidding = ref(props.isBidding);
+const minimum = ref(props.minimum);
 const currentBid = ref(props.amount ? props.amount : 0);
 const remaining = computed(() => props.available - currentBid.value);
+const hasPassed = ref(props.hasPassed);
+
+const emit = defineEmits<{
+  pass: []
+  bid: [amount: number]
+}>();
+
+const singalRClient = inject<SignalRClient>(SignalRClientKey);
+
+onMounted(() => {
+  singalRClient?.subscribe({
+    onPlayerTurnFinished(reaction) {
+      if (reaction.result?.passed === true && reaction.player === props.name) {
+        hasPassed.value = true;
+        emit("pass");
+      } else if (reaction.result?.bid) {
+        minimum.value = reaction.result.bid + 1;
+        if (reaction.player === props.name) {
+          currentBid.value = reaction.result?.bid
+          emit("bid", currentBid.value);
+        }
+      }
+
+      isBidding.value = reaction.nextPlayer === props.name
+    },
+  } as IHouseAuctionReceiver)
+})
 
 const addToBid = () => {
   if (currentBid.value < props.available) {
@@ -37,28 +68,35 @@ const makeBid = async () => {
   })
 }
 
+const pass = async () => {
+  await singalRClient?.hub.pass({
+    gameId: props.gameId
+  })
+}
+
 </script>
 
 <template>
-  <div v-if="!props.isBidding">
+  <div v-if="!isBidding">
     <div class="flex flex-col gap-2 items-center">
       <CoinStash :amount="currentBid" />
-      <p v-if="currentBid === 0" class="text-primary text-center">Yet to bid</p>
-      <p v-else class="text-primary text-center">Bid {{ currentBid }} coins <span
-          v-if="props.available < (minimum ? minimum : 0)">(cannot place any more bids)</span></p>
+      <p v-if="hasPassed" class="text-primary text-center">Passed</p>
+      <p v-else-if="currentBid === 0" class="text-primary text-center">Yet to bid</p>
+      <p v-if="currentBid > 0" class="text-primary text-center">Bid {{ currentBid }} coins</p>
     </div>
   </div>
   <div v-else-if="props.isMe" class="flex flex-col gap-8">
     <div class="flex flex-col gap-3 items-center">
       <CoinStash :amount="currentBid" />
-      <div class="flex gap-4 items-center justify-evenly">
-        <PhMinus class="cursor-pointer select-none text-primary font-bold" weight="bold" @click="removeFromBid" />
-        <p class="text-white text-2xl select-none">{{ currentBid }}</p>
-        <PhPlus class="cursor-pointer select-none text-primary font-bold" weight="bold" @click="addToBid" />
+      <div v-if="!hasPassed" class="flex gap-4 items-center justify-evenly">
+        <PhMinus class="cursor-pointer select-none text-primary font-bold text-3xl" weight="bold"
+          @click="removeFromBid" />
+        <p class="text-white text-3xl select-none">{{ currentBid }}</p>
+        <PhPlus class="cursor-pointer select-none text-primary font-bold text-3xl" weight="bold" @click="addToBid" />
       </div>
       <div class="flex items-center gap-5">
-        <Button :disabled="currentBid < (props.minimum ? props.minimum : 0)" @click="makeBid">Bid</Button>
-        <Button>Pass</Button>
+        <Button v-if="!hasPassed" :disabled="currentBid < (minimum ? minimum : 0)" @click="makeBid">Bid</Button>
+        <Button @click="pass">Pass</Button>
       </div>
     </div>
     <div class="flex flex-col gap-2 items-center">
