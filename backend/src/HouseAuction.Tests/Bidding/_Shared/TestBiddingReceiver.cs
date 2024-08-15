@@ -5,9 +5,9 @@ namespace HouseAuction.Tests.Bidding._Shared
 {
     public class TestBiddingReceiver : IBiddingReceiver
     {
-        public OnPlayerTurnFinished LatestPlayerTurnFinished { get; private set; }
+        public OnPlayerTurnComplete LatestPlayerTurnFinished { get; private set; }
 
-        public Task OnPlayerTurnFinished(OnPlayerTurnFinished reaction)
+        public Task OnPlayerTurnComplete(OnPlayerTurnComplete reaction)
         {
             LatestPlayerTurnFinished = reaction;
 

@@ -63,11 +63,11 @@ namespace HouseAuction
                     .Clients
                     .Group(biddingPhase.GameId)
                     .AsReceiver<IBiddingReceiver>()
-                    .OnPlayerTurnFinished(new Bidding.Reactions.OnPlayerTurnFinished
+                    .OnPlayerTurnComplete(new Bidding.Reactions.OnPlayerTurnComplete
                     {
                         Player = currentPlayer,
                         NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
-                        Result = new Bidding.Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult
+                        Result = new Bidding.Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                         {
                             Passed = pass,
                             Bid = highestBid

@@ -3,7 +3,7 @@
 namespace HouseAuction.Bidding.Reactions
 {
     [TranspilationSource]
-    public class OnPlayerTurnFinished
+    public class OnPlayerTurnComplete
     {
         public string Player { get; set; }
 

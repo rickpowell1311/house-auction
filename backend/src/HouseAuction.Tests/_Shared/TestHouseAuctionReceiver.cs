@@ -37,9 +37,9 @@ namespace HouseAuction.Tests._Shared
             await TestLobbyReceiver.OnLobbyMembersChanged(reaction);
         }
 
-        public async Task OnPlayerTurnFinished(OnPlayerTurnFinished reaction)
+        public async Task OnPlayerTurnComplete(OnPlayerTurnComplete reaction)
         {
-            await TestBiddingReceiver.OnPlayerTurnFinished(reaction);
+            await TestBiddingReceiver.OnPlayerTurnComplete(reaction);
         }
     }
 }

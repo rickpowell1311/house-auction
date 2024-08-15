@@ -7,7 +7,7 @@ import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
 import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
 import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
-import type { OnPlayerTurnFinished } from '../HouseAuction.Bidding.Reactions';
+import type { OnPlayerTurnComplete } from '../HouseAuction.Bidding.Reactions';
 
 
 // components
@@ -135,20 +135,20 @@ class IHouseAuctionReceiver_Binder implements ReceiverRegister<IHouseAuctionRece
         const __onLobbyMembersChanged = (...args: [OnLobbyMembersChangedReaction]) => receiver.onLobbyMembersChanged(...args);
         const __onGameReadinessChanged = (...args: [OnGameReadinessChangedReaction]) => receiver.onGameReadinessChanged(...args);
         const __onGameStarted = (...args: [OnGameStartedReaction]) => receiver.onGameStarted(...args);
-        const __onPlayerTurnFinished = (...args: [OnPlayerTurnFinished]) => receiver.onPlayerTurnFinished(...args);
+        const __onPlayerTurnComplete = (...args: [OnPlayerTurnComplete]) => receiver.onPlayerTurnComplete(...args);
         const __notifyError = (...args: [string]) => receiver.notifyError(...args);
 
         connection.on("OnLobbyMembersChanged", __onLobbyMembersChanged);
         connection.on("OnGameReadinessChanged", __onGameReadinessChanged);
         connection.on("OnGameStarted", __onGameStarted);
-        connection.on("OnPlayerTurnFinished", __onPlayerTurnFinished);
+        connection.on("OnPlayerTurnComplete", __onPlayerTurnComplete);
         connection.on("NotifyError", __notifyError);
 
         const methodList: ReceiverMethod[] = [
             { methodName: "OnLobbyMembersChanged", method: __onLobbyMembersChanged },
             { methodName: "OnGameReadinessChanged", method: __onGameReadinessChanged },
             { methodName: "OnGameStarted", method: __onGameStarted },
-            { methodName: "OnPlayerTurnFinished", method: __onPlayerTurnFinished },
+            { methodName: "OnPlayerTurnComplete", method: __onPlayerTurnComplete },
             { methodName: "NotifyError", method: __notifyError }
         ]
 

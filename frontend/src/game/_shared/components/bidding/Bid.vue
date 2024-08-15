@@ -32,7 +32,7 @@ const singalRClient = inject<SignalRClient>(SignalRClientKey);
 
 onMounted(() => {
   singalRClient?.subscribe({
-    onPlayerTurnFinished(reaction) {
+    onPlayerTurnComplete(reaction) {
       if (reaction.result?.passed === true && reaction.player === props.name) {
         hasPassed.value = true;
         emit("pass");

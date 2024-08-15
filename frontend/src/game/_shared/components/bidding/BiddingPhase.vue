@@ -33,7 +33,7 @@ const onPass = () => {
 
 onMounted(() => {
   signalRClient?.subscribe({
-    onPlayerTurnFinished(reaction) {
+    onPlayerTurnComplete(reaction) {
       previousPlays.value = [...previousPlays.value, {
         name: reaction.player ?? '',
         bid: reaction.result?.bid,

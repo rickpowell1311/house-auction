@@ -2,17 +2,17 @@
 /* eslint-disable */
 /* tslint:disable */
 
-/** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnFinished */
-export type OnPlayerTurnFinished = {
+/** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnComplete */
+export type OnPlayerTurnComplete = {
     /** Transpiled from string */
     player?: string;
     /** Transpiled from string */
     nextPlayer?: string;
-    /** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult */
+    /** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult */
     result?: OnPlayerTurnFinishedResult;
 }
 
-/** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult */
+/** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult */
 export type OnPlayerTurnFinishedResult = {
     /** Transpiled from int */
     bid?: number;

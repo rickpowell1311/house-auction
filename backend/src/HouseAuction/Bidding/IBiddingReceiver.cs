@@ -4,6 +4,6 @@ namespace HouseAuction.Bidding
 {
     public interface IBiddingReceiver
     {
-        Task OnPlayerTurnFinished(OnPlayerTurnFinished reaction);
+        Task OnPlayerTurnComplete(OnPlayerTurnComplete reaction);
     }
 }

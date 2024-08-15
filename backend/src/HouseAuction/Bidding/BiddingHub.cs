@@ -58,11 +58,11 @@ namespace HouseAuction.Bidding
             await _callingHubContext.Hub.Clients
                 .Group(request.GameId)
                 .AsReceiver<IBiddingReceiver>()
-                .OnPlayerTurnFinished(new Reactions.OnPlayerTurnFinished
+                .OnPlayerTurnComplete(new Reactions.OnPlayerTurnComplete
                 {
                     Player = _userContext[request.GameId].Player,
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
-                    Result = new Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult
+                    Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
                         Bid = request.Amount
                     }
@@ -84,11 +84,11 @@ namespace HouseAuction.Bidding
             await _callingHubContext.Hub.Clients
                 .Group(request.GameId)
                 .AsReceiver<IBiddingReceiver>()
-                .OnPlayerTurnFinished(new Reactions.OnPlayerTurnFinished
+                .OnPlayerTurnComplete(new Reactions.OnPlayerTurnComplete
                 {
                     Player = _userContext[request.GameId].Player,
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
-                    Result = new Reactions.OnPlayerTurnFinished.OnPlayerTurnFinishedResult
+                    Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
                         Passed = true
                     }
