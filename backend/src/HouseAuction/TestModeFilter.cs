@@ -45,8 +45,7 @@ namespace HouseAuction
             var userContextGame = new UserContext.Game
             {
                 GameId = "123",
-                Player = biddingPhase.PlayerCycle.CurrentPlayer,
-                PlayerGroupName = $"123-{biddingPhase.PlayerCycle.CurrentPlayer}"
+                Player = biddingPhase.PlayerCycle.CurrentPlayer
             };
 
             _userContext.Games.Add(userContextGame);
@@ -55,22 +54,23 @@ namespace HouseAuction
                 invocationContext.Context.ConnectionId,
                 userContextGame.GameId);
 
-            await invocationContext.Hub.Groups.AddToGroupAsync(
+            await invocationContext.Hub.Groups.AddPlayerAsIndividualGroup(
                 invocationContext.Context.ConnectionId,
-                userContextGame.PlayerGroupName);
+                userContextGame.GameId,
+                userContextGame.Player);
 
             var result = await next(invocationContext);
 
             if (invocationContext.HubMethodName == nameof(IHouseAuctionHub.Bid))
             {
                 var request = (Bid.BidRequest)invocationContext.HubMethodArguments[0];
-                await _autoPlay.Run(_userContext[request.GameId].Player, request.GameId);
+                await _autoPlay.Run(_userContext, request.GameId);
             }
 
             if (invocationContext.HubMethodName == nameof(IHouseAuctionHub.Pass))
             {
                 var request = (Pass.PassRequest)invocationContext.HubMethodArguments[0];
-                await _autoPlay.Run(_userContext[request.GameId].Player, request.GameId);
+                await _autoPlay.Run(_userContext, request.GameId);
             }
 
             return result;

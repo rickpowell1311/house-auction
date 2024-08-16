@@ -3,6 +3,7 @@ using HouseAuction.Bidding.Requests;
 using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseAuction.Bidding
 {
@@ -40,7 +41,7 @@ namespace HouseAuction.Bidding
                 ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
 
             var round = biddingPhase.CurrentBiddingRound
-                ?? throw new HubException($"Unable to make a bit for game {request.GameId} at this time");
+                ?? throw new HubException($"Unable to make a bid for game {request.GameId} at this time");
 
             var hand = biddingPhase.Hands
                 .Single(x => x.Player == _userContext[request.GameId].Player);
@@ -56,17 +57,23 @@ namespace HouseAuction.Bidding
             await _context.SaveChangesAsync();
 
             await _callingHubContext.Hub.Clients
-                .Group(request.GameId)
+                .Group(biddingPhase.GameId)
                 .AsReceiver<IBiddingReceiver>()
                 .OnPlayerTurnComplete(new Reactions.OnPlayerTurnComplete
                 {
-                    Player = _userContext[request.GameId].Player,
+                    Player = _userContext[biddingPhase.GameId].Player,
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
+                        Passed = false,
                         Bid = request.Amount
                     }
                 });
+
+            if (round.HasFinished)
+            {
+                await NotifyRoundFinished(biddingPhase);
+            }
         }
 
         public async Task Pass(Pass.PassRequest request)
@@ -75,24 +82,53 @@ namespace HouseAuction.Bidding
                 ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
 
             var round = biddingPhase.CurrentBiddingRound
-                ?? throw new HubException($"Unable to make a bit for game {request.GameId} at this time");
+                ?? throw new HubException($"Unable to make a bid for game {request.GameId} at this time");
 
             round.Pass(_userContext[request.GameId].Player);
 
             await _context.SaveChangesAsync();
 
             await _callingHubContext.Hub.Clients
-                .Group(request.GameId)
+                .Group(biddingPhase.GameId)
                 .AsReceiver<IBiddingReceiver>()
                 .OnPlayerTurnComplete(new Reactions.OnPlayerTurnComplete
                 {
-                    Player = _userContext[request.GameId].Player,
+                    Player = _userContext[biddingPhase.GameId].Player,
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
                         Passed = true
                     }
                 });
+
+            if (round.HasFinished)
+            {
+                await NotifyRoundFinished(biddingPhase);
+            }
+        }
+
+        private async Task NotifyRoundFinished(BiddingPhase biddingPhase)
+        {
+            var playerBanks = await _context.Hands
+                .Where(x => x.BiddingPhaseId == biddingPhase.GameId)
+                .ToDictionaryAsync(x => x.Player, x => x.Coins);
+
+            foreach (var player in biddingPhase.PlayerCycle.Players.Values)
+            {
+                await _callingHubContext.Hub.Clients
+                    .IndividualGroupForPlayer(biddingPhase.GameId, player)
+                    .AsReceiver<IBiddingReceiver>()
+                    .OnBiddingRoundComplete(new Reactions.OnBiddingRoundComplete
+                    {
+                        CoinsRemaining = playerBanks[player],
+                        NextRound = new Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound
+                        {
+                            Properties = biddingPhase.Deck.ForRound(
+                                biddingPhase.CurrentBiddingRound.RoundNumber),
+                            IsLastRound = biddingPhase.BiddingRounds.Max(x => x.RoundNumber) == biddingPhase.CurrentBiddingRound.RoundNumber
+                        }
+                    });
+            }
         }
 
         private GetBiddingPhase.GetBiddingPhaseDeckResponse MapToDeck(BiddingPhase biddingPhase)

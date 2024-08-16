@@ -16,8 +16,6 @@
             public string GameId { get; set; }
 
             public string Player { get; set; }
-
-            public string PlayerGroupName { get; set; }
         }
 
         public Game this[string gameId] => Games.Find(x => x.GameId == gameId);

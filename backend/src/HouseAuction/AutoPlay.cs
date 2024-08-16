@@ -1,11 +1,9 @@
 ﻿using HouseAuction.Bidding;
 using HouseAuction.Bidding.Domain;
-using HouseAuction.Bidding.Domain.Events;
 using HouseAuction.Infrastructure.HubContext;
+using HouseAuction.Infrastructure.Identity;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
-using Onwrd.EntityFrameworkCore;
-using System.Runtime.InteropServices;
+using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace HouseAuction
 {
@@ -23,17 +21,20 @@ namespace HouseAuction
         }
 
         public async Task Run(
-            string humanPlayer,
+            UserContext userContext,
             string gameId)
         {
+            var humanPlayer = userContext[gameId].Player;
             var biddingPhase = await _biddingContext.BiddingPhases.FindAsync(gameId)
                 ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {gameId}");
 
-            var chanceOfPassing = 0.3d;
+            var chanceOfPassing = 0.5d;
             var thinkingTime = 2000;
 
             while (biddingPhase.PlayerCycle.CurrentPlayer != humanPlayer && !biddingPhase.HasFinished)
             {
+                await Task.Delay(thinkingTime);
+
                 var biddingRound = biddingPhase.CurrentBiddingRound;
                 var playerBanks = biddingPhase.Hands
                     .ToDictionary(x => x.Player, x => x.Coins);
@@ -57,8 +58,6 @@ namespace HouseAuction
 
                 await _biddingContext.SaveChangesAsync();
 
-                await Task.Delay(thinkingTime);
-
                 await _hubContext
                     .Clients
                     .Group(biddingPhase.GameId)
@@ -73,6 +72,28 @@ namespace HouseAuction
                             Bid = highestBid
                         }
                     });
+
+
+                if (biddingRound.HasFinished)
+                {
+                    var hand = await _biddingContext.Hands.FindAsync([biddingPhase.GameId, humanPlayer]);
+
+                    await _hubContext
+                        .Clients
+                        .IndividualGroupForPlayer(biddingPhase.GameId, humanPlayer)
+                        .AsReceiver<IBiddingReceiver>()
+                        .OnBiddingRoundComplete(new Bidding.Reactions.OnBiddingRoundComplete
+                        {
+                            CoinsRemaining = hand.Coins,
+                            NextRound = new Bidding.Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound
+                            {
+                                Properties = biddingPhase.Deck.ForRound(
+                                    biddingPhase.CurrentBiddingRound.RoundNumber),
+                                IsLastRound = biddingPhase.BiddingRounds
+                                    .Max(x => x.RoundNumber) == biddingPhase.CurrentBiddingRound.RoundNumber
+                            }
+                        });
+                }
             }
         }
     }

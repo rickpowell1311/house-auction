@@ -24,6 +24,7 @@ namespace HouseAuction.Bidding.Domain
         public BiddingRound(int roundNumber, BiddingPhase biddingPhase)
         {
             Id = Guid.NewGuid();
+            RoundNumber = roundNumber;
             BiddingPhase = biddingPhase;
 
             _plays = [];
@@ -54,24 +55,6 @@ namespace HouseAuction.Bidding.Domain
                 BiddingRoundId = Id,
                 FinishingPosition = finishingPosition,
             });
-
-            var remainingPlayers = BiddingPhase.PlayerCycle.Players.Values
-                .Except(Plays.PlayersWhoPassed())
-                .ToList();
-
-            if (remainingPlayers.Count == 1)
-            {
-                var winner = remainingPlayers.Single();
-                var winningBid = Plays.HighestBid(winner);
-
-                RaiseEvent(new PlayerFinishedBidding
-                {
-                    Player = winner,
-                    BidAmount = winningBid ?? 0,
-                    FinishingPosition = 0,
-                    BiddingRoundId = Id
-                });
-            }
         }
 
         public void Bid(string player, int amount)
@@ -125,6 +108,21 @@ namespace HouseAuction.Bidding.Domain
             }
             else
             {
+                var winner = BiddingPhase.PlayerCycle.Players.Values
+                    .Except(Plays.PlayersWhoPassed())
+                    .Single();
+                var winningBid = Plays.HighestBid(winner);
+
+                BiddingPhase.PlayerCycle.SetCurrentPlayer(winner);
+
+                RaiseEvent(new PlayerFinishedBidding
+                {
+                    Player = winner,
+                    BidAmount = winningBid ?? 0,
+                    FinishingPosition = 0,
+                    BiddingRoundId = Id
+                });
+
                 RaiseEvent(new BiddingRoundComplete
                 {
                     BiddingRoundId = Id

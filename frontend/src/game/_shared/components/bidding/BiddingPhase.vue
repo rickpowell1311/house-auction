@@ -44,7 +44,11 @@ onMounted(() => {
       if (reaction.result?.bid) {
         highestBid.value = reaction.result.bid;
       }
-    }
+    },
+    onBiddingRoundComplete(reaction) {
+      previousPlays.value = [];
+      highestBid.value = 0;
+    },
   } as IHouseAuctionReceiver)
 })
 

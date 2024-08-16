@@ -40,8 +40,7 @@ namespace HouseAuction.Infrastructure.Identity
                         return new UserContext.Game
                         {
                             GameId = x.GameId,
-                            Player = gamer.Name,
-                            PlayerGroupName = gamer.GroupName
+                            Player = gamer.Name
                         };
                     })
                     .ToList();

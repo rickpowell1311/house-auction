@@ -17,10 +17,11 @@ const props = defineProps<{
   minimum?: number;
 }>();
 
+const available = ref(props.available);
 const isBidding = ref(props.isBidding);
 const minimum = ref(props.minimum);
 const currentBid = ref(props.amount ? props.amount : 0);
-const remaining = computed(() => props.available - currentBid.value);
+const remaining = computed(() => available.value - currentBid.value);
 const hasPassed = ref(props.hasPassed);
 
 const emit = defineEmits<{
@@ -46,6 +47,14 @@ onMounted(() => {
 
       isBidding.value = reaction.nextPlayer === props.name
     },
+    onBiddingRoundComplete(reaction) {
+      if (props.isMe) {
+        available.value = reaction.coinsRemaining;
+      }
+      minimum.value = 0;
+      currentBid.value = 0;
+      hasPassed.value = false;
+    }
   } as IHouseAuctionReceiver)
 })
 

@@ -41,5 +41,10 @@ namespace HouseAuction.Tests._Shared
         {
             await TestBiddingReceiver.OnPlayerTurnComplete(reaction);
         }
+
+        public async Task OnBiddingRoundComplete(OnBiddingRoundComplete reaction)
+        {
+            await TestBiddingReceiver.OnBiddingRoundComplete(reaction);
+        }
     }
 }

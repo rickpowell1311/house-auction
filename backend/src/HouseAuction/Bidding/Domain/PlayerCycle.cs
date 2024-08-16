@@ -37,5 +37,17 @@
         {
             CurrentPlayerIndex = (CurrentPlayerIndex + 1) % _players.Count;
         }
+
+        public void SetCurrentPlayer(string player)
+        {
+            if (!Players.Values.Contains(player))
+            {
+                throw new InvalidOperationException($"Player {player} not recognised");
+            }
+
+            CurrentPlayerIndex = Players
+                .Single(x => x.Value == player)
+                .Key;
+        }
     }
 }

@@ -2,6 +2,22 @@
 /* eslint-disable */
 /* tslint:disable */
 
+/** Transpiled from HouseAuction.Bidding.Reactions.OnBiddingRoundComplete */
+export type OnBiddingRoundComplete = {
+    /** Transpiled from int */
+    coinsRemaining: number;
+    /** Transpiled from HouseAuction.Bidding.Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound */
+    nextRound?: OnBiddingRoundCompleteNextRound;
+}
+
+/** Transpiled from HouseAuction.Bidding.Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound */
+export type OnBiddingRoundCompleteNextRound = {
+    /** Transpiled from System.Collections.Generic.List<int> */
+    properties?: number[];
+    /** Transpiled from bool */
+    isLastRound: boolean;
+}
+
 /** Transpiled from HouseAuction.Bidding.Reactions.OnPlayerTurnComplete */
 export type OnPlayerTurnComplete = {
     /** Transpiled from string */

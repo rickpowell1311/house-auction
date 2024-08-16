@@ -33,9 +33,10 @@ namespace HouseAuction.Lobby
 
             var gamer = lobby.Gamers.Single(x => x.Name == request.Name);
 
-            await _callingHubContext.Hub.Groups.AddToGroupAsync(
+            await _callingHubContext.Hub.Groups.AddPlayerAsIndividualGroup(
                 _callingHubContext.Hub.Context.ConnectionId,
-                gamer.GroupName);
+                lobby.GameId,
+                gamer.Name);
 
             return new CreateLobby.CreateLobbyResponse { GameId = lobby.GameId };
         }
@@ -91,9 +92,10 @@ namespace HouseAuction.Lobby
 
             var gamer = lobby.Gamers.Single(x => x.Name == request.Name);
 
-            await _callingHubContext.Hub.Groups.AddToGroupAsync(
+            await _callingHubContext.Hub.Groups.AddPlayerAsIndividualGroup(
                 _callingHubContext.Hub.Context.ConnectionId,
-                gamer.GroupName);
+                lobby.GameId,
+                gamer.Name);
 
             await NotifyMembersChanged(lobby);
         }
@@ -189,7 +191,7 @@ namespace HouseAuction.Lobby
                 };
 
                 await _callingHubContext.Hub.Clients
-                    .Group(gamer.GroupName)
+                    .IndividualGroupForPlayer(lobby.GameId, gamer.Name)
                     .AsReceiver<ILobbyReceiver>()
                     .OnLobbyMembersChanged(reaction);
             }

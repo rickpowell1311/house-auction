@@ -7,6 +7,13 @@ namespace HouseAuction.Tests.Bidding._Shared
     {
         public OnPlayerTurnComplete LatestPlayerTurnFinished { get; private set; }
 
+        public OnBiddingRoundComplete RoundComplete { get; private set; }
+
+        public Task OnBiddingRoundComplete(OnBiddingRoundComplete reaction)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task OnPlayerTurnComplete(OnPlayerTurnComplete reaction)
         {
             LatestPlayerTurnFinished = reaction;
