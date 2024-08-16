@@ -2,13 +2,18 @@ import { describe, expect, test } from "vitest";
 import { shift } from "./shift";
 
 describe('Shift', () => {
-  test('Shift 1,2,3,4,5 with 1 does nothing', () => {
-    const result = shift([1, 2, 3, 4, 5], x => x, 1);
-    expect(result).toEqual([1, 2, 3, 4, 5]);
+  test('Shift 0,1,2 with 0 does nothing', () => {
+    const result = shift([0, 1, 2], x => x, 0);
+    expect(result).toEqual([0, 1, 2]);
   })
 
-  test('Shift 1,2,3,4,5 with 3 shifts results', () => {
-    const result = shift([1, 2, 3, 4, 5], x => x, 3);
-    expect(result).toEqual([3, 4, 5, 1, 2]);
+  test('Shift 0,1,2 with 1 shifts as expected', () => {
+    const result = shift([0, 1, 2], x => x, 1);
+    expect(result).toEqual([1, 2, 0]);
+  })
+
+  test('Shift 0,1,2 with 2 shifts as expected', () => {
+    const result = shift([0, 1, 2], x => x, 2);
+    expect(result).toEqual([2, 0, 1]);
   })
 })

@@ -85,13 +85,15 @@ namespace HouseAuction
                         .OnBiddingRoundComplete(new Bidding.Reactions.OnBiddingRoundComplete
                         {
                             CoinsRemaining = hand.Coins,
-                            NextRound = new Bidding.Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound
-                            {
-                                Properties = biddingPhase.Deck.ForRound(
-                                    biddingPhase.CurrentBiddingRound.RoundNumber),
-                                IsLastRound = biddingPhase.BiddingRounds
-                                    .Max(x => x.RoundNumber) == biddingPhase.CurrentBiddingRound.RoundNumber
-                            }
+                            NextRound = biddingPhase.CurrentBiddingRound != null
+                                ? new Bidding.Reactions.OnBiddingRoundComplete.OnBiddingRoundCompleteNextRound
+                                    {
+                                        Properties = biddingPhase.Deck.ForRound(
+                                            biddingPhase.CurrentBiddingRound.RoundNumber),
+                                        IsLastRound = biddingPhase.BiddingRounds
+                                            .Max(x => x.RoundNumber) == biddingPhase.CurrentBiddingRound.RoundNumber
+                                    }
+                                : default
                         });
                 }
             }

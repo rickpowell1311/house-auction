@@ -14,13 +14,15 @@ interface BiddingPhaseProps extends GetBiddingPhaseResponse {
 const props = defineProps<BiddingPhaseProps>();
 const signalRClient = inject<SignalRClient>(SignalRClientKey);
 const me = props.players?.me;
-const all = [...(props.players?.others ?? []), me];
-const others = shift(all, x => x?.order ?? 0, me)
-  .filter(x => x?.name !== me?.name);
-const allBids = [props.players?.me?.bid?.amount ?? 0, ...others.map(x => x?.bid?.amount ?? 0)].sort((a, b) => b - a);
+const ordered = shift(
+  [...(props.players?.others ?? []), me].sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0)),
+  x => x?.order ?? 0,
+  me)
+const others = ordered.filter(x => x?.name !== me?.name ?? '');
+const allBids = [...ordered.map(x => x?.bid?.amount ?? 0)].sort((a, b) => b - a);
 
 const previousPlays = ref<{ name: string, bid?: number, passed: boolean }[]>([]);
-const activePlayer = ref(all.find(x => x?.isTurn === true)?.name ?? undefined);
+const activePlayer = ref(ordered.find(x => x?.isTurn === true)?.name ?? undefined);
 const highestBid = ref<number>(Math.max(...allBids))
 
 const onBid = (amount: number) => {
