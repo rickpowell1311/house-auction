@@ -34,5 +34,7 @@ export type OnPlayerTurnFinishedResult = {
     bid?: number;
     /** Transpiled from bool */
     passed: boolean;
+    /** Transpiled from int */
+    remainingCoins: number;
 }
 

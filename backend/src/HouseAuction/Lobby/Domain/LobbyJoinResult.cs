@@ -2,7 +2,7 @@
 {
     public class LobbyJoinResult
     {
-        public enum JoinResultType { Success, Error, Reconnection }
+        public enum JoinResultType { Success, Error }
 
         public JoinResultType Type { get; }
 
@@ -21,11 +21,6 @@
         public static LobbyJoinResult Error(string message)
         {
             return new LobbyJoinResult(JoinResultType.Error, message);
-        }
-
-        public static LobbyJoinResult Reconnection()
-        {
-            return new LobbyJoinResult(JoinResultType.Reconnection);
         }
     }
 }

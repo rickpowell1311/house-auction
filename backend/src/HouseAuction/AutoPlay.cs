@@ -58,6 +58,8 @@ namespace HouseAuction
 
                 await _biddingContext.SaveChangesAsync();
 
+                var hand = await _biddingContext.Hands.FindAsync([biddingPhase.GameId, humanPlayer]);
+
                 await _hubContext
                     .Clients
                     .Group(biddingPhase.GameId)
@@ -68,6 +70,7 @@ namespace HouseAuction
                         NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                         Result = new Bidding.Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                         {
+                            RemainingCoins = hand.Coins,
                             Passed = pass,
                             Bid = highestBid
                         }
@@ -76,8 +79,6 @@ namespace HouseAuction
 
                 if (biddingRound.HasFinished)
                 {
-                    var hand = await _biddingContext.Hands.FindAsync([biddingPhase.GameId, humanPlayer]);
-
                     await _hubContext
                         .Clients
                         .IndividualGroupForPlayer(biddingPhase.GameId, humanPlayer)

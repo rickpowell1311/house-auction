@@ -73,15 +73,9 @@ namespace HouseAuction.Lobby
 
             var lobbyJoinResult = lobby.Join(request.Name, _callingHubContext.Hub.Context.ConnectionId);
 
-            switch (lobbyJoinResult.Type)
+            if (lobbyJoinResult.Type == LobbyJoinResult.JoinResultType.Error)
             {
-                case LobbyJoinResult.JoinResultType.Error:
-                    throw new HubException(lobbyJoinResult.ErrorMessage);
-                case LobbyJoinResult.JoinResultType.Reconnection:
-                    // TODO:
-                    throw new NotImplementedException("Reconnection not implemented yet");
-                default:
-                    break;
+                throw new HubException(lobbyJoinResult.ErrorMessage);
             }
 
             await _context.SaveChangesAsync();
@@ -181,13 +175,16 @@ namespace HouseAuction.Lobby
             {
                 var reaction = new OnLobbyMembersChanged.OnLobbyMembersChangedReaction
                 {
-                    Gamers = lobby.Gamers.Select(x => new OnLobbyMembersChanged.OnLobbyMembersChangedReactionGamer
-                    {
-                        IsMe = x.Name == gamer.Name,
-                        IsCreator = lobby.Creator.Name == x.Name,
-                        IsReady = x.IsReady,
-                        Name = x.Name
-                    }).ToList()
+                    Gamers = lobby.Gamers
+                        .Where(x => !x.IsDisconnected)
+                        .Select(x => new OnLobbyMembersChanged.OnLobbyMembersChangedReactionGamer
+                        {
+                            IsMe = x.Name == gamer.Name,
+                            IsCreator = lobby.Creator.Name == x.Name,
+                            IsReady = x.IsReady,
+                            Name = x.Name
+                        })
+                        .ToList()
                 };
 
                 await _callingHubContext.Hub.Clients

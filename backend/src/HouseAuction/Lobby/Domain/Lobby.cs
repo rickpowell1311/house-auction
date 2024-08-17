@@ -9,9 +9,10 @@ namespace HouseAuction.Lobby.Domain
 
         public const int MaxGamers = 6;
 
-        public bool IsReadyToStartGame => Gamers.Count >= MinGamers 
+        public bool IsReadyToStartGame => 
+            Gamers.Where(x => !x.IsDisconnected).Count() >= MinGamers 
             && Gamers.Count <= MaxGamers
-            && Gamers.All(x => x.IsReady);
+            && Gamers.All(x => !x.IsDisconnected && x.IsReady);
 
         public bool HasGameStarted { get; private set; }
 
@@ -43,11 +44,6 @@ namespace HouseAuction.Lobby.Domain
 
         public LobbyJoinResult Join(string name, string connectionId)
         {
-            if (HasGameStarted && Gamers.Any(x => x.Name.ToLowerInvariant() == name.ToLowerInvariant()))
-            {
-                return LobbyJoinResult.Reconnection();
-            }
-
             if (HasGameStarted)
             {
                 return LobbyJoinResult.Error("Game in progress");
@@ -128,13 +124,23 @@ namespace HouseAuction.Lobby.Domain
             if (!HasGameStarted)
             {
                 var disconnected = new List<Gamer>(
-                    Gamers.Where(x => x.ConnectionId == connectionId));
+                    Gamers
+                    .Where(x => x.ConnectionId == connectionId));
 
                 foreach (var gamer in disconnected)
                 {
-                    Gamers.Remove(gamer);
+                    gamer.Disconnect();
                 }
             }
+        }
+
+        public void Reconnect(string connectionId)
+        {
+            var gamer = Gamers
+                .SingleOrDefault(x => x.ConnectionId == connectionId) 
+                ?? throw new InvalidOperationException($"Cannot reconnect - not part of lobby for game {GameId}");
+
+            gamer.Reconnect(connectionId);
         }
     }
 }

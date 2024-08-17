@@ -1,4 +1,5 @@
-﻿using HouseAuction.Bidding.Domain;
+﻿using Google.Api;
+using HouseAuction.Bidding.Domain;
 using HouseAuction.Bidding.Requests;
 using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Identity;
@@ -56,6 +57,8 @@ namespace HouseAuction.Bidding
 
             await _context.SaveChangesAsync();
 
+            var playerBank = await _context.Hands.FindAsync([request.GameId, _userContext[request.GameId].Player]);
+
             await _callingHubContext.Hub.Clients
                 .Group(biddingPhase.GameId)
                 .AsReceiver<IBiddingReceiver>()
@@ -65,6 +68,7 @@ namespace HouseAuction.Bidding
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
+                        RemainingCoins = playerBank.Coins,
                         Passed = false,
                         Bid = request.Amount
                     }
@@ -88,6 +92,10 @@ namespace HouseAuction.Bidding
 
             await _context.SaveChangesAsync();
 
+            var playerBank = await _context.Hands.FindAsync([request.GameId, _userContext[request.GameId].Player]);
+            _context.Entry(biddingPhase).State = EntityState.Detached;
+            await _context.Entry(biddingPhase).ReloadAsync();
+
             await _callingHubContext.Hub.Clients
                 .Group(biddingPhase.GameId)
                 .AsReceiver<IBiddingReceiver>()
@@ -97,6 +105,7 @@ namespace HouseAuction.Bidding
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
+                        RemainingCoins = playerBank.Coins,
                         Passed = true
                     }
                 });

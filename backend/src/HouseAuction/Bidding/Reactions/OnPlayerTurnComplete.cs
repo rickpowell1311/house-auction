@@ -18,6 +18,8 @@ namespace HouseAuction.Bidding.Reactions
             public int? Bid { get; set; }
 
             public bool Passed { get; set; }
+
+            public int RemainingCoins { get; set; }
         }
     }
 }

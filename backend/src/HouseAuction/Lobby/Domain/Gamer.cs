@@ -37,6 +37,17 @@ namespace HouseAuction.Lobby.Domain
             IsReady = true;
         }
 
+        public void Disconnect()
+        {
+            IsDisconnected = true;
+        }
+
+        public void Reconnect(string connectionId)
+        {
+            ConnectionId = connectionId;
+            IsDisconnected = false;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Gamer);
