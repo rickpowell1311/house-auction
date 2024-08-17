@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import Loader from "@/_shared/components/Loader.vue";
-import { useRoute } from "vue-router";
+import { watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import Main from "../_shared/components/layout/Main.vue";
 import BiddingPhase from "./_shared/components/bidding/BiddingPhase.vue";
 import { useBiddingPhaseLoader } from "./_shared/composables/useBiddingPhaseLoader";
 
 const route = useRoute();
+const router = useRouter();
 const params = route.params as Record<string, string>;
 const gameId = params.gameid;
 
-const biddingPhase = useBiddingPhaseLoader(gameId);
+const { biddingPhase, error } = useBiddingPhaseLoader(gameId);
+
+watch(error, err => {
+  if (err) {
+    // If the bidding phase can't be loaded, push user back to the lobby
+    router.push(`/lobby/${gameId}`);
+  }
+})
 
 </script>
 <template>

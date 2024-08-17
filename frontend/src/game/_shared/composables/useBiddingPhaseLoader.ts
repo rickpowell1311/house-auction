@@ -3,17 +3,24 @@ import { Key as SignalRKey, type SignalRClient } from "@/_shared/providers/signa
 import { inject, ref } from "vue";
 
 export const useBiddingPhaseLoader = (gameId: string) => {
-  const signalRClient = inject<SignalRClient>(SignalRKey);
 
+  const signalRClient = inject<SignalRClient>(SignalRKey);
   const biddingPhase = ref<GetBiddingPhaseResponse | undefined>();
+  const error = ref<unknown | undefined>();
 
   const fetchBiddingPhase = async () => {
-    biddingPhase.value = await signalRClient?.hub.getBiddingPhase({
-      gameId
-    })
+    try {
+      biddingPhase.value = await signalRClient?.hub.getBiddingPhase({
+        gameId
+      })
+    }
+    catch (err) {
+      // If the bidding phase can't be loaded - push back to the lobby
+      error.value = err;
+    }
   }
 
   fetchBiddingPhase();
 
-  return biddingPhase;
+  return { biddingPhase, error };
 }
