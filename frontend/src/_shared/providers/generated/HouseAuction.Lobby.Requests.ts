@@ -38,6 +38,18 @@ export type FetchLobbyResponseGamer = {
     isReady: boolean;
 }
 
+/** Transpiled from HouseAuction.Lobby.Requests.GetDisconnectedPlayers.GetDisconnectedPlayersRequest */
+export type GetDisconnectedPlayersRequest = {
+    /** Transpiled from string */
+    gameId?: string;
+}
+
+/** Transpiled from HouseAuction.Lobby.Requests.GetDisconnectedPlayers.GetDisconnectedPlayersResponse */
+export type GetDisconnectedPlayersResponse = {
+    /** Transpiled from System.Collections.Generic.List<string> */
+    players?: string[];
+}
+
 /** Transpiled from HouseAuction.Lobby.Requests.JoinLobby.JoinLobbyRequest */
 export type JoinLobbyRequest = {
     /** Transpiled from string */
@@ -50,6 +62,14 @@ export type JoinLobbyRequest = {
 export type ReadyUpRequest = {
     /** Transpiled from string */
     gameId?: string;
+}
+
+/** Transpiled from HouseAuction.Lobby.Requests.Reconnect.ReconnectRequest */
+export type ReconnectRequest = {
+    /** Transpiled from string */
+    gameId?: string;
+    /** Transpiled from string */
+    gamer?: string;
 }
 
 /** Transpiled from HouseAuction.Lobby.Requests.StartGame.StartGameRequest */

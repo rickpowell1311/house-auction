@@ -4,7 +4,7 @@
 // @ts-nocheck
 import type { HubConnection, IStreamResult, Subject } from '@microsoft/signalr';
 import type { IHouseAuctionHub, IHouseAuctionReceiver } from './HouseAuction';
-import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest, GetDisconnectedPlayersRequest, GetDisconnectedPlayersResponse, ReconnectRequest } from '../HouseAuction.Lobby.Requests';
 import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 import type { OnPlayerTurnComplete, OnBiddingRoundComplete } from '../HouseAuction.Bidding.Reactions';
@@ -101,6 +101,14 @@ class IHouseAuctionHub_HubProxy implements IHouseAuctionHub {
 
     public readonly startGame = async (request: StartGameRequest): Promise<void> => {
         return await this.connection.invoke("StartGame", request);
+    }
+
+    public readonly getDisconnectedPlayers = async (request: GetDisconnectedPlayersRequest): Promise<GetDisconnectedPlayersResponse> => {
+        return await this.connection.invoke("GetDisconnectedPlayers", request);
+    }
+
+    public readonly reconnect = async (request: ReconnectRequest): Promise<void> => {
+        return await this.connection.invoke("Reconnect", request);
     }
 
     public readonly onDisconnectedAsync = async (): Promise<void> => {

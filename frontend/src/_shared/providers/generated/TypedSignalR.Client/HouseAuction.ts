@@ -3,7 +3,7 @@
 /* tslint:disable */
 // @ts-nocheck
 import type { IStreamResult, Subject } from '@microsoft/signalr';
-import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest } from '../HouseAuction.Lobby.Requests';
+import type { CreateLobbyRequest, CreateLobbyResponse, FetchLobbyRequest, FetchLobbyResponse, JoinLobbyRequest, ReadyUpRequest, StartGameRequest, GetDisconnectedPlayersRequest, GetDisconnectedPlayersResponse, ReconnectRequest } from '../HouseAuction.Lobby.Requests';
 import type { GetBiddingPhaseRequest, GetBiddingPhaseResponse, BidRequest, PassRequest } from '../HouseAuction.Bidding.Requests';
 import type { OnLobbyMembersChangedReaction, OnGameReadinessChangedReaction, OnGameStartedReaction } from '../HouseAuction.Lobby.Reactions';
 import type { OnPlayerTurnComplete, OnBiddingRoundComplete } from '../HouseAuction.Bidding.Reactions';
@@ -34,6 +34,16 @@ export type IHouseAuctionHub = {
     * @returns Transpiled from System.Threading.Tasks.Task
     */
     startGame(request: StartGameRequest): Promise<void>;
+    /**
+    * @param request Transpiled from HouseAuction.Lobby.Requests.GetDisconnectedPlayers.GetDisconnectedPlayersRequest
+    * @returns Transpiled from System.Threading.Tasks.Task<HouseAuction.Lobby.Requests.GetDisconnectedPlayers.GetDisconnectedPlayersResponse>
+    */
+    getDisconnectedPlayers(request: GetDisconnectedPlayersRequest): Promise<GetDisconnectedPlayersResponse>;
+    /**
+    * @param request Transpiled from HouseAuction.Lobby.Requests.Reconnect.ReconnectRequest
+    * @returns Transpiled from System.Threading.Tasks.Task
+    */
+    reconnect(request: ReconnectRequest): Promise<void>;
     /**
     * @returns Transpiled from System.Threading.Tasks.Task
     */
