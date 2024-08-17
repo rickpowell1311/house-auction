@@ -124,7 +124,8 @@ watch(isBidding, val => {
               @click="addToBid" />
           </div>
           <div class="flex items-center gap-5">
-            <Button v-if="!hasPassed" :disabled="stagedBid < (minimum ? minimum : 0)" @click="makeBid">Bid</Button>
+            <Button v-if="!hasPassed" :disabled="stagedBid == 0 || stagedBid < (minimum ? minimum : 0)"
+              @click="makeBid">Bid</Button>
             <Button @click="pass">Pass</Button>
           </div>
         </div>
