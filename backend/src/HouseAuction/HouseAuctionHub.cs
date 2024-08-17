@@ -44,6 +44,11 @@ namespace HouseAuction
             return await _lobbyHub.GetDisconnectedPlayers(request);
         }
 
+        public async Task Reconnect(Reconnect.ReconnectRequest request)
+        {
+            await _lobbyHub.Reconnect(request);
+        }
+
         public async Task ReadyUp(ReadyUp.ReadyUpRequest request)
         {
             await _lobbyHub.ReadyUp(request);

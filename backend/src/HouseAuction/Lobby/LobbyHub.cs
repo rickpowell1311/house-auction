@@ -171,6 +171,36 @@ namespace HouseAuction.Lobby
             }
         }
 
+        public async Task<GetDisconnectedPlayers.GetDisconnectedPlayersResponse> GetDisconnectedPlayers(GetDisconnectedPlayers.GetDisconnectedPlayersRequest request)
+        {
+            var lobby = await _context.Lobbies.FindAsync(request.GameId) 
+                ?? throw new HubException($"Game with Id {request.GameId} not found");
+
+            return new GetDisconnectedPlayers.GetDisconnectedPlayersResponse
+            {
+                Players = lobby.Gamers
+                    .Where(x => x.IsDisconnected)
+                    .Select(x => x.Name)
+                    .ToList()
+            };
+        }
+
+        public async Task Reconnect(Reconnect.ReconnectRequest request)
+        {
+            var lobby = await _context.Lobbies.FindAsync(request.GameId)
+                ?? throw new HubException($"Game with Id {request.GameId} not found");
+
+            var gamer = lobby.Gamers
+                .SingleOrDefault(x => x.IsDisconnected && x.Name == request.Gamer)
+                ?? throw new HubException($"Cannot reconnect to game {request.GameId} as player '{request.Gamer}'");
+
+            gamer.Reconnect(_callingHubContext.Hub.Context.ConnectionId);
+
+            await _context.SaveChangesAsync();
+
+            await NotifyMembersChanged(lobby);
+        }
+
         private async Task NotifyMembersChanged(Domain.Lobby lobby)
         {
             foreach (var gamer in lobby.Gamers)
@@ -194,20 +224,6 @@ namespace HouseAuction.Lobby
                     .AsReceiver<ILobbyReceiver>()
                     .OnLobbyMembersChanged(reaction);
             }
-        }
-
-        public async Task<GetDisconnectedPlayers.GetDisconnectedPlayersResponse> GetDisconnectedPlayers(GetDisconnectedPlayers.GetDisconnectedPlayersRequest request)
-        {
-            var lobby = await _context.Lobbies.FindAsync(request.GameId) 
-                ?? throw new HubException($"Game with Id {request.GameId} not found");
-
-            return new Requests.GetDisconnectedPlayers.GetDisconnectedPlayersResponse
-            {
-                Players = lobby.Gamers
-                    .Where(x => x.IsDisconnected)
-                    .Select(x => x.Name)
-                    .ToList()
-            };
         }
     }
 }
