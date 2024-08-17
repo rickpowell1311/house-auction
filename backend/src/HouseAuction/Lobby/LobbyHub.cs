@@ -52,13 +52,15 @@ namespace HouseAuction.Lobby
 
             return new FetchLobby.FetchLobbyResponse
             {
-                Gamers = lobby.Gamers.Select(x => new FetchLobby.FetchLobbyResponseGamer
-                {
-                    Name = x.Name,
-                    IsMe = x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId,
-                    IsCreator = lobby.Creator.Name == x.Name,
-                    IsReady = x.IsReady
-                }).ToList()
+                Gamers = lobby.Gamers
+                    .Where(x => !x.IsDisconnected)
+                    .Select(x => new FetchLobby.FetchLobbyResponseGamer
+                    {
+                        Name = x.Name,
+                        IsMe = x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId,
+                        IsCreator = lobby.Creator.Name == x.Name,
+                        IsReady = x.IsReady
+                    }).ToList()
             };
         }
 
@@ -192,6 +194,20 @@ namespace HouseAuction.Lobby
                     .AsReceiver<ILobbyReceiver>()
                     .OnLobbyMembersChanged(reaction);
             }
+        }
+
+        public async Task<GetDisconnectedPlayers.GetDisconnectedPlayersResponse> GetDisconnectedPlayers(GetDisconnectedPlayers.GetDisconnectedPlayersRequest request)
+        {
+            var lobby = await _context.Lobbies.FindAsync(request.GameId) 
+                ?? throw new HubException($"Game with Id {request.GameId} not found");
+
+            return new Requests.GetDisconnectedPlayers.GetDisconnectedPlayersResponse
+            {
+                Players = lobby.Gamers
+                    .Where(x => x.IsDisconnected)
+                    .Select(x => x.Name)
+                    .ToList()
+            };
         }
     }
 }

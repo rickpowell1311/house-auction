@@ -38,6 +38,12 @@ namespace HouseAuction
             await _lobbyHub.JoinLobby(request);
         }
 
+        public async Task<GetDisconnectedPlayers.GetDisconnectedPlayersResponse> GetDisconnectedPlayers(
+            GetDisconnectedPlayers.GetDisconnectedPlayersRequest request)
+        {
+            return await _lobbyHub.GetDisconnectedPlayers(request);
+        }
+
         public async Task ReadyUp(ReadyUp.ReadyUpRequest request)
         {
             await _lobbyHub.ReadyUp(request);

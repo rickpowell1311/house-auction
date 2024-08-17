@@ -39,6 +39,7 @@ namespace HouseAuction.Lobby.Domain
 
         public void Disconnect()
         {
+            IsReady = false;
             IsDisconnected = true;
         }
 
