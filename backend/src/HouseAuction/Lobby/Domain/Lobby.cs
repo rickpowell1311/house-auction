@@ -18,14 +18,16 @@ namespace HouseAuction.Lobby.Domain
 
         public string GameId { get; private set; }
 
-        public Gamer Creator { get; private set; }
-
         public ICollection<Gamer> Gamers { get; private set; }
+
+        public Gamer Creator => Gamers
+            .Where(x => !x.IsDisconnected)
+            .OrderBy(x => x.JoinedOn)
+            .FirstOrDefault();
 
         private Lobby(string gameId, string creator, string creatorConnectionId) : this(gameId, false)
         {          
-            Creator = new Gamer(creator, GameId, creatorConnectionId);
-            Gamers = new List<Gamer> { Creator };
+            Gamers = new List<Gamer> { new Gamer(creator, GameId, creatorConnectionId) };
         }
 
         private Lobby(string gameId, bool hasGameStarted)
@@ -124,10 +126,17 @@ namespace HouseAuction.Lobby.Domain
             if (!HasGameStarted)
             {
                 var disconnected = new List<Gamer>(
-                    Gamers
-                    .Where(x => x.ConnectionId == connectionId));
+                    Gamers.Where(x => x.ConnectionId == connectionId));
 
                 foreach (var gamer in disconnected)
+                {
+                    Gamers.Remove(gamer);
+                }
+            }
+            else
+            {
+                foreach (var gamer in Gamers
+                    .Where(x => x.ConnectionId == connectionId))
                 {
                     gamer.Disconnect();
                 }

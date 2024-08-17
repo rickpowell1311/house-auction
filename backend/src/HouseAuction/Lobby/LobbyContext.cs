@@ -17,7 +17,6 @@ namespace HouseAuction.Lobby
             {
                 g.HasKey(y => new { y.Name, y.GameId });
             });
-            lobbyConfiguration.OwnsOne(x => x.Creator);
 
             base.OnModelCreating(modelBuilder);
         }

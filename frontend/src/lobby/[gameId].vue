@@ -10,6 +10,8 @@ import { PhCheck } from '@phosphor-icons/vue';
 import { computed, inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Button from '../_shared/components/Button.vue';
+import JoinGame from './_shared/components/JoinGame.vue';
+import Reconnect from './_shared/components/Reconnect.vue';
 
 const signalRClient = inject<SignalRClient>(Key);
 const route = useRoute();
@@ -17,7 +19,9 @@ const router = useRouter();
 const params = route.params as Record<string, string>;
 const gameId = params.gameId;
 const players = ref<OnLobbyMembersChangedReactionGamer[] | FetchLobbyResponseGamer[] | undefined>();
+const hasJoined = ref(false);
 const isGameReady = ref(false);
+const hasGameStarted = ref(false);
 const creator = computed(() => {
   return players.value?.find(x => x.isCreator);
 })
@@ -41,20 +45,21 @@ const startGame = async () => {
 }
 
 onMounted(async () => {
-
   try {
     const lobby = await signalRClient?.hub.fetchLobby({ gameId: gameId });
     players.value = lobby?.gamers;
+    hasJoined.value = lobby?.hasJoined === true;
+    hasGameStarted.value = lobby?.hasGameStarted === true;
   }
   catch {
-    // If we can't load the lobby, it might be because of a refresh of the page.
-    // In this case, push to home and force a rejoin
+    // Something wen't wrong :( push back to home to try again
     router.push('/home');
   }
 
   signalRClient?.subscribe({
     onLobbyMembersChanged(reaction) {
       players.value = reaction.gamers;
+      hasJoined.value = reaction.gamers?.some(x => x.isMe) ?? false;
     },
     onGameReadinessChanged(reaction) {
       isGameReady.value = reaction.isReadyToStart;
@@ -78,7 +83,7 @@ onMounted(async () => {
               <h1 class="text-primary">Lobby</h1>
               <p>Game ID: <span class="text-primary text-bold">{{ gameId }}</span></p>
             </div>
-            <div class="flex flex-col gap-4">
+            <div v-if="hasJoined" class="flex flex-col gap-4">
               <h2>Players</h2>
               <div class="flex flex-col gap-2">
                 <div v-for="player in players" :key="player.name"
@@ -88,6 +93,12 @@ onMounted(async () => {
                   <PhCheck v-if="player.isReady" class="text-primary animate-flip-down text-lg" weight="bold" />
                 </div>
               </div>
+            </div>
+            <div v-else-if="!hasGameStarted">
+              <JoinGame :game-id="gameId" />
+            </div>
+            <div v-else>
+              <Reconnect :game-id="gameId" />
             </div>
             <div>
               <Button v-if="iAmCreator" :disabled="!isGameReady" @click="startGame">Start Game</Button>

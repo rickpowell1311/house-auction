@@ -14,6 +14,10 @@ namespace HouseAuction.Lobby.Requests
         public class FetchLobbyResponse
         {
             public List<FetchLobbyResponseGamer> Gamers { get; set; }
+
+            public bool HasGameStarted { get; set; }
+
+            public bool HasJoined { get; set; }
         }
 
         [TranspilationSource]

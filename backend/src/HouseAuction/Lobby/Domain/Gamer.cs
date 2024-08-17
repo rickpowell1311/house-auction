@@ -12,6 +12,8 @@ namespace HouseAuction.Lobby.Domain
 
         public string Name { get; private set; }
 
+        public DateTime JoinedOn { get; private set; }
+
         public bool IsDisconnected { get; private set; }
 
         public string ConnectionId { get; private set; }
@@ -24,6 +26,7 @@ namespace HouseAuction.Lobby.Domain
             ConnectionId = connectionId;
             GameId = gameId;
             Name = name;
+            JoinedOn = DateTime.UtcNow;
         }
 
         private Gamer(Guid id, string gameId, string name, string connectionId, bool isReady) : this(name, gameId, connectionId)

@@ -24,6 +24,10 @@ export type FetchLobbyRequest = {
 export type FetchLobbyResponse = {
     /** Transpiled from System.Collections.Generic.List<HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponseGamer> */
     gamers?: FetchLobbyResponseGamer[];
+    /** Transpiled from bool */
+    hasGameStarted: boolean;
+    /** Transpiled from bool */
+    hasJoined: boolean;
 }
 
 /** Transpiled from HouseAuction.Lobby.Requests.FetchLobby.FetchLobbyResponseGamer */

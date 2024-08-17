@@ -43,15 +43,13 @@ namespace HouseAuction.Lobby
 
         public async Task<FetchLobby.FetchLobbyResponse> FetchLobby(FetchLobby.FetchLobbyRequest request)
         {
-            var lobby = await _context.Lobbies.FindAsync(request.GameId);
-
-            if (lobby == null || !lobby.Gamers.Any(x => x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId))
-            {
-                throw new HubException($"Game with Id {request.GameId} not found");
-            }
+            var lobby = await _context.Lobbies.FindAsync(request.GameId)
+                ?? throw new HubException($"Game with Id {request.GameId} not found");
 
             return new FetchLobby.FetchLobbyResponse
             {
+                HasJoined = lobby.Gamers.Any(x => x.ConnectionId == _callingHubContext.Hub.Context.ConnectionId),
+                HasGameStarted = lobby.HasGameStarted,
                 Gamers = lobby.Gamers
                     .Where(x => !x.IsDisconnected)
                     .Select(x => new FetchLobby.FetchLobbyResponseGamer
@@ -197,6 +195,15 @@ namespace HouseAuction.Lobby
             gamer.Reconnect(_callingHubContext.Hub.Context.ConnectionId);
 
             await _context.SaveChangesAsync();
+
+            await _callingHubContext.Hub.Groups.AddToGroupAsync(
+                _callingHubContext.Hub.Context.ConnectionId,
+                lobby.GameId);
+
+            await _callingHubContext.Hub.Groups.AddPlayerAsIndividualGroup(
+                _callingHubContext.Hub.Context.ConnectionId,
+                lobby.GameId,
+                gamer.Name);
 
             await NotifyMembersChanged(lobby);
         }
