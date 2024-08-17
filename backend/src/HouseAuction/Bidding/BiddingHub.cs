@@ -1,5 +1,4 @@
-﻿using Google.Api;
-using HouseAuction.Bidding.Domain;
+﻿using HouseAuction.Bidding.Domain;
 using HouseAuction.Bidding.Requests;
 using HouseAuction.Infrastructure.HubContext;
 using HouseAuction.Infrastructure.Identity;
@@ -26,8 +25,7 @@ namespace HouseAuction.Bidding
 
         public async Task<GetBiddingPhase.GetBiddingPhaseResponse> GetBiddingPhase(GetBiddingPhase.GetBiddingPhaseRequest request)
         {
-            var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
-                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
+            var biddingPhase = await GetBiddingPhase(request.GameId);
 
             return new GetBiddingPhase.GetBiddingPhaseResponse
             {
@@ -38,8 +36,7 @@ namespace HouseAuction.Bidding
 
         public async Task Bid(Bid.BidRequest request)
         {
-            var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
-                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
+            var biddingPhase = await GetBiddingPhase(request.GameId);
 
             var round = biddingPhase.CurrentBiddingRound
                 ?? throw new HubException($"Unable to make a bid for game {request.GameId} at this time");
@@ -82,8 +79,7 @@ namespace HouseAuction.Bidding
 
         public async Task Pass(Pass.PassRequest request)
         {
-            var biddingPhase = await _context.BiddingPhases.FindAsync(request.GameId)
-                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {request.GameId}");
+            var biddingPhase = await GetBiddingPhase(request.GameId);
 
             var round = biddingPhase.CurrentBiddingRound
                 ?? throw new HubException($"Unable to make a bid for game {request.GameId} at this time");
@@ -114,6 +110,19 @@ namespace HouseAuction.Bidding
             {
                 await NotifyRoundFinished(biddingPhase);
             }
+        }
+
+        private async Task<BiddingPhase> GetBiddingPhase(string gameId)
+        {
+            if (!_userContext.Games.Any(x => x.GameId == gameId))
+            {
+                throw new HubException($"Unable to find game with Id {gameId}");
+            }
+
+            var biddingPhase = await _context.BiddingPhases.FindAsync(gameId)
+                ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {gameId}");
+
+            return biddingPhase;
         }
 
         private async Task NotifyRoundFinished(BiddingPhase biddingPhase)
