@@ -53,6 +53,23 @@ namespace HouseAuction.Bidding.Domain
             var order = Plays.Select(x => x.Order).DefaultIfEmpty(-1).Max() + 1;
             var play = Play.Bid(player, order, amount);
 
+            var highestBid = _plays
+                .Select(x => x.Amount)
+                .DefaultIfEmpty(0)
+                .Max();
+
+            if (play.Amount <= highestBid)
+            {
+                throw new InvalidOperationException($"Bid must be higher than {highestBid}");
+            }
+
+            var hand = BiddingPhase.Hands.Single(x => x.Player == player);
+
+            if (play.Amount > hand.Coins)
+            {
+                throw new InvalidOperationException($"Not enough coins to make a bid of {play.Amount}");
+            }
+
             MakePlay(play);
             HandleEndOfTurn();
         }
@@ -67,16 +84,6 @@ namespace HouseAuction.Bidding.Domain
             if (BiddingPhase.PlayerCycle.CurrentPlayer != play.Player)
             {
                 throw new InvalidOperationException($"It's not {play.Player}'s turn");
-            }
-
-            var highestBid = _plays
-                .Select(x => x.Amount)
-                .DefaultIfEmpty(0)
-                .Max();
-
-            if (!play.IsPass && play.Amount <= highestBid)
-            {
-                throw new InvalidOperationException($"Bid must be higher than {highestBid}");
             }
 
             _plays.Add(play);
@@ -114,7 +121,7 @@ namespace HouseAuction.Bidding.Domain
         {
             var highestBid = Plays.HighestBid(player);
             var finishingPosition =
-                BiddingPhase.PlayerCycle.Players.Count - Plays.PlayersWhoPassed().Count();
+                BiddingPhase.PlayerCycle.Players.Count - Plays.PlayersWhoPassed().Count() - 1;
 
             var propertyToPurchase = BiddingPhase.Deck
                 .ForRound(RoundNumber)

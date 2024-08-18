@@ -116,8 +116,6 @@ namespace HouseAuction.Tests.Bidding.Domain
         {
             var biddingPhase = new BiddingPhase(GameId.Generate(), players);
 
-            var biddingRound = new BiddingRound(0, biddingPhase);
-
             foreach (var (playerNumber, amount, isPass, order) in plays.Select((x, i) => (x.playerNumber, x.amount, x.isPass, i)))
             {
                 var player = biddingPhase.PlayerCycle.Players[playerNumber];
@@ -128,21 +126,21 @@ namespace HouseAuction.Tests.Bidding.Domain
                     {
                         if (isPass)
                         {
-                            biddingRound.Pass(player);
+                            biddingPhase.CurrentBiddingRound.Pass(player);
                         }
                         else
                         {
-                            biddingRound.Bid(player, amount.Value);
+                            biddingPhase.CurrentBiddingRound.Bid(player, amount.Value);
                         }
                     });
                 }
                 else if (isPass)
                 {
-                    biddingRound.Pass(player);
+                    biddingPhase.CurrentBiddingRound.Pass(player);
                 }
                 else
                 {
-                    biddingRound.Bid(player, amount.Value);
+                    biddingPhase.CurrentBiddingRound.Bid(player, amount.Value);
                 }
             }
         }
@@ -152,7 +150,10 @@ namespace HouseAuction.Tests.Bidding.Domain
             {
                 InvalidBidScenario1,
                 InvalidBidScenario2,
-                InvalidBidScenario3
+                InvalidBidScenario3,
+                InvalidBidScenario4,
+                InvalidBidScenario5,
+                InvalidBidScenario6
             };
 
         public static object[] InvalidBidScenario1
@@ -196,6 +197,64 @@ namespace HouseAuction.Tests.Bidding.Domain
                     (1, 2, false),
                     (2, 3, false),
                     (0, null, true)
+                };
+
+                return [gamers, plays];
+            }
+        }
+
+        public static object[] InvalidBidScenario4
+        {
+            get
+            {
+                var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
+                var startingCoins = Hand.StartingCoinsByPlayerCount[gamers.Count];
+
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
+                {
+                    (0, startingCoins + 1, false)
+                };
+
+                return [gamers, plays];
+            }
+        }
+
+        public static object[] InvalidBidScenario5
+        {
+            get
+            {
+                var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
+                var startingCoins = Hand.StartingCoinsByPlayerCount[gamers.Count];
+
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
+                {
+                    (0, startingCoins, false),
+                    (1, null, true),
+                    (2, null, true),
+                    // The next round (no coins left for 1st player)
+                    (0, 1, false)
+                };
+
+                return [gamers, plays];
+            }
+        }
+
+        public static object[] InvalidBidScenario6
+        {
+            get
+            {
+                var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
+                var startingCoins = Hand.StartingCoinsByPlayerCount[gamers.Count];
+
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
+                {
+                    (0, 10, false),
+                    (1, null, true),
+                    (2, 11, false),
+                    (0, null, true),
+                    // The next round (only starting coins - 5 left for 1st player)
+                    (2, 0, true),
+                    (0, startingCoins - 4, false)
                 };
 
                 return [gamers, plays];
