@@ -44,17 +44,8 @@ namespace HouseAuction.Bidding.Domain
             var play = Play.Pass(player, order);
 
             MakePlay(play);
-
-            var highestBid = Plays.HighestBid(player);
-            var finishingPosition = BiddingPhase.PlayerCycle.Players.Count - Plays.PlayersWhoPassed().Count();
-
-            RaiseEvent(new PlayerFinishedBidding
-            {
-                Player = player,
-                BidAmount = highestBid ?? 0,
-                BiddingRoundId = Id,
-                FinishingPosition = finishingPosition,
-            });
+            BuyNextAvailableProperty(player);
+            HandleEndOfTurn();
         }
 
         public void Bid(string player, int amount)
@@ -63,6 +54,7 @@ namespace HouseAuction.Bidding.Domain
             var play = Play.Bid(player, order, amount);
 
             MakePlay(play);
+            HandleEndOfTurn();
         }
 
         private void MakePlay(Play play)
@@ -88,15 +80,10 @@ namespace HouseAuction.Bidding.Domain
             }
 
             _plays.Add(play);
+        }
 
-            RaiseEvent(new PlayerTurnComplete
-            {
-                BiddingRoundId = Id,
-                BidAmount = play.Amount,
-                HasPassed = play.IsPass,
-                Player = play.Player
-            });
-
+        private void HandleEndOfTurn()
+        {
             if (!HasFinished)
             {
                 BiddingPhase.PlayerCycle.Next();
@@ -111,23 +98,32 @@ namespace HouseAuction.Bidding.Domain
                 var winner = BiddingPhase.PlayerCycle.Players.Values
                     .Except(Plays.PlayersWhoPassed())
                     .Single();
-                var winningBid = Plays.HighestBid(winner);
+
+                BuyNextAvailableProperty(winner);
 
                 BiddingPhase.PlayerCycle.SetCurrentPlayer(winner);
-
-                RaiseEvent(new PlayerFinishedBidding
-                {
-                    Player = winner,
-                    BidAmount = winningBid ?? 0,
-                    FinishingPosition = 0,
-                    BiddingRoundId = Id
-                });
 
                 RaiseEvent(new BiddingRoundComplete
                 {
                     BiddingRoundId = Id
                 });
             }
+        }
+
+        private void BuyNextAvailableProperty(string player)
+        {
+            var highestBid = Plays.HighestBid(player);
+            var finishingPosition =
+                BiddingPhase.PlayerCycle.Players.Count - Plays.PlayersWhoPassed().Count();
+
+            var propertyToPurchase = BiddingPhase.Deck
+                .ForRound(RoundNumber)
+                .OrderByDescending(x => x)
+                .ToList()
+                [finishingPosition];
+
+            var hand = BiddingPhase.Hands.Single(x => x.Player == player);
+            hand.BuyProperty(propertyToPurchase, highestBid ?? 0, finishingPosition == 0);
         }
     }
 }

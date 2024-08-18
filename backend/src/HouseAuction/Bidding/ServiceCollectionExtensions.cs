@@ -18,7 +18,6 @@ namespace HouseAuction.Bidding
                 {
                     onwrdConfig.UseOnwardProcessors(x =>
                     {
-                        x.Register<PlayerFinishedBidding, OnPlayerFinishedBidding>();
                     });
                 },
                 contextLifetime: ServiceLifetime.Transient);
