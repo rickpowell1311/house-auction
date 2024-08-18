@@ -54,7 +54,9 @@ namespace HouseAuction.Bidding
 
             await _context.SaveChangesAsync();
 
-            var playerBank = await _context.Hands.FindAsync([request.GameId, _userContext[request.GameId].Player]);
+            var remainingCoins = biddingPhase.Hands
+                .Single(x => x.Player == _userContext[request.GameId].Player)
+                .Coins;
 
             await _callingHubContext.Hub.Clients
                 .Group(biddingPhase.GameId)
@@ -65,7 +67,7 @@ namespace HouseAuction.Bidding
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
-                        RemainingCoins = playerBank.Coins,
+                        RemainingCoins = remainingCoins,
                         Passed = false,
                         Bid = request.Amount
                     }
@@ -88,9 +90,9 @@ namespace HouseAuction.Bidding
 
             await _context.SaveChangesAsync();
 
-            var playerBank = await _context.Hands.FindAsync([request.GameId, _userContext[request.GameId].Player]);
-            _context.Entry(biddingPhase).State = EntityState.Detached;
-            await _context.Entry(biddingPhase).ReloadAsync();
+            var remainingCoins = biddingPhase.Hands
+                .Single(x => x.Player == _userContext[request.GameId].Player)
+                .Coins;
 
             await _callingHubContext.Hub.Clients
                 .Group(biddingPhase.GameId)
@@ -101,7 +103,7 @@ namespace HouseAuction.Bidding
                     NextPlayer = biddingPhase.PlayerCycle.CurrentPlayer,
                     Result = new Reactions.OnPlayerTurnComplete.OnPlayerTurnFinishedResult
                     {
-                        RemainingCoins = playerBank.Coins,
+                        RemainingCoins = remainingCoins,
                         Passed = true
                     }
                 });
