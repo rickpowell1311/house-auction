@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key as SignalRClientKey } from '@/_shared/providers/signalRClient';
-import { inject, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useStoryblokCardDealer } from '../../composables/useStoryblokCardDealer';
 import Card from '../Card.vue';
 import Deck from '../Deck.vue';
@@ -9,12 +9,14 @@ import HouseCardContents from '../HouseCardContents.vue';
 import Flip from '../animations/Flip.vue';
 
 const { isReadyToDeal, cards, deal, dealt } = useStoryblokCardDealer();
-const props = defineProps<{ properties: number[] }>();
+const props = defineProps<{ properties: number[], roundNumber: number, totalRounds: number }>();
 const cardIndexes = Array.from(Array(props.properties.length).keys());
 const signalRClient = inject<SignalRClient>(SignalRClientKey);
 
 const propertyCards = ref<number[]>([]);
-const isDeckEmpty = ref(false);
+const roundNumber = ref(props.roundNumber ?? props.totalRounds ?? 1);
+
+const isDeckEmpty = computed(() => roundNumber.value >= props.totalRounds);
 
 watch(isReadyToDeal, val => {
   if (val) {
@@ -30,7 +32,7 @@ onMounted(() => {
   signalRClient?.subscribe({
     onBiddingRoundComplete(reaction) {
       propertyCards.value = reaction.nextRound?.properties ?? []
-      isDeckEmpty.value = reaction.nextRound?.isLastRound === true
+      roundNumber.value++;
     },
   } as IHouseAuctionReceiver)
 })

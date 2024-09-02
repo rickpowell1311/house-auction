@@ -61,7 +61,8 @@ onMounted(() => {
   <div class="flex flex-col gap-6">
     <h2 class="text-center text-primary">Round {{ currentRound }}/{{ props.totalRounds }}
     </h2>
-    <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" />
+    <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" :round-number="round"
+      :total-rounds="props.totalRounds" />
     <div class="flex gap-8 flex-wrap justify-center w-full">
       <BiddingPlayer :game-id="gameId" :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.name === activePlayer"
         :coins="{ available: me?.coins ?? 0, minimum: highestBid + 1 }" :has-passed="me?.bid?.hasPassed === true"
