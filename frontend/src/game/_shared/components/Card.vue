@@ -15,8 +15,22 @@ const props = defineProps<Props>();
     <div v-else-if="props.type === 'face-down'" class="w-full h-full rounded-2xl bg-primary-500 relative">
       <div class="absolute top-0 left-0 w-full h-full z-10">
         <div class="p-2 h-full overflow-clip">
-          <div class="w-80 -rotate-45 -ml-20 -mt-10">
+          <div class="w-96 -rotate-45 -ml-28 -mt-14">
             <p class="text-primary-600 font-bold text-2xl break-words opacity-30 flex flex-wrap gap-2">
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
+              <PhHouse />
               <PhHouse />
               <PhHouse />
               <PhHouse />
