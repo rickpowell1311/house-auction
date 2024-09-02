@@ -24,6 +24,10 @@ export type GetBiddingPhaseResponse = {
     deck?: GetBiddingPhaseDeckResponse;
     /** Transpiled from HouseAuction.Bidding.Requests.GetBiddingPhase.GetBiddingPhasePlayersResponse */
     players?: GetBiddingPhasePlayersResponse;
+    /** Transpiled from int */
+    round: number;
+    /** Transpiled from int */
+    totalRounds: number;
 }
 
 /** Transpiled from HouseAuction.Bidding.Requests.GetBiddingPhase.GetBiddingPhaseDeckResponse */

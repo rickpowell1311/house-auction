@@ -29,6 +29,10 @@ namespace HouseAuction.Bidding
 
             return new GetBiddingPhase.GetBiddingPhaseResponse
             {
+                Round = biddingPhase.CurrentBiddingRound != null
+                    ? biddingPhase.CurrentBiddingRound.RoundNumber + 1
+                    : biddingPhase.BiddingRounds.Count(),
+                TotalRounds = biddingPhase.BiddingRounds.Count(),
                 Deck = MapToDeck(biddingPhase),
                 Players = MapToPlayers(biddingPhase)
             };

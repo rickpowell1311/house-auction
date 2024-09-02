@@ -24,6 +24,7 @@ const allBids = [...ordered.map(x => x?.bid?.amount ?? 0)].sort((a, b) => b - a)
 const previousPlays = ref<{ name: string, bid?: number, passed: boolean }[]>([]);
 const activePlayer = ref(ordered.find(x => x?.isTurn === true)?.name ?? undefined);
 const highestBid = ref<number>(Math.max(...allBids))
+const currentRound = ref<number>(props.round ?? props.totalRounds ?? 1);
 
 const onBid = (amount: number) => {
   highestBid.value = amount;
@@ -50,6 +51,7 @@ onMounted(() => {
     onBiddingRoundComplete(reaction) {
       previousPlays.value = [];
       highestBid.value = 0;
+      currentRound.value++;
     },
   } as IHouseAuctionReceiver)
 })
@@ -57,6 +59,8 @@ onMounted(() => {
 </script>
 <template>
   <div class="flex flex-col gap-6">
+    <h2 class="text-center text-primary">Round {{ currentRound }}/{{ props.totalRounds }}
+    </h2>
     <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" />
     <div class="flex gap-8 flex-wrap justify-center w-full">
       <BiddingPlayer :game-id="gameId" :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.name === activePlayer"

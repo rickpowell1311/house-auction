@@ -19,6 +19,10 @@ namespace HouseAuction.Bidding.Requests
             public GetBiddingPhaseDeckResponse Deck { get; set; }
 
             public GetBiddingPhasePlayersResponse Players { get; set; }
+
+            public int Round { get; set; }
+
+            public int TotalRounds { get; set; }
         }
 
         [TranspilationSource]
