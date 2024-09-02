@@ -58,19 +58,20 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="flex flex-col gap-6">
-    <h2 class="text-center text-primary">Round {{ currentRound }}/{{ props.totalRounds }}
-    </h2>
-    <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" :round-number="round"
-      :total-rounds="props.totalRounds" />
-    <div class="flex gap-8 flex-wrap justify-center w-full">
-      <BiddingPlayer :game-id="gameId" :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.name === activePlayer"
-        :coins="{ available: me?.coins ?? 0, minimum: highestBid + 1 }" :has-passed="me?.bid?.hasPassed === true"
-        bid="onBid" @pass="onPass" />
-      <BiddingPlayer v-for="player in others" :key="player?.name ?? ''" :game-id="gameId" :name="player?.name ?? ''"
-        :is-me="false" :is-bidding="player?.name === activePlayer"
-        :coins="{ available: 0, minimum: highestBid + 1, amount: player?.bid?.amount ?? 0 }"
-        :has-passed="player?.bid?.hasPassed === true" @bid="onBid" @pass="onPass" />
+  <div class="flex flex-col gap-16">
+    <h2 class="text-center text-primary">Bidding Round {{ currentRound }}/{{ props.totalRounds }}</h2>
+    <div class="flex flex-col gap-6">
+      <BiddingDeal :properties="props.deck?.propertiesOnTheTable ?? []" :round-number="round"
+        :total-rounds="props.totalRounds" />
+      <div class="flex gap-8 flex-wrap justify-center w-full">
+        <BiddingPlayer :game-id="gameId" :name="me?.name ?? ''" :is-me="true" :is-bidding="me?.name === activePlayer"
+          :coins="{ available: me?.coins ?? 0, minimum: highestBid + 1 }" :has-passed="me?.bid?.hasPassed === true"
+          bid="onBid" @pass="onPass" />
+        <BiddingPlayer v-for="player in others" :key="player?.name ?? ''" :game-id="gameId" :name="player?.name ?? ''"
+          :is-me="false" :is-bidding="player?.name === activePlayer"
+          :coins="{ available: 0, minimum: highestBid + 1, amount: player?.bid?.amount ?? 0 }"
+          :has-passed="player?.bid?.hasPassed === true" @bid="onBid" @pass="onPass" />
+      </div>
     </div>
   </div>
 </template>
