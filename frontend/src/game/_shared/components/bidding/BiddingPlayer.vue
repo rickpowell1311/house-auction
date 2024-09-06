@@ -2,7 +2,7 @@
 import Button from '@/_shared/components/Button.vue';
 import type { IHouseAuctionReceiver } from '@/_shared/providers/generated/TypedSignalR.Client/HouseAuction';
 import { type SignalRClient, Key as SignalRClientKey } from '@/_shared/providers/signalRClient';
-import { PhMinus, PhPlus } from '@phosphor-icons/vue';
+import { PhArrowUp, PhMinus, PhPlus } from '@phosphor-icons/vue';
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import CoinStash from '../coins/CoinStash.vue';
 
@@ -26,6 +26,7 @@ const currentBid = ref(props.coins.amount ?? 0);
 const stagedBid = ref(props.coins.amount ?? 0);
 const remaining = computed(() => available.value - stagedBid.value);
 const hasPassed = ref(props.hasPassed);
+const rebate = ref<number | undefined>(0);
 
 const emit = defineEmits<{
   pass: []
@@ -43,6 +44,7 @@ onMounted(() => {
 
         if (reaction.player === props.name) {
           stagedBid.value = 0;
+          rebate.value = available.value - (reaction.result?.remainingCoins ?? 0);
           available.value = reaction.result?.remainingCoins ?? 0;
         }
 
@@ -115,7 +117,17 @@ watch(isBidding, val => {
       </div>
       <div v-if="props.isMe" class="flex flex-col gap-8">
         <div v-if="isBidding" class="flex flex-col gap-3 items-center">
-          <CoinStash :amount="stagedBid" />
+          <div class="flex items-center gap-5">
+            <template v-if="currentBid > 0 && stagedBid > 0">
+              <CoinStash :amount="currentBid" />
+              <div>
+                <div class="-ml-2 rotate-90">
+                  <PhArrowUp size="24" class="text-primary animate-bounce animate-infinite" />
+                </div>
+              </div>
+            </template>
+            <CoinStash v-if="stagedBid > 0" :amount="stagedBid" />
+          </div>
           <div v-if="!hasPassed" class="flex gap-4 items-center justify-evenly">
             <PhMinus class="cursor-pointer select-none text-primary font-bold text-3xl" weight="bold"
               @click="removeFromBid" />
@@ -130,7 +142,12 @@ watch(isBidding, val => {
           </div>
         </div>
         <div class="flex flex-col gap-2 items-center">
-          <CoinStash :amount="remaining" />
+          <div class="flex items-center gap-2">
+            <CoinStash :amount="remaining" />
+            <p v-if="rebate" :key="rebate" class="text-primary animate-fade-down animate-reverse animate-delay-300">+{{
+              rebate
+            }}</p>
+          </div>
           <p class="text-white text-center">{{ remaining }} coins remaining</p>
         </div>
       </div>
