@@ -29,7 +29,7 @@ namespace HouseAuction
                 ?? throw new InvalidOperationException($"Bidding phase doesn't exist for game {gameId}");
 
             var chanceOfPassing = 0.5d;
-            var thinkingTime = 2000;
+            var thinkingTime = 200;
 
             while (biddingPhase.PlayerCycle.CurrentPlayer != humanPlayer && !biddingPhase.HasFinished)
             {
