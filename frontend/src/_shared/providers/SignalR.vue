@@ -28,8 +28,14 @@ onBeforeMount(async () => {
   try {
     await connection.value.start();
     connectionReady.value = true;
+
+    connection.value.onclose(() => {
+      connectionReady.value = false;
+      connectionError.value = "Connection lost"
+    });
+
   } catch (error) {
-    connectionError.value = String(error);
+    connectionError.value = "House Auction is unavailable right now";
     console.error(error);
   }
 })
@@ -44,7 +50,7 @@ onBeforeMount(async () => {
         <h1 class="text-center animate-wiggle animate-infinite">😭</h1>
       </Section>
       <Section>
-        <h2 class="shadow-gray-300 text-primary text-center">House Auction is unavailable right now</h2>
+        <h2 class="shadow-gray-300 text-primary text-center">{{ connectionError }}</h2>
       </Section>
     </div>
   </Modal>
