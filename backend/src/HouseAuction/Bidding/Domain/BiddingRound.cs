@@ -120,8 +120,12 @@ namespace HouseAuction.Bidding.Domain
         private void BuyNextAvailableProperty(string player)
         {
             var highestBid = Plays.HighestBid(player);
-            var playersWhoPassed = Plays.PlayersWhoPassed().Count();
-            var finishingPosition = BiddingPhase.PlayerCycle.Players.Count - playersWhoPassed;
+            var otherPlayersWhoPassed = Plays.PlayersWhoPassed()
+                .Except([player])
+                .Count();
+
+            var finishingPosition =
+                BiddingPhase.PlayerCycle.Players.Count - otherPlayersWhoPassed - 1;
 
             var propertyToPurchase = BiddingPhase.Deck
                 .ForRound(RoundNumber)
