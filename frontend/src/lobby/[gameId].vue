@@ -10,6 +10,7 @@ import { PhCheck } from '@phosphor-icons/vue';
 import { computed, inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Button from '../_shared/components/Button.vue';
+import Copy from './_shared/components/Copy.vue';
 import JoinGame from './_shared/components/JoinGame.vue';
 import Reconnect from './_shared/components/Reconnect.vue';
 
@@ -81,7 +82,11 @@ onMounted(async () => {
           <div class="flex flex-col gap-12">
             <div class="flex flex-col gap-4">
               <h1 class="text-primary">Lobby</h1>
-              <p>Game ID: <span class="text-primary text-bold">{{ gameId }}</span></p>
+              <p class="flex gap-2 items-center text-lg">
+                <span>Game ID:</span>
+                <span class="text-primary text-bold">{{ gameId }}</span>
+                <Copy :value="gameId" />
+              </p>
             </div>
             <div v-if="hasJoined" class="flex flex-col gap-4">
               <h2>Players</h2>
