@@ -260,5 +260,58 @@ namespace HouseAuction.Tests.Bidding.Domain
                 return [gamers, plays];
             }
         }
+
+        [Theory, MemberData(nameof(ValidBidScenarios))]
+        public void ValidBidDoesNotThrow(
+            List<string> players,
+            List<(int playerNumber, int? amount, bool isPass)> plays)
+        {
+            var biddingPhase = new BiddingPhase(GameId.Generate(), players);
+
+            foreach (var (playerNumber, amount, isPass, order) in plays.Select((x, i) => (x.playerNumber, x.amount, x.isPass, i)))
+            {
+                var player = biddingPhase.PlayerCycle.Players[playerNumber];
+
+                if (isPass)
+                {
+                    biddingPhase.CurrentBiddingRound.Pass(player);
+                }
+                else
+                {
+                    biddingPhase.CurrentBiddingRound.Bid(player, amount.Value);
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> ValidBidScenarios =>
+            new List<object[]>
+            {
+                ValidBidScenario1,
+            };
+
+        public static object[] ValidBidScenario1
+        {
+            get
+            {
+                var gamers = Gamers.Sample.Select(x => x).Take(3).ToList();
+                var startingCoins = Hand.StartingCoinsByPlayerCount[gamers.Count];
+                var halfStartingCoins = startingCoins / 2;
+
+                var plays = new List<(int playerNumber, int? amount, bool isPass)>
+                {
+                    // First round
+                    (0, startingCoins - 1, false),
+                    (1, startingCoins, false),
+                    (2, null, true),
+                    (0, null, true),
+                    // Second round
+                    (1, null, true),
+                    (2, 1, false),
+                    (0, halfStartingCoins, false)
+                };
+
+                return [gamers, plays];
+            }
+        }
     }
 }

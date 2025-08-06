@@ -1,6 +1,5 @@
 ﻿using HouseAuction.Bidding.Domain;
 using HouseAuction.Bidding.Requests;
-using HouseAuction.Lobby;
 using HouseAuction.Tests._Shared;
 using HouseAuction.Tests._Shared.TestData;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -30,7 +29,7 @@ namespace HouseAuction.Tests
             }
 
             var createLobbyResponse = await players[creator].Hub.CreateLobby(
-                new HouseAuction.Lobby.Requests.CreateLobby.CreateLobbyRequest
+                new CreateLobbyRequest
             {
                 Name = creator
             });
@@ -58,7 +57,7 @@ namespace HouseAuction.Tests
                 GameId = createLobbyResponse.GameId
             });
 
-            var biddingPhase = await players[creator].Hub.GetBiddingPhase(new HouseAuction.Bidding.Requests.GetBiddingPhase.GetBiddingPhaseRequest
+            var biddingPhase = await players[creator].Hub.GetBiddingPhase(new GetBiddingPhase.GetBiddingPhaseRequest
             {
                 GameId = createLobbyResponse.GameId
             });
